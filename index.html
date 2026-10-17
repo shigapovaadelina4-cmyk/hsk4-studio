@@ -1061,4 +1061,64 @@ picker.addEventListener('change',()=>setTimeout(sync,0));render();sync();
 }
 window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,1000);setTimeout(init,2400)});
 })();
+</script><style>
+#mainLessonStudio{background:#fff;border:1px solid #dce9e7;border-radius:19px;padding:22px;margin:15px 0}
+#mainLessonStudio[hidden]{display:none!important}
+#mainLessonStudio .ml-head{background:#08aaa3;color:white;padding:18px;border-radius:14px;font-size:21px;font-weight:750}
+#mainLessonStudio .ml-tabs{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0}
+#mainLessonStudio .ml-tabs button{border:1px solid #cfe3e0;border-radius:12px;padding:11px 14px;background:#f5fbfa}
+#mainLessonStudio .ml-tabs button.active{background:#08aaa3;color:white}
+#mainLessonStudio .ml-card{background:#fbfefe;border:1px solid #d6e9e7;border-radius:18px;text-align:center;padding:28px 16px;cursor:pointer;min-height:210px}
+#mainLessonStudio .ml-hanzi{font-size:56px;margin:9px 0}
+#mainLessonStudio .ml-actions{display:flex;gap:9px;margin:14px 0;flex-wrap:wrap}
+#mainLessonStudio .ml-actions button{padding:12px 17px;border:0;border-radius:11px;background:#dff4f1;color:#126b66;cursor:pointer}
+#mainLessonStudio .ml-quiz-options{display:grid;gap:10px}
+#mainLessonStudio .ml-quiz-options button{padding:15px;border:1px solid #d5e6e4;border-radius:12px;background:white;text-align:left}
+#mainLessonStudio .ml-quiz-options button:disabled{opacity:.85}
+</style>
+<script>
+(function(){
+const data={
+2:{title:'Настоящая дружба · 友情',grammar:[['尽管…还是…','Несмотря на то что… всё равно…','尽管很忙，我还是会联系朋友。','Несмотря на занятость, я всё равно поддерживаю связь с друзьями.'],['适应','Привыкнуть, приспособиться к новым условиям','我慢慢适应了这里的生活。','Я постепенно привыкла к жизни здесь.']],words:[
+['友情','yǒuqíng','дружба','我们的友情很重要。','Наша дружба очень важна.'],['联系','liánxì','связываться; связь','我们经常联系。','Мы часто общаемся.'],['适应','shìyìng','привыкать; адаптироваться','我适应了新环境。','Я привыкла к новой обстановке.'],['及时','jíshí','вовремя; своевременно','有问题请及时联系我。','Если будут вопросы, свяжись со мной вовремя.'],['尽管','jǐnguǎn','несмотря на то что','尽管下雨，我们还是出门了。','Хотя идёт дождь, мы всё равно вышли.'],['陪','péi','сопровождать; составлять компанию','我陪妈妈去公园。','Я пошла с мамой в парк.'],['逛街','guàngjiē','гулять по магазинам','周末我们去逛街。','На выходных мы ходим по магазинам.'],['差不多','chàbuduō','почти; примерно','差不多十点了。','Уже почти десять часов.'],['温度','wēndù','температура','今天的温度很低。','Сегодня низкая температура.'],['而','ér','а; но; при этом','他喜欢茶，而我喜欢咖啡。','Он любит чай, а я — кофе.']]},
+3:{title:'Повседневная жизнь · 日常生活',grammar:[['先…再…','Сначала…, затем…','我先做作业，再看电影。','Сначала я делаю домашнюю работу, потом смотрю фильм.'],['一边…一边…','Одновременно выполнять два действия','她一边听音乐一边学习。','Она учится, слушая музыку.']],words:[
+['日常','rìcháng','повседневный','这是我的日常生活。','Это моя повседневная жизнь.'],['习惯','xíguàn','привычка; привыкать','我习惯早起。','Я привыкла рано вставать.'],['安排','ānpái','планировать; организовывать','我安排好了时间。','Я распланировала время.'],['完成','wánchéng','заканчивать; выполнять','我完成了作业。','Я закончила домашнюю работу.'],['经验','jīngyàn','опыт','她有很多工作经验。','У неё большой опыт работы.'],['决定','juédìng','решать; решение','我决定明天去。','Я решила пойти завтра.'],['计划','jìhuà','план','你有什么计划？','Какие у тебя планы?'],['注意','zhùyì','обращать внимание','请注意安全。','Пожалуйста, соблюдай осторожность.'],['提高','tígāo','повышать; улучшать','我想提高汉语水平。','Я хочу улучшить китайский.'],['坚持','jiānchí','упорно продолжать','每天坚持练习。','Продолжай заниматься каждый день.']]}
+};
+function init(){
+const top=document.querySelector('#partA');if(!top||document.querySelector('#mainLessonStudio'))return;
+const panel=document.querySelector('.panel');if(!panel)return;
+const studio=document.createElement('section');studio.id='mainLessonStudio';studio.hidden=true;
+studio.innerHTML='<div class="ml-head"></div><p class="muted small">Учебные карточки и примеры составлены для практики HSK 4; это не дословный словарь учебника.</p><div class="ml-tabs"><button data-ml="cards">🀄 Слова</button><button data-ml="grammar">📖 Грамматика</button><button data-ml="practice">✍️ Тест</button><button data-ml="workbook">📒 Рабочая тетрадь</button></div><div class="ml-body"></div>';
+panel.insertAdjacentElement('afterend',studio);
+let active=2,tab='cards',idx=0,flipped=false,qidx=0,score=0;
+const head=studio.querySelector('.ml-head'),body=studio.querySelector('.ml-body');
+function speech(text){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='zh-CN';u.rate=.85;window.speechSynthesis.speak(u)}
+function render(){
+const d=data[active];head.textContent='🌸 Урок '+active+' · '+d.title;body.replaceChildren();
+studio.querySelectorAll('[data-ml]').forEach(b=>b.classList.toggle('active',b.dataset.ml===tab));
+if(tab==='cards'){
+const w=d.words[idx];const count=document.createElement('p');count.textContent='Слово '+(idx+1)+' из '+d.words.length;
+const card=document.createElement('div');card.className='ml-card';card.innerHTML='<div class="ml-hanzi"></div><p></p><p></p><p></p>';card.querySelector('.ml-hanzi').textContent=w[0];const ps=card.querySelectorAll('p');ps[0].textContent=flipped?w[1]:'Нажми на карточку, чтобы открыть перевод';ps[1].textContent=flipped?w[2]:'';ps[2].textContent=flipped?w[3]+' — '+w[4]:'';
+card.onclick=()=>{flipped=!flipped;render()};
+const actions=document.createElement('div');actions.className='ml-actions';
+[['← Назад',()=>{idx=(idx+d.words.length-1)%d.words.length;flipped=false;render()}],['🔊 Слушать',()=>speech(w[0])],['Далее →',()=>{idx=(idx+1)%d.words.length;flipped=false;render()}]].forEach(([label,fn])=>{const b=document.createElement('button');b.textContent=label;b.onclick=fn;actions.appendChild(b)});
+body.append(count,card,actions);
+}else if(tab==='grammar'){
+d.grammar.forEach(([rule,meaning,ex,ru])=>{const el=document.createElement('div');el.className='notice';el.style.marginBottom='12px';const h=document.createElement('h3');h.textContent=rule;const p=document.createElement('p');p.textContent=meaning;const zh=document.createElement('p');zh.textContent=ex;const tr=document.createElement('p');tr.textContent=ru;el.append(h,p,zh,tr);body.appendChild(el)});
+}else if(tab==='practice'){
+const w=d.words[qidx%d.words.length],choices=[w[2],...d.words.filter(x=>x!==w).slice((qidx+2)%4,(qidx+2)%4+3).map(x=>x[2])];while(choices.length<4)choices.push(d.words[(qidx+choices.length)%d.words.length][2]);choices.sort((a,b)=>((a.length+qidx)%7)-((b.length+qidx)%7));
+const h=document.createElement('h3');h.textContent='Как переводится '+w[0]+'?';const meta=document.createElement('p');meta.textContent='Вопрос '+(qidx+1)+' из '+d.words.length+' · Верно: '+score;const opts=document.createElement('div');opts.className='ml-quiz-options';const feedback=document.createElement('p');
+choices.forEach(v=>{const b=document.createElement('button');b.textContent=v;b.onclick=()=>{opts.querySelectorAll('button').forEach(btn=>btn.disabled=true);if(v===w[2]){score++;feedback.textContent='✓ Правильно!'}else feedback.textContent='✕ Неверно. Верный ответ: '+w[2]};opts.appendChild(b)});
+const next=document.createElement('button');next.className='primary';next.textContent='Следующий вопрос →';next.onclick=()=>{qidx=(qidx+1)%d.words.length;if(qidx===0)score=0;render()};body.append(h,meta,opts,feedback,next);
+}else{const p=document.createElement('p');p.textContent=active===2?'Урок 2: задания на чтение №23–30 доступны в разделе «Рабочая тетрадь» выше.':'Интерактивная рабочая тетрадь для урока 3 пока не перенесена.';const b=document.createElement('button');b.className='primary';b.textContent='Перейти к рабочей тетради';b.onclick=()=>{document.querySelector('[data-tab="workbook"]')?.click();document.querySelector('#wbMainLesson')?.scrollIntoView({behavior:'smooth'});const picker=document.querySelector('#wbMainLesson');if(picker){picker.value=String(active);picker.dispatchEvent(new Event('change',{bubbles:true}))}};body.append(p,b)}
+}
+studio.querySelectorAll('[data-ml]').forEach(b=>b.onclick=()=>{tab=b.dataset.ml;render()});
+function select(n){active=n;idx=0;qidx=0;score=0;flipped=false;tab='cards';studio.hidden=false;panel.style.display='none';render();studio.scrollIntoView({behavior:'smooth',block:'start'})}
+function addButtons(){for(const n of [2,3]){const old=[...top.querySelectorAll('button.lesson')].find(b=>b.textContent.trim()==='Урок '+n);if(!old)continue;old.disabled=false;old.title='Открыть основной урок '+n;old.onclick=()=>select(n)}}
+addButtons();
+new MutationObserver(addButtons).observe(top,{childList:true});
+const b1=[...top.querySelectorAll('button.lesson')].find(b=>b.textContent.trim()==='Урок 1');if(b1)b1.addEventListener('click',()=>{studio.hidden=true;panel.style.display=''});
+}
+window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,1000)});
+})();
 </script></body></html>
