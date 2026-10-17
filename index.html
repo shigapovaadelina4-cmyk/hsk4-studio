@@ -1152,4 +1152,19 @@ cards.insertAdjacentElement('afterend',row);row.insertAdjacentElement('afterend'
 }
 window.addEventListener('DOMContentLoaded',()=>{setInterval(addRating,450)});
 })();
+</script><script>
+/* Keep lessons 2 and 3 selectable even if an earlier script resets the buttons. */
+(function(){
+function unlock(){
+const part=document.getElementById('partA');if(!part)return;
+for(const n of [2,3]){
+const b=[...part.querySelectorAll('button')].find(x=>x.textContent.trim()==='Урок '+n);
+if(!b)continue;
+b.disabled=false;b.removeAttribute('disabled');b.title='Открыть урок '+n;
+b.onclick=function(e){e.preventDefault();document.dispatchEvent(new CustomEvent('hsk-main-lesson',{detail:n}));};
+}
+}
+document.addEventListener('DOMContentLoaded',()=>{unlock();setTimeout(unlock,300);setTimeout(unlock,1200)});
+window.addEventListener('pageshow',unlock);
+})();
 </script></body></html>
