@@ -69,4 +69,28 @@ byId('privateSave').onclick=saveNotes;byId('privateNotes').addEventListener('inp
 }
 window.addEventListener('DOMContentLoaded',render);
 })();
+</script><style>.key-checker{margin-top:22px;border:1px solid #dec4e3;background:#fffafd;padding:16px;border-radius:16px}.key-checker .key-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:10px}.key-checker label{display:flex;flex-direction:column;gap:5px;font-size:14px}.key-checker select{padding:9px;border:1px solid #d7bedc;border-radius:9px;background:white;font:inherit}.key-checker .key-feedback{font-size:13px;min-height:20px}.key-checker .good{color:#187444}.key-checker .bad{color:#ae3547}.key-checker .key-controls{display:flex;flex-wrap:wrap;gap:10px;margin:15px 0}.key-checker .key-controls button{padding:10px 14px}</style>
+<script>
+(function(){
+const lesson1={};
+'×√×√√'.split('').forEach((a,i)=>lesson1[i+1]=a);
+'DBACCDD'.split('').forEach((a,i)=>lesson1[i+6]=a);
+'ACADDABDCA'.split('').forEach((a,i)=>lesson1[i+13]=a);
+'EACB'.split('').forEach((a,i)=>lesson1[i+23]=a);
+'DEBA'.split('').forEach((a,i)=>lesson1[i+27]=a);
+'BBCCDBADD'.split('').forEach((a,i)=>lesson1[i+35]=a);
+const ordering={31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+function init(){
+const wb=document.getElementById('workbook');if(!wb)return;
+const host=wb.querySelector('.personal-wb');if(!host)return;
+const panel=document.createElement('div');panel.className='key-checker';panel.innerHTML='<h3>✅ Автопроверка по оригинальным ключам · Урок 1</h3><p class="muted">Выбери ответы на задания в твоём PDF. Ключи взяты со страницы 4 файла «HSK4 workbook keys.pdf». Задания не переписаны и не заменены другими.</p><div id="keyRows" class="key-grid"></div><div class="key-controls"><button id="keyCheck" class="primary">Проверить ответы</button><button id="keyReset">Очистить мои ответы</button></div><p id="keyResult" role="status"></p><p class="muted small">Задания 31–34 — порядок частей A/B/C. Задания 44–50 — свободное письмо, их пока нужно сверять с образцами в ключах; автоматическая оценка письменных ответов не включена. Для аудирования 1–22 нужны оригинальные записи.</p>';
+host.appendChild(panel);
+const rows=panel.querySelector('#keyRows');const storage='hsk4-wb-l1-key-v1';let answers={};try{answers=JSON.parse(localStorage.getItem(storage)||'{}')}catch(e){}
+const ids=Object.keys({...lesson1,...ordering}).map(Number).sort((a,b)=>a-b);
+for(const n of ids){const label=document.createElement('label');label.textContent='Задание '+n;const select=document.createElement('select');select.dataset.n=n;let vals=n<=5?['','√','×']:n>=31&&n<=34?['','ABC','ACB','BAC','BCA','CAB','CBA']:['','A','B','C','D','E'];for(const v of vals){const option=document.createElement('option');option.value=v;option.textContent=v||'Выбрать';select.appendChild(option)}select.value=answers[n]||'';select.onchange=()=>{answers[n]=select.value;localStorage.setItem(storage,JSON.stringify(answers));const feedback=label.querySelector('.key-feedback');feedback.textContent='';feedback.className='key-feedback'};const fb=document.createElement('span');fb.className='key-feedback';label.appendChild(select);label.appendChild(fb);rows.appendChild(label)}
+panel.querySelector('#keyCheck').onclick=()=>{let right=0,done=0;rows.querySelectorAll('select').forEach(select=>{const n=+select.dataset.n;const correct=lesson1[n]||ordering[n];const feedback=select.parentElement.querySelector('.key-feedback');if(!select.value){feedback.textContent='Не отвечено';feedback.className='key-feedback';return}done++;if(select.value===correct){right++;feedback.textContent='✓ Верно';feedback.className='key-feedback good'}else{feedback.textContent='✕ Ответ: '+correct;feedback.className='key-feedback bad'}});panel.querySelector('#keyResult').textContent='Правильно: '+right+' из '+done+' отвеченных. Всего проверяемых: '+ids.length+'.'};
+panel.querySelector('#keyReset').onclick=()=>{if(!confirm('Очистить выбранные ответы урока 1?'))return;answers={};localStorage.removeItem(storage);rows.querySelectorAll('select').forEach(sel=>{sel.value='';sel.parentElement.querySelector('.key-feedback').textContent=''});panel.querySelector('#keyResult').textContent='Ответы очищены'};
+}
+window.addEventListener('DOMContentLoaded',init);
+})();
 </script></body></html>
