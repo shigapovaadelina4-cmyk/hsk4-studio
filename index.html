@@ -772,4 +772,27 @@ picker.addEventListener('change',switchLesson);switchLesson();
 }
 window.addEventListener('DOMContentLoaded',()=>{initLessons();setTimeout(initLessons,1000);setTimeout(initLessons,2700)});
 })();
+</script><script>
+(function(){
+function resetWorkbookAttempt(){
+const host=document.querySelector('#workbook .personal-wb');if(!host||host.dataset.freshAttempt)return;
+const cards=host.querySelectorAll('.original-exercises .source-task');
+if(!cards.length)return;
+try{localStorage.removeItem('hsk4-wb-l1-key-v1')}catch(e){}
+for(const card of cards){
+card.querySelectorAll('.exercise-choices input[type="radio"]').forEach(r=>{r.checked=false});
+card.querySelectorAll('.final-grade,.submitted-explanation').forEach(el=>{el.classList.remove('visible','wb-show-grade');el.style.display='none';el.textContent=''});
+card.querySelectorAll('.study-status,.choice-result').forEach(el=>{el.textContent=''});
+}
+host.querySelectorAll('#keyRows select').forEach(sel=>{sel.value=''});
+const dash=host.querySelector('.wb-submit-dashboard');
+if(dash){
+dash.querySelectorAll('.wb-answer-pill').forEach(p=>{const n=p.textContent.match(/№\d+/)?.[0];if(n)p.textContent=n+': —'});
+const result=dash.querySelector('.wb-submit-result');if(result)result.replaceChildren();
+const p=dash.querySelector('p');if(p)p.textContent='Выбрано 0 из 12 ответов. Когда закончишь, нажми «Сдать задание».';
+}
+host.dataset.freshAttempt='1';
+}
+window.addEventListener('DOMContentLoaded',()=>{resetWorkbookAttempt();setTimeout(resetWorkbookAttempt,1050);setTimeout(resetWorkbookAttempt,2600);setTimeout(resetWorkbookAttempt,4500)});
+})();
 </script></body></html>
