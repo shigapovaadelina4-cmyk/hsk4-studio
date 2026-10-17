@@ -403,7 +403,7 @@ vals.forEach(v=>{
 const label=document.createElement('label');label.className='choice';
 const radio=document.createElement('input');radio.type='radio';radio.name=group;radio.value=v;
 radio.checked=source?.value===v;
-const txt=document.createElement('span');txt.textContent=choices?v+' · '+choices[v]:v.split('').join(' → ');
+const txt=document.createElement('span');txt.textContent=choices?v+' · '+choices[v].split(' — ')[0]:v.split('').join(' → ');
 radio.addEventListener('change',()=>{
 if(source){source.value=v;source.dispatchEvent(new Event('change',{bubbles:true}))}
 show(v);
