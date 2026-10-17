@@ -1121,4 +1121,21 @@ const b1=[...top.querySelectorAll('button.lesson')].find(b=>b.textContent.trim()
 }
 window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,1000)});
 })();
+</script><script>
+/* Do not present assistant-authored lesson sets as original textbook content. */
+(function(){
+function restrictUnsourcedLessons(){
+const top=document.querySelector('#partA');if(!top)return;
+for(const n of [2,3]){
+const btn=[...top.querySelectorAll('button.lesson')].find(b=>b.textContent.trim()==='Урок '+n);
+if(btn){btn.disabled=true;btn.title='Ожидаем страницы оригинального учебника';btn.onclick=null}
+}
+const studio=document.querySelector('#mainLessonStudio');
+if(studio&&!studio.hidden){
+studio.hidden=true;
+const panel=document.querySelector('.panel');if(panel)panel.style.display='';
+}
+}
+window.addEventListener('DOMContentLoaded',()=>{restrictUnsourcedLessons();setTimeout(restrictUnsourcedLessons,1100)});
+})();
 </script></body></html>
