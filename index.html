@@ -351,4 +351,74 @@ area.dataset.instant='1';update();
 }
 window.addEventListener('DOMContentLoaded',()=>{enableInstant();setTimeout(enableInstant,850);setTimeout(enableInstant,2000);setTimeout(enableInstant,3700)});
 })();
+</script><style>
+#workbook .source-task>.inline-answer,#workbook .source-task>.answer-right-here{display:none!important}
+#workbook #keyRows label:has(select[data-n="23"]),#workbook #keyRows label:has(select[data-n="24"]),#workbook #keyRows label:has(select[data-n="25"]),#workbook #keyRows label:has(select[data-n="26"]),#workbook #keyRows label:has(select[data-n="27"]),#workbook #keyRows label:has(select[data-n="28"]),#workbook #keyRows label:has(select[data-n="29"]),#workbook #keyRows label:has(select[data-n="30"]),#workbook #keyRows label:has(select[data-n="31"]),#workbook #keyRows label:has(select[data-n="32"]),#workbook #keyRows label:has(select[data-n="33"]),#workbook #keyRows label:has(select[data-n="34"]){display:none!important}
+#workbook .exercise-choices{margin-top:12px;padding:13px;border:1px solid #e8d4e8;border-radius:12px;background:#fff9fe}
+#workbook .exercise-choices .choice-title{font-weight:700;margin-bottom:9px}
+#workbook .exercise-choices .choice-list{display:grid;gap:7px}
+#workbook .exercise-choices .choice{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #ead6ed;border-radius:10px;background:white;cursor:pointer;font-size:15px}
+#workbook .exercise-choices .choice:has(input:checked){background:#f4e5f8;border-color:#ac75bb}
+#workbook .exercise-choices input{accent-color:#8953a0;width:18px;height:18px;flex-shrink:0}
+#workbook .exercise-choices .choice-result{margin-top:10px;line-height:1.6;font-size:14px}
+#workbook .exercise-choices .choice-result.correct{color:#176f43}
+#workbook .exercise-choices .choice-result.wrong{color:#a02d4c}
+</style>
+<script>
+(function(){
+const key={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+const words1={A:'自然 — естественно',B:'缺点 — недостаток',C:'互相 — друг друга',D:'竟然 — неожиданно',E:'生活 — жизнь'};
+const words2={A:'俩 — двое',B:'刚 — только что',C:'温度 — температура',D:'还是 — всё-таки / лучше',E:'够 — достаточно'};
+const order=['ABC','ACB','BAC','BCA','CAB','CBA'];
+const explanations={
+23:'生活中 — «в жизни». Речь о том, что жизнь без юмора похожа на блюдо без соли.',
+24:'自然 — «естественно, закономерно». Если долго не завтракать, это закономерно влияет на здоровье.',
+25:'互相 — «друг друга». Здесь люди знакомятся друг с другом: 互相认识.',
+26:'缺点 — «недостатки». Несмотря на недостатки человека, говорящая считает его милым.',
+27:'刚 — «только что». 刚买的苹果 — яблоки, которые только что купили.',
+28:'够 — «хватать, быть достаточным». Денег может не хватить: 不够.',
+29:'还是 — «лучше всё-таки». Собеседник предлагает подождать папу, потому что вдвоём кровать не передвинуть.',
+30:'俩 — «двое». 你们俩认识 — познакомить вас двоих.',
+31:'Сначала говорится, что чай — не только напиток, затем что это ещё и культура, и далее — о его тысячелетней истории.',
+32:'Сначала первая встреча (C), затем её приветливость (B), после — впечатление (A).',
+33:'Сначала общее мнение о человеке (A), затем уточнение о характере (C), потом вывод, почему это привлекает (B).',
+34:'Сначала мнение о браке (B), затем необходимость взаимопонимания (A), далее пояснение о достоинствах и недостатках (C).'
+};
+function build(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+const cards=host.querySelectorAll('.original-exercises .source-task');
+cards.forEach(card=>{
+if(card.querySelector('.exercise-choices'))return;
+const n=Number(card.querySelector('b')?.textContent.match(/\d+/)?.[0]);if(!key[n])return;
+const source=host.querySelector('#keyRows select[data-n="'+n+'"]');
+const choices=n<=26?words1:n<=30?words2:null;
+const vals=choices?Object.keys(choices):order;
+const wrap=document.createElement('div');wrap.className='exercise-choices';
+const title=document.createElement('div');title.className='choice-title';title.textContent=n<=30?'✍️ Выбери подходящее слово:':'✍️ Выбери порядок предложений:';
+wrap.appendChild(title);
+const list=document.createElement('div');list.className='choice-list';
+const result=document.createElement('div');result.className='choice-result';result.setAttribute('role','status');
+const group='exercise-choice-'+n;
+vals.forEach(v=>{
+const label=document.createElement('label');label.className='choice';
+const radio=document.createElement('input');radio.type='radio';radio.name=group;radio.value=v;
+radio.checked=source?.value===v;
+const txt=document.createElement('span');txt.textContent=choices?v+' · '+choices[v]:v.split('').join(' → ');
+radio.addEventListener('change',()=>{
+if(source){source.value=v;source.dispatchEvent(new Event('change',{bubbles:true}))}
+show(v);
+});
+label.appendChild(radio);label.appendChild(txt);list.appendChild(label);
+});
+wrap.appendChild(list);wrap.appendChild(result);card.appendChild(wrap);
+function show(v){
+if(!v){result.textContent='Выбери вариант — результат появится сразу.';result.className='choice-result';return}
+const ok=v===key[n];result.className='choice-result '+(ok?'correct':'wrong');
+result.textContent=ok?'✓ Правильно! '+explanations[n]:'✕ Пока неверно. Подсказка: '+explanations[n];
+}
+show(source?.value||'');
+});
+}
+window.addEventListener('DOMContentLoaded',()=>{build();setTimeout(build,650);setTimeout(build,1600);setTimeout(build,3000)});
+})();
 </script></body></html>
