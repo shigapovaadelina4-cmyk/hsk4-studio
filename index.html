@@ -324,4 +324,31 @@ wrap.appendChild(button);wrap.appendChild(result);card.appendChild(wrap);
 }
 window.addEventListener('DOMContentLoaded',()=>{fixAnswers();setTimeout(fixAnswers,700);setTimeout(fixAnswers,1700);setTimeout(fixAnswers,3200)});
 })();
+</script><style>
+#workbook .source-task .inline-answer{display:none!important}
+#workbook .source-task .answer-right-here button{display:none!important}
+#workbook .source-task .answer-right-here .result{font-weight:650;margin-top:7px;min-height:20px}
+</style>
+<script>
+(function(){
+const keys={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+function enableInstant(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+host.querySelectorAll('.original-exercises .source-task').forEach(card=>{
+const n=Number(card.querySelector('b')?.textContent.match(/\d+/)?.[0]);if(!keys[n])return;
+const area=card.querySelector('.answer-right-here');if(!area||area.dataset.instant)return;
+const select=area.querySelector('select'),result=area.querySelector('.result');if(!select||!result)return;
+const update=()=>{
+if(!select.value){result.textContent='Выбери ответ — проверка появится сразу';result.style.color='';return}
+const ok=select.value===keys[n];
+result.textContent=ok?'✓ Правильно!':'✕ Неверно. Попробуй ещё раз.';
+result.style.color=ok?'#187444':'#ae3547';
+};
+select.addEventListener('change',update);
+select.addEventListener('input',update);
+area.dataset.instant='1';update();
+});
+}
+window.addEventListener('DOMContentLoaded',()=>{enableInstant();setTimeout(enableInstant,850);setTimeout(enableInstant,2000);setTimeout(enableInstant,3700)});
+})();
 </script></body></html>
