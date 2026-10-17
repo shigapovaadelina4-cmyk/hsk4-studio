@@ -894,4 +894,42 @@ host.dataset.appPolished='1';
 }
 window.addEventListener('DOMContentLoaded',()=>{polishTest();setTimeout(polishTest,950);setTimeout(polishTest,2400);setTimeout(polishTest,4100)});
 })();
+</script><style>
+#workbook .wb-submit-dashboard .wb-answer-pill.wb-pill-wrong{background:#fff0f2!important;border:2px solid #e35a72!important;color:#a72b44!important;font-weight:700}
+#workbook .wb-submit-dashboard .wb-answer-pill.wb-pill-right{background:#eaf9f2!important;border:2px solid #3dbb8a!important;color:#167b55!important;font-weight:700}
+#workbook .wb-submit-dashboard .wb-answer-pill.wb-pill-missing{background:#fff6e6!important;border:2px solid #e7b04c!important;color:#8b6219!important}
+#workbook .wb-submit-dashboard .wb-answer-pill.wb-pill-wrong,#workbook .wb-submit-dashboard .wb-answer-pill.wb-pill-right,#workbook .wb-submit-dashboard .wb-answer-pill.wb-pill-missing{cursor:pointer}
+#workbook .wb-submit-dashboard .wb-grade-legend{margin:9px 0;font-size:14px;color:#63727b}
+</style>
+<script>
+(function(){
+const answers={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+function setup(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+const dash=host.querySelector('.wb-submit-dashboard'),submit=dash?.querySelector('.wb-submit-btn');if(!submit||submit.dataset.pillGrade)return;
+submit.dataset.pillGrade='1';
+const pills=dash.querySelector('.wb-answer-pills');
+function clear(){pills?.querySelectorAll('.wb-answer-pill').forEach(p=>p.classList.remove('wb-pill-wrong','wb-pill-right','wb-pill-missing'));dash.querySelector('.wb-grade-legend')?.remove()}
+host.querySelectorAll('.original-exercises .source-task .exercise-choices input[type="radio"]').forEach(r=>r.addEventListener('change',clear));
+submit.addEventListener('click',()=>{
+if(!pills)return;
+clear();
+const legend=document.createElement('div');legend.className='wb-grade-legend';legend.textContent='🟢 Верно · 🔴 Ошибка · 🟠 Нет ответа. Нажми на номер, чтобы открыть задание.';
+pills.insertAdjacentElement('beforebegin',legend);
+pills.querySelectorAll('.wb-answer-pill').forEach(p=>{
+const n=Number(p.textContent.match(/№\s*(\d+)/)?.[1]);if(!answers[n])return;
+const card=[...host.querySelectorAll('.original-exercises .source-task')].find(c=>Number(c.querySelector('b')?.textContent.match(/\d+/)?.[0])===n);
+const v=card?.querySelector('.exercise-choices input[type="radio"]:checked')?.value||'';
+const status=!v?'wb-pill-missing':v===answers[n]?'wb-pill-right':'wb-pill-wrong';
+p.classList.add(status);
+p.textContent=(status==='wb-pill-right'?'✓ ':status==='wb-pill-wrong'?'✕ ':'○ ')+'№'+n+': '+(v||'—');
+p.title='Перейти к заданию '+n;
+p.setAttribute('role','button');p.tabIndex=0;
+function jump(){const nav=host.querySelector('.wb-stepper');const buttons=nav?.querySelectorAll('.wb-jump button');if(buttons?.[n-23])buttons[n-23].click();else card?.scrollIntoView({behavior:'smooth',block:'center'});}
+p.onclick=jump;p.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();jump()}};
+});
+},false);
+}
+window.addEventListener('DOMContentLoaded',()=>{setup();setTimeout(setup,900);setTimeout(setup,2100);setTimeout(setup,4000)});
+})();
 </script></body></html>
