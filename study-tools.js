@@ -37,23 +37,60 @@
       .lesson-group summary:hover, .lesson-group summary:focus-visible {
         background: #f6eaf5; border-color: #ac75a5; }
       .lesson-group .lessons { margin: 12px 0 4px; }
-      .review-panel { margin-top: 22px; padding: 18px; border: 1px solid #dfcbe8;
-        border-radius: 16px; background: #fbf5ff; }
-      .review-panel h3 { margin: 0 0 7px; }
+      .review-panel { position: relative; isolation: isolate; overflow: hidden;
+        margin-top: 22px; padding: 22px; border: 1px solid #e7c9e4;
+        border-radius: 22px; background: linear-gradient(145deg, #fff8fc, #f7edff);
+        box-shadow: 0 12px 30px #86538b14; }
+      .review-panel::before { content: '✿'; position: absolute; top: -31px; right: 20px;
+        font-size: 105px; line-height: 1; color: #edcee9; opacity: .72;
+        pointer-events: none; z-index: 0; transform: rotate(-18deg); }
+      .review-panel::after { content: '✦'; position: absolute; right: 86px; top: 23px;
+        font-size: 21px; color: #d9a0c9; pointer-events: none; z-index: 0; }
+      .review-panel > * { position: relative; z-index: 1; }
+      .review-panel h3 { margin: 0 60px 8px 0; color: #653c72; }
       .review-panel p { margin: 0 0 14px; }
-      .review-words { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
-      .review-words button { border: 1px solid #d8bde4; background: #fff;
-        border-radius: 10px; padding: 8px 12px; cursor: pointer; font: inherit; }
-      .review-words button:hover, .review-words button:focus-visible {
-        border-color: #8653a1; background: #f0e2f8; }
-      .review-panel .review-next:disabled { opacity: .55; cursor: default; }
+      .review-panel .review-status { display: inline-block; margin: 3px 0;
+        padding: 7px 12px; border-radius: 999px; background: #fff;
+        color: #704b7a; font-size: 14px; box-shadow: 0 2px 9px #86538b12; }
+      .review-words { display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0; }
+      .review-words button { border: 1px solid #dfb9dc;
+        background: linear-gradient(180deg, #fff, #fff0fa); color: #5b3566;
+        border-radius: 999px; padding: 9px 15px; cursor: pointer;
+        font: inherit; font-size: 18px; font-weight: 650;
+        box-shadow: 0 4px 10px #86538b17;
+        transition: transform .18s, box-shadow .18s, background .18s; }
+      .review-words button::before { content: '✿'; color: #d58ebd; margin-right: 7px; }
+      .review-words button:hover { transform: translateY(-2px);
+        background: #fff; box-shadow: 0 7px 15px #86538b26; }
+      .review-panel .review-next { border: 0; border-radius: 999px;
+        padding: 12px 20px; background: linear-gradient(120deg, #b96aab, #7958a5);
+        color: white; font: inherit; font-weight: 700;
+        box-shadow: 0 6px 15px #7958a54a;
+        transition: transform .18s, box-shadow .18s; }
+      .review-panel .review-next::before { content: '✿'; margin-right: 8px; }
+      .review-panel .review-next:hover:not(:disabled) { transform: translateY(-2px);
+        box-shadow: 0 9px 20px #7958a55c; }
+      .review-panel .review-next:disabled { opacity: .55; cursor: default;
+        box-shadow: none; }
+      .review-panel button:focus-visible { outline: 3px solid #9b5ba8;
+        outline-offset: 3px; }
+      #cards .controls [data-rate] { border: 1px solid #ffffffb8;
+        border-radius: 999px; box-shadow: 0 5px 12px #86538b1c;
+        font-weight: 700; transition: transform .18s, box-shadow .18s; }
+      #cards .controls [data-rate]:hover { transform: translateY(-2px);
+        box-shadow: 0 8px 16px #86538b30; }
+      @media (max-width: 480px) { .review-panel { padding: 18px; }
+        .review-panel .review-next { width: 100%; } }
+      @media (prefers-reduced-motion: reduce) {
+        .review-panel button, #cards .controls [data-rate] { transition: none; }
+      }
     `;
     document.head.append(style);
 
     const panel = document.createElement('section');
     panel.className = 'review-panel';
     panel.setAttribute('aria-label', 'Повторение сложных слов');
-    panel.innerHTML = '<h3>🔁 Повторить сложные слова</h3>' +
+    panel.innerHTML = '<h3>🌸 Повторить сложные слова</h3>' +
       '<p class="muted small">Слова с отметками «Не знаю» и «С трудом» появятся здесь. Нажми на слово, чтобы вернуться к карточке.</p>' +
       '<p class="review-status" role="status"></p>' +
       '<div class="review-words"></div>' +
