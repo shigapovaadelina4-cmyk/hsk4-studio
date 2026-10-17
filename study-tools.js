@@ -6,6 +6,9 @@
 
     document.querySelector('main.wrap > footer')?.remove();
 
+    const subtitle = document.querySelector('header > p');
+    if (subtitle) subtitle.textContent = 'Карточки, грамматика, практика и аудирование · 20 уроков · Ярослав — мой любимый парень';
+
     function foldLessonList(id) {
       const list = document.getElementById(id);
       const heading = list?.previousElementSibling;
