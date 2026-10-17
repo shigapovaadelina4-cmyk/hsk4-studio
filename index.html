@@ -1138,4 +1138,35 @@ const panel=document.querySelector('.panel');if(panel)panel.style.display='';
 }
 window.addEventListener('DOMContentLoaded',()=>{restrictUnsourcedLessons();setTimeout(restrictUnsourcedLessons,1100)});
 })();
+</script><style>
+#mainLessonStudio .ml-rating{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+#mainLessonStudio .ml-rating button{flex:1;min-width:130px;padding:14px;border-radius:13px;border:1px solid #cce6e1;font-size:17px;font-weight:700;cursor:pointer}
+#mainLessonStudio .ml-rating .ml-known{background:#dff7eb;color:#176e4d}
+#mainLessonStudio .ml-rating .ml-unknown{background:#fff0f3;color:#a12d49}
+#mainLessonStudio .ml-rating-status{font-size:14px;color:#58736e;margin:10px 0}
+</style>
+<script>
+(function(){
+function addRating(){
+const studio=document.querySelector('#mainLessonStudio');if(!studio||studio.hidden)return;
+const cards=studio.querySelector('.ml-card'),body=studio.querySelector('.ml-body');if(!cards||!body||body.querySelector('.ml-rating'))return;
+const header=studio.querySelector('.ml-head')?.textContent||'';
+const n=Number(header.match(/Урок\s*(\d+)/)?.[1]);if(!n)return;
+const count=body.querySelector('p')?.textContent||'';
+const index=Number(count.match(/Слово\s*(\d+)/)?.[1]);if(!index)return;
+const word=cards.querySelector('.ml-hanzi')?.textContent||'';
+const key='hsk4-main-ratings-'+n;
+let ratings={};try{ratings=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
+const row=document.createElement('div');row.className='ml-rating';
+const status=document.createElement('div');status.className='ml-rating-status';
+function renderStatus(){status.textContent='Знаю: '+Object.values(ratings).filter(v=>v==='known').length+' · Не знаю: '+Object.values(ratings).filter(v=>v==='unknown').length+(ratings[word]?' · Эта карточка: '+(ratings[word]==='known'?'знаю':'не знаю'):'')}
+for(const [value,label,cls] of [['unknown','✕ Не знаю','ml-unknown'],['known','✓ Знаю','ml-known']]){
+const b=document.createElement('button');b.className=cls;b.textContent=label;b.type='button';
+b.onclick=()=>{ratings[word]=value;try{localStorage.setItem(key,JSON.stringify(ratings))}catch(e){};renderStatus();const next=[...body.querySelectorAll('.ml-actions button')].find(x=>/Далее/.test(x.textContent));next?.click()};
+row.appendChild(b)
+}
+cards.insertAdjacentElement('afterend',row);row.insertAdjacentElement('afterend',status);renderStatus();
+}
+window.addEventListener('DOMContentLoaded',()=>{setInterval(addRating,450)});
+})();
 </script></body></html>
