@@ -262,4 +262,33 @@ const layout=host.querySelector('.wb-study-layout');if(layout){layout.style.disp
 }
 window.addEventListener('DOMContentLoaded',()=>{organizeWorkbook();setTimeout(organizeWorkbook,700);setTimeout(organizeWorkbook,1800);setTimeout(organizeWorkbook,3600)});
 })();
+</script><style>
+#workbook .source-task .inline-answer{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #efdfef}
+#workbook .source-task .inline-answer select,#workbook .source-task .inline-answer input{border:1px solid #d5b6d9;border-radius:9px;padding:10px;font:inherit;background:#fff;min-width:145px}
+#workbook .source-task .inline-answer .inline-feedback{font-size:13px}
+#workbook .source-task .inline-answer button{border:1px solid #c8a4d1;border-radius:9px;background:#f8eafa;padding:9px 13px;cursor:pointer}
+</style>
+<script>
+(function(){
+function placeAnswers(){
+const host=document.querySelector('#workbook .personal-wb');
+if(!host)return;
+const cards=host.querySelectorAll('.original-exercises .source-task');
+cards.forEach(card=>{
+if(card.querySelector('.inline-answer'))return;
+const heading=card.querySelector('b'),match=heading?.textContent.match(/(\d+)/);if(!match)return;
+const n=Number(match[1]);
+const controls=[...host.querySelectorAll('.key-checker label')];
+let target=controls.find(el=>{const t=el.textContent.trim();return new RegExp('^(?:Задание|№)\\s*'+n+'(?:\\D|$)','i').test(t)&&el.querySelector('select,input')});
+if(!target){target=controls.find(el=>el.textContent.trim()==='Задание '+n&&el.querySelector('select,input'))}
+const source=target?.querySelector('select,input');if(!source)return;
+const line=document.createElement('div');line.className='inline-answer';
+const label=document.createElement('span');label.textContent='Твой ответ:';line.appendChild(label);
+const control=source.cloneNode(true);control.removeAttribute('id');control.removeAttribute('name');control.value=source.value;control.addEventListener('change',()=>{source.value=control.value;source.dispatchEvent(new Event('change',{bubbles:true}));feedback.textContent='✓ Ответ записан'});control.addEventListener('input',()=>{source.value=control.value;source.dispatchEvent(new Event('input',{bubbles:true}));feedback.textContent='✓ Ответ записан'});source.addEventListener('change',()=>{control.value=source.value});line.appendChild(control);
+const feedback=document.createElement('span');feedback.className='inline-feedback';line.appendChild(feedback);
+const button=document.createElement('button');button.type='button';button.textContent='Проверить';button.addEventListener('click',()=>{const all=[...host.querySelectorAll('button')];const check=all.find(b=>/проверить ответы|проверить всё|проверить задания/i.test(b.textContent));if(check){check.click();feedback.textContent='Результат проверки показан ниже ↓'}else feedback.textContent='Ответ сохранён'});line.appendChild(button);card.appendChild(line);
+});
+}
+window.addEventListener('DOMContentLoaded',()=>{placeAnswers();setTimeout(placeAnswers,1100);setTimeout(placeAnswers,2800);setTimeout(placeAnswers,4500)});
+})();
 </script></body></html>
