@@ -736,4 +736,40 @@ if(result){result.replaceChildren();const title=document.createElement('strong')
 }
 window.addEventListener('DOMContentLoaded',()=>{setup();setTimeout(setup,950);setTimeout(setup,2300);setTimeout(setup,4200)});
 })();
+</script><style>
+#workbook .wb-lesson-nav{background:#fff7fc;border:1px solid #e4c8e6;border-radius:15px;padding:16px;margin:12px 0}
+#workbook .wb-lesson-nav select{padding:10px;border-radius:9px;border:1px solid #d5b9da;font:inherit}
+#workbook .wb-lesson-nav .wb-grammar-link{display:inline-block;margin:10px 0;padding:8px 12px;border-radius:9px;background:#f1e3f6;color:#704080;text-decoration:none}
+#workbook .wb-other-lesson{border:1px solid #e4d0e8;border-radius:13px;padding:16px;margin:15px 0;background:white}
+#workbook .wb-other-lesson audio{display:block;width:100%;max-width:520px;margin:9px 0}
+</style>
+<script>
+(function(){
+async function initLessons(){
+const host=document.querySelector('#workbook .personal-wb');if(!host||host.querySelector('.wb-lesson-nav'))return;
+const nav=document.createElement('section');nav.className='wb-lesson-nav';
+nav.innerHTML='<h3>📚 Выбери урок · HSK 4</h3><label>Урок: <select id="wbMainLesson">'+Array.from({length:20},(_,i)=>'<option value="'+(i+1)+'">Урок '+(i+1)+'</option>').join('')+'</select></label><div><a class="wb-grammar-link" href="#" id="wbGrammarJump">📖 Перейти к грамматике</a></div><p id="wbLessonMessage"></p>';
+host.insertBefore(nav,host.firstChild);
+const picker=nav.querySelector('#wbMainLesson'),msg=nav.querySelector('#wbLessonMessage');
+const audio=host.querySelector('.wb-audio'),audioPicker=audio?.querySelector('#wbAudioLesson');
+const original=host.querySelector('.original-exercises'),dash=host.querySelector('.wb-submit-dashboard');
+const other=document.createElement('section');other.className='wb-other-lesson';other.hidden=true;nav.insertAdjacentElement('afterend',other);
+const grammar=nav.querySelector('#wbGrammarJump');
+grammar.addEventListener('click',e=>{e.preventDefault();const btn=[...document.querySelectorAll('button,[role="tab"],a')].find(el=>/грамматик/i.test(el.textContent||'')&&!nav.contains(el));if(btn)btn.click();else document.querySelector('#grammar')?.scrollIntoView({behavior:'smooth'});});
+async function switchLesson(){
+const n=Number(picker.value);
+if(original)original.style.display=n===1?'':'none';
+if(dash)dash.style.display=n===1?'':'none';
+if(audioPicker){audioPicker.value=String(n);audioPicker.dispatchEvent(new Event('change',{bubbles:true}))}
+other.hidden=n===1;
+msg.textContent=n===1?'Урок 1: задания 23–34 с проверкой, аудио и ссылка на грамматику.':'Урок '+n+': аудио доступно через плеер выше, если архив сохранён в браузере. Интерактивные задания этого урока ещё не перенесены из тетради.';
+if(n!==1){other.replaceChildren();const title=document.createElement('h3');title.textContent='📒 Урок '+n;const p=document.createElement('p');p.textContent='Задания из оригинальной тетради для этого урока ещё готовятся. Аудиозаписи выбираются в плеере выше.';other.append(title,p)}
+if(n>10&&window.hsk4Vault&&window.hsk4LoadSavedZip){const saved=await window.hsk4Vault.get('zip-B');if(saved)await window.hsk4LoadSavedZip(saved,false)}
+else if(n<=10&&window.hsk4Vault&&window.hsk4LoadSavedZip){const saved=await window.hsk4Vault.get('zip-A');if(saved)await window.hsk4LoadSavedZip(saved,false)}
+if(audioPicker){audioPicker.value=String(n);audioPicker.dispatchEvent(new Event('change',{bubbles:true}))}
+}
+picker.addEventListener('change',switchLesson);switchLesson();
+}
+window.addEventListener('DOMContentLoaded',()=>{initLessons();setTimeout(initLessons,1000);setTimeout(initLessons,2700)});
+})();
 </script></body></html>
