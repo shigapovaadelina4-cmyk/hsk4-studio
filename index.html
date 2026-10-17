@@ -93,4 +93,42 @@ panel.querySelector('#keyReset').onclick=()=>{if(!confirm('Очистить вы
 }
 window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,500);setTimeout(init,1800)});
 })();
+</script><style>
+#workbook .personal-wb .wb-study-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:14px;align-items:start;margin-top:12px}
+#workbook .personal-wb .wb-study-layout .key-checker{margin:0;min-width:0}
+#workbook .personal-wb .wb-pdf-side{min-width:0;position:sticky;top:8px;background:#fff;border:1px solid #e5d0e7;border-radius:14px;padding:12px}
+#workbook .personal-wb .wb-pdf-side iframe{height:70vh;min-height:430px}
+#workbook .personal-wb .wb-study-layout .key-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
+#workbook .personal-wb .wb-notes-toggle{margin-top:18px;border:1px solid #ead9ee;border-radius:14px;padding:14px}
+#workbook .personal-wb .wb-notes-toggle summary{cursor:pointer;font-weight:700}
+@media(max-width:750px){#workbook .personal-wb .wb-study-layout{grid-template-columns:1fr}#workbook .personal-wb .wb-pdf-side{position:static}#workbook .personal-wb .wb-pdf-side iframe{height:52vh;min-height:300px}}
+</style>
+<script>
+(function(){
+function improve(){
+const host=document.querySelector('#workbook .personal-wb');
+const checker=host?.querySelector('.key-checker');
+const picker=host?.querySelector('#privatePdf');
+const viewer=host?.querySelector('#privateViewer');
+if(!host||!checker||!picker||!viewer||host.querySelector('.wb-study-layout'))return false;
+const uploadRow=picker.closest('.wb-line');
+const pageRow=host.querySelector('#privatePage')?.closest('.wb-line');
+const status=host.querySelector('#privateStatus');
+const layout=document.createElement('div');layout.className='wb-study-layout';
+const pdfSide=document.createElement('div');pdfSide.className='wb-pdf-side';
+const h=document.createElement('h3');h.textContent='📖 Страницы твоей тетради';pdfSide.appendChild(h);
+const hint=document.createElement('p');hint.className='muted small';hint.textContent='Открой свой PDF один раз на этом устройстве. Слева будет оригинальная страница, рядом — проверка ответов по ключам.';pdfSide.appendChild(hint);
+if(uploadRow)pdfSide.appendChild(uploadRow);
+if(pageRow)pdfSide.appendChild(pageRow);
+if(status)pdfSide.appendChild(status);
+pdfSide.appendChild(viewer);
+host.insertBefore(layout,host.firstChild);
+layout.appendChild(pdfSide);layout.appendChild(checker);
+const notes=host.querySelector('#privateNotes');
+if(notes){const title=notes.previousElementSibling;const intro=title?.previousElementSibling;const save=host.querySelector('#privateSave')?.closest('.wb-line');const details=document.createElement('details');details.className='wb-notes-toggle';const summary=document.createElement('summary');summary.textContent='✍️ Мои письменные ответы и заметки (открыть)';details.appendChild(summary);if(title)details.appendChild(title);if(intro&&intro.tagName==='P')details.appendChild(intro);details.appendChild(notes);if(save)details.appendChild(save);host.appendChild(details);}
+const first=host.querySelector('h3');if(first&&first!==h&&first!==checker.querySelector('h3'))first.textContent='📒 Рабочая тетрадь HSK 4A — работа с оригиналом';
+return true;
+}
+window.addEventListener('DOMContentLoaded',()=>{improve();setTimeout(improve,700);setTimeout(improve,2100)});
+})();
 </script></body></html>
