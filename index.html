@@ -584,4 +584,55 @@ bar.append(button,summary);exercises.appendChild(bar);
 }
 window.addEventListener('DOMContentLoaded',()=>{setup();setTimeout(setup,850);setTimeout(setup,2100);setTimeout(setup,3900)});
 })();
+</script><style>
+#workbook .wb-submit-dashboard{border:1px solid #ddbee4;background:#fffafd;border-radius:15px;padding:17px;margin:15px 0}
+#workbook .wb-submit-dashboard h3{margin:0 0 9px}
+#workbook .wb-submit-dashboard .wb-answer-pills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+#workbook .wb-submit-dashboard .wb-answer-pill{background:white;border:1px solid #e6d3e9;border-radius:9px;padding:7px 10px;font-size:14px}
+#workbook .wb-submit-dashboard .wb-submit-btn{border:0;border-radius:10px;background:#80529a;color:white;padding:12px 19px;font-weight:700;cursor:pointer}
+#workbook .wb-submit-dashboard .wb-submit-result{margin-top:12px;line-height:1.8}
+#workbook .wb-submit-dashboard .wb-submit-result a{color:#8a438f}
+#workbook .original-exercises .wb-finish-bar{display:none!important}
+#workbook .original-exercises .source-task .final-grade{display:none!important}
+#workbook .original-exercises .source-task .final-grade.wb-show-grade{display:block!important}
+</style>
+<script>
+(function(){
+const key={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+function setupDashboard(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+const exercises=host.querySelector('.original-exercises');if(!exercises||host.querySelector('.wb-submit-dashboard'))return;
+const dash=document.createElement('section');dash.className='wb-submit-dashboard';
+dash.innerHTML='<h3>📝 Мои ответы · Урок 1</h3><p>Выбирай ответы в заданиях ниже. Здесь они появятся автоматически. Когда закончишь, нажми «Сдать задание».</p><div class="wb-answer-pills" aria-live="polite"></div><button class="wb-submit-btn" type="button">✅ Сдать задание</button><div class="wb-submit-result" role="status"></div>';
+exercises.parentNode.insertBefore(dash,exercises);
+const pills=dash.querySelector('.wb-answer-pills'),result=dash.querySelector('.wb-submit-result');
+const cards=[...exercises.querySelectorAll('.source-task')];
+function getCard(n){return cards.find(c=>Number(c.querySelector('b')?.textContent.match(/\d+/)?.[0])===n)}
+function chosen(n){return getCard(n)?.querySelector('.exercise-choices input[type="radio"]:checked')?.value||''}
+function update(){
+pills.replaceChildren();let count=0;
+Object.keys(key).forEach(k=>{const n=Number(k),value=chosen(n);if(value)count++;const pill=document.createElement('span');pill.className='wb-answer-pill';pill.textContent='№'+n+': '+(value||'—');pills.appendChild(pill)});
+dash.querySelector('p').textContent='Выбрано '+count+' из 12 ответов. Когда закончишь, нажми «Сдать задание».';
+result.textContent='';
+cards.forEach(card=>{const grade=card.querySelector('.final-grade');if(grade)grade.classList.remove('wb-show-grade')});
+}
+cards.forEach(card=>card.querySelectorAll('.exercise-choices input[type="radio"]').forEach(input=>input.addEventListener('change',update)));
+dash.querySelector('.wb-submit-btn').addEventListener('click',()=>{
+let right=0;const mistakes=[],missing=[];
+for(const k of Object.keys(key)){
+const n=Number(k),v=chosen(n),card=getCard(n),grade=card?.querySelector('.final-grade');
+if(!v)missing.push(n);else if(v===key[n])right++;else mistakes.push(n);
+if(grade){grade.className='final-grade wb-show-grade '+(!v?'is-empty':v===key[n]?'is-correct':'is-wrong');grade.textContent=!v?'○ Ответ не выбран':v===key[n]?'✓ Верно':'✕ Ошибка. Можешь открыть подсказку и попробовать снова.'}
+}
+result.replaceChildren();
+const strong=document.createElement('strong');strong.textContent='Результат: '+right+' из 12 правильных.';result.appendChild(strong);
+function links(title,nums){if(!nums.length)return;const p=document.createElement('p');p.append(title+' ');nums.forEach((n,i)=>{const a=document.createElement('a');a.href='#';a.textContent='№'+n;a.addEventListener('click',e=>{e.preventDefault();getCard(n)?.scrollIntoView({behavior:'smooth',block:'center'})});p.appendChild(a);if(i<nums.length-1)p.append(', ')});result.appendChild(p)}
+links('Ошибки в заданиях:',mistakes);links('Не отвечено:',missing);
+if(!mistakes.length&&!missing.length){const p=document.createElement('p');p.textContent='🎉 Все ответы правильные!';result.appendChild(p)}
+dash.scrollIntoView({behavior:'smooth',block:'start'});
+});
+update();
+}
+window.addEventListener('DOMContentLoaded',()=>{setupDashboard();setTimeout(setupDashboard,950);setTimeout(setupDashboard,2200);setTimeout(setupDashboard,4000)});
+})();
 </script></body></html>
