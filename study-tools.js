@@ -4,16 +4,39 @@
   function init() {
     document.getElementById('release-note')?.remove();
 
-    const footer = document.querySelector('main.wrap > footer');
-    if (footer) {
-      footer.textContent = 'Учись в своём ритме: повторяй слова, тренируй грамматику и возвращайся к сложным заданиям.';
+    document.querySelector('main.wrap > footer')?.remove();
+
+    function foldLessonList(id) {
+      const list = document.getElementById(id);
+      const heading = list?.previousElementSibling;
+      if (!list || heading?.tagName !== 'H3') return;
+
+      const details = document.createElement('details');
+      details.className = 'lesson-group';
+      const summary = document.createElement('summary');
+      summary.textContent = heading.textContent;
+      heading.replaceWith(details);
+      details.append(summary, list);
+      list.addEventListener('click', event => {
+        if (event.target.closest('button.lesson')) details.open = false;
+      });
     }
+
+    foldLessonList('partA');
+    foldLessonList('partB');
 
     const cards = document.getElementById('cards');
     if (!cards || typeof demo === 'undefined' || typeof saved === 'undefined') return;
 
     const style = document.createElement('style');
     style.textContent = `
+      .lesson-group { margin: 12px 0 16px; }
+      .lesson-group summary { cursor: pointer; padding: 14px 16px;
+        border: 1px solid #e8dce8; border-radius: 14px; background: #fff;
+        color: #49344d; font-weight: 700; }
+      .lesson-group summary:hover, .lesson-group summary:focus-visible {
+        background: #f6eaf5; border-color: #ac75a5; }
+      .lesson-group .lessons { margin: 12px 0 4px; }
       .review-panel { margin-top: 22px; padding: 18px; border: 1px solid #dfcbe8;
         border-radius: 16px; background: #fbf5ff; }
       .review-panel h3 { margin: 0 0 7px; }
