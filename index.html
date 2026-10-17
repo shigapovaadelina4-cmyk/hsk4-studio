@@ -1182,4 +1182,21 @@ if(btn){btn.disabled=false;btn.click()}
 }
 window.addEventListener('DOMContentLoaded',()=>setTimeout(openRequestedLesson,350));
 })();
+</script><style>
+/* Hide legacy example panels even when an old script recreates them. */
+#mainLessonStudio .ml-visible-example,
+#mainLessonStudio [class*="visible-example"]{display:none!important}
+</style>
+<script>
+(function(){
+function removeExamplePanels(){
+const studio=document.getElementById('mainLessonStudio');if(!studio)return;
+studio.querySelectorAll('.ml-visible-example,[class*="visible-example"]').forEach(el=>el.remove());
+}
+window.addEventListener('DOMContentLoaded',()=>{
+removeExamplePanels();
+const studio=document.getElementById('mainLessonStudio');
+if(studio)new MutationObserver(removeExamplePanels).observe(studio,{childList:true,subtree:true});
+});
+})();
 </script></body></html>
