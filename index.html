@@ -530,4 +530,58 @@ else{status.textContent='Чтобы включить оригинальное а
 }
 window.addEventListener('DOMContentLoaded',()=>{prepareAudio();setTimeout(prepareAudio,1100);setTimeout(prepareAudio,2500);setTimeout(prepareAudio,4300)});
 })();
+</script><style>
+#workbook .original-exercises .source-task .study-status,#workbook .original-exercises .source-task .choice-result{display:none!important}
+#workbook .original-exercises .source-task .final-grade{display:none;margin-top:12px;font-weight:700;border-radius:9px;padding:10px}
+#workbook .original-exercises .source-task .final-grade.is-correct{display:block;color:#186a41;background:#ecf8f0}
+#workbook .original-exercises .source-task .final-grade.is-wrong{display:block;color:#a72f48;background:#fff0f1}
+#workbook .original-exercises .source-task .final-grade.is-empty{display:block;color:#755d76;background:#f7f2f8}
+#workbook .wb-finish-bar{position:sticky;bottom:8px;z-index:3;background:#fff;border:1px solid #dcbde5;border-radius:14px;padding:14px;margin-top:18px;box-shadow:0 3px 14px #3b153017}
+#workbook .wb-finish-bar button{padding:12px 20px;border-radius:10px;border:0;background:#82509a;color:white;font-weight:700;cursor:pointer}
+#workbook .wb-finish-bar .wb-final-summary{margin-top:9px;font-weight:650}
+</style>
+<script>
+(function(){
+const correct={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+function setup(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+const exercises=host.querySelector('.original-exercises');if(!exercises)return;
+const cards=[...exercises.querySelectorAll('.source-task')];
+for(const card of cards){
+const n=Number(card.querySelector('b')?.textContent.match(/\d+/)?.[0]);if(!correct[n])continue;
+const box=card.querySelector('.exercise-choices');if(!box)continue;
+for(const label of box.querySelectorAll('label.choice span')){
+const t=label.textContent;
+if(t.includes(' — '))label.textContent=t.split(' — ')[0];
+}
+if(!card.querySelector('.final-grade')){const grade=document.createElement('div');grade.className='final-grade';grade.setAttribute('role','status');box.appendChild(grade)}
+if(!box.dataset.finalOnly){
+box.querySelectorAll('input[type="radio"]').forEach(input=>input.addEventListener('change',()=>{
+const grade=card.querySelector('.final-grade');grade.className='final-grade';grade.textContent='';
+const bar=host.querySelector('.wb-finish-bar .wb-final-summary');if(bar)bar.textContent='Ответ изменён. Нажми «Проверить все задания», когда закончишь.';
+}));
+box.dataset.finalOnly='1';
+}
+}
+if(exercises.querySelector('.wb-finish-bar'))return;
+const bar=document.createElement('div');bar.className='wb-finish-bar';
+const button=document.createElement('button');button.type='button';button.textContent='✅ Проверить все задания';
+const summary=document.createElement('div');summary.className='wb-final-summary';summary.setAttribute('role','status');
+button.addEventListener('click',()=>{
+let good=0,answered=0;const mistakes=[],missing=[];
+for(const card of cards){
+const n=Number(card.querySelector('b')?.textContent.match(/\d+/)?.[0]);if(!correct[n])continue;
+const grade=card.querySelector('.final-grade');if(!grade)continue;
+const chosen=card.querySelector('.exercise-choices input[type="radio"]:checked')?.value;
+if(!chosen){grade.className='final-grade is-empty';grade.textContent='○ Задание '+n+': нет ответа';missing.push(n)}
+else if(chosen===correct[n]){grade.className='final-grade is-correct';grade.textContent='✓ Задание '+n+': верно';good++;answered++}
+else{grade.className='final-grade is-wrong';grade.textContent='✕ Задание '+n+': ошибка. Открой подсказку и попробуй ещё раз.';mistakes.push(n);answered++}
+}
+summary.textContent='Верно: '+good+' из '+answered+' отвеченных (всего 12).'+(mistakes.length?' Ошибки в заданиях: '+mistakes.join(', ')+'.':'')+(missing.length?' Не отвечено: '+missing.join(', ')+'.':'');
+bar.scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+bar.append(button,summary);exercises.appendChild(bar);
+}
+window.addEventListener('DOMContentLoaded',()=>{setup();setTimeout(setup,850);setTimeout(setup,2100);setTimeout(setup,3900)});
+})();
 </script></body></html>
