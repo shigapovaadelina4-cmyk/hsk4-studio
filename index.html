@@ -131,4 +131,35 @@ return true;
 }
 window.addEventListener('DOMContentLoaded',()=>{improve();setTimeout(improve,700);setTimeout(improve,2100)});
 })();
+</script><script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" defer></script>
+<style>
+#workbook .wb-audio{background:#fff7fd;border:1px solid #e4cce5;border-radius:16px;padding:17px;margin:18px 0}
+#workbook .wb-audio input{max-width:100%}#workbook .wb-audio audio{width:100%;max-width:560px}
+#workbook .wb-audio .wb-track{padding:10px 0;border-bottom:1px solid #efdfed}
+#workbook .wb-audio select{padding:9px;border-radius:9px;border:1px solid #d9bfdd}
+</style>
+<script>
+(function(){
+let archive=null,archiveKind='',urls=[],loadedFile='';
+function clean(){urls.forEach(u=>URL.revokeObjectURL(u));urls=[];}
+function addAudio(){
+const host=document.querySelector('#workbook .personal-wb');
+if(!host||host.querySelector('.wb-audio'))return;
+const box=document.createElement('section');box.className='wb-audio';
+box.innerHTML='<h3>🎧 Оригинальное аудио рабочей тетради</h3><p>Выбери свой ZIP с аудио HSK 4A или HSK 4B. Файл открывается только в браузере и не загружается на сайт. После закрытия страницы ZIP потребуется выбрать снова.</p><label>ZIP с аудиозаписями: <input id="wbAudioZip" type="file" accept=".zip,application/zip"></label><p><label>Урок: <select id="wbAudioLesson">'+Array.from({length:20},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'</option>').join('')+'</select></label></p><p id="wbAudioStatus" role="status">Выбери ZIP с записями.</p><div id="wbAudioTracks"></div>';
+const layout=host.querySelector('.wb-study-layout');host.insertBefore(box,layout||host.firstChild);
+const input=box.querySelector('#wbAudioZip'),select=box.querySelector('#wbAudioLesson'),status=box.querySelector('#wbAudioStatus'),tracks=box.querySelector('#wbAudioTracks');
+async function show(){
+clean();tracks.replaceChildren();if(!archive)return;
+const n=+select.value;
+const files=Object.values(archive.files).filter(x=>!x.dir&&/\.mp3$/i.test(x.name)&&new RegExp('lesson-'+String(n).padStart(2,'0')+'/','i').test(x.name)).sort((a,b)=>a.name.localeCompare(b.name));
+if(!files.length){status.textContent='В этом ZIP нет записей для урока '+n+'. Для уроков 1–10 нужен архив 4A, для 11–20 — 4B.';return}
+status.textContent='Урок '+n+': '+files.length+' аудиозаписи. Подготавливаю...';
+try{for(const item of files){const blob=await item.async('blob');const url=URL.createObjectURL(new Blob([blob],{type:'audio/mpeg'}));urls.push(url);const row=document.createElement('div');row.className='wb-track';const title=document.createElement('div');title.textContent=item.name.split('/').pop().replace(/\.mp3$/i,'');const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.src=url;row.append(title,audio);tracks.appendChild(row)}status.textContent='Урок '+n+': записи готовы. Нажми ▶ для прослушивания.'}catch(e){status.textContent='Не удалось прочитать аудио: '+e.message}
+}
+input.addEventListener('change',async()=>{const file=input.files[0];if(!file)return;if(typeof JSZip==='undefined'){status.textContent='Не загрузилась библиотека для ZIP. Проверь интернет и обнови страницу.';return}status.textContent='Открываю архив '+file.name+'...';try{archive=await JSZip.loadAsync(file);loadedFile=file.name;archiveKind=/4b/i.test(file.name)?'B':'A';select.value=archiveKind==='B'?'11':'1';await show()}catch(e){status.textContent='Ошибка открытия ZIP: '+e.message}});
+select.addEventListener('change',show);
+}
+window.addEventListener('DOMContentLoaded',()=>{addAudio();setTimeout(addAudio,800);setTimeout(addAudio,2100)});
+})();
 </script></body></html>
