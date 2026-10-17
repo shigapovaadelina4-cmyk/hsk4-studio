@@ -238,4 +238,28 @@ host.dataset.directReady='1';
 }
 window.addEventListener('DOMContentLoaded',()=>{tidy();setTimeout(tidy,900);setTimeout(tidy,2600)});
 })();
+</script><style>
+/* Workbook is an exercise page first; file tools are optional. */
+#workbook .personal-wb .wb-study-layout{display:flex!important;flex-direction:column!important;grid-template-columns:none!important}
+#workbook .personal-wb .wb-study-layout>.key-checker{width:100%!important;max-width:100%!important;box-sizing:border-box}
+#workbook .personal-wb .wb-study-layout>.wb-pdf-side{display:none!important}
+#workbook .personal-wb>.wb-audio{display:none!important}
+#workbook .personal-wb .wb-materials-details .wb-pdf-side,#workbook .personal-wb .wb-materials-details .wb-audio{display:block!important}
+#workbook .personal-wb .original-exercises{width:auto!important}
+</style>
+<script>
+(function(){
+function organizeWorkbook(){
+const host=document.querySelector('#workbook .personal-wb');
+if(!host)return;
+const checker=host.querySelector('.key-checker'),ex=host.querySelector('.original-exercises');
+if(!checker)return;
+let details=host.querySelector('.wb-materials-details');
+if(!details){details=document.createElement('details');details.className='wb-materials-details';const summary=document.createElement('summary');summary.textContent='📁 Дополнительно: PDF и аудио';details.appendChild(summary);host.appendChild(details)}
+for(const cls of ['.wb-audio','.wb-pdf-side']){const el=host.querySelector(cls);if(el&&el.parentElement!==details)details.appendChild(el)}
+if(ex&&ex.parentElement!==checker)checker.insertBefore(ex,checker.firstChild);
+const layout=host.querySelector('.wb-study-layout');if(layout){layout.style.display='flex';layout.style.flexDirection='column'}
+}
+window.addEventListener('DOMContentLoaded',()=>{organizeWorkbook();setTimeout(organizeWorkbook,700);setTimeout(organizeWorkbook,1800);setTimeout(organizeWorkbook,3600)});
+})();
 </script></body></html>
