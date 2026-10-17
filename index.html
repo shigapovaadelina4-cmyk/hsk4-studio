@@ -1004,4 +1004,61 @@ host.querySelectorAll('.original-exercises .exercise-choices input[type="radio"]
 }
 window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,900);setTimeout(init,2200);setTimeout(init,4100)});
 })();
+</script><style>
+#workbook .wb-lesson2-test{max-width:780px;margin:15px auto;background:white;border:1px solid #d3e9e7;border-radius:18px;overflow:hidden}
+#workbook .wb-lesson2-test[hidden]{display:none!important}
+#workbook .wb2-header{background:#08aaa3;color:white;padding:20px;font-size:19px;font-weight:750}
+#workbook .wb2-content{padding:22px}
+#workbook .wb2-counter{color:#66777c;font-weight:650;margin-bottom:12px}
+#workbook .wb2-question{font-size:22px;line-height:1.9;margin:15px 0 20px}
+#workbook .wb2-options{display:grid;gap:9px}
+#workbook .wb2-option{display:flex;gap:12px;align-items:center;border:1px solid #d6e8e6;border-radius:13px;padding:14px;cursor:pointer;background:#fbfefe;font-size:18px}
+#workbook .wb2-option:has(input:checked){border:2px solid #08aaa3;background:#dff7f4}
+#workbook .wb2-option input{accent-color:#08aaa3}
+#workbook .wb2-hint{margin:14px 0;padding:12px;border:1px solid #e5d6e8;border-radius:12px}
+#workbook .wb2-controls{display:flex;justify-content:space-between;gap:12px;margin-top:22px}
+#workbook .wb2-controls button,#workbook .wb2-submit{padding:12px 19px;border:0;border-radius:12px;background:#08aaa3;color:white;font-weight:700;cursor:pointer}
+#workbook .wb2-controls button:disabled{opacity:.4}
+#workbook .wb2-dots{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+#workbook .wb2-dots button{border:1px solid #cfe4e1;border-radius:20px;padding:7px 12px;background:white;cursor:pointer}
+#workbook .wb2-dots button.active{background:#08aaa3;color:white}
+#workbook .wb2-review{margin:10px 0;padding:12px;border-radius:10px;background:#f0faf8;line-height:1.7}
+</style>
+<script>
+(function(){
+const qs=[
+{n:23,q:'如果有什么问题，请（　）与我们联系。',opts:['陪','而','及时','友情','尽管'],a:'及时',hint:'Нужно слово со значением «своевременно».',why:'及时联系 — «своевременно связаться». Просьба не откладывать обращение.'},
+{n:24,q:'有人说，（　）就像酒一样，时间越长越好。',opts:['陪','而','及时','友情','尽管'],a:'友情',hint:'Сравнивают с вином то, что крепнет со временем.',why:'友情 — дружба. Чем дольше дружба, тем она ценнее.'},
+{n:25,q:'我们不应该总是看到别人的缺点，（　）应该多学习别人做得好的地方。',opts:['陪','而','及时','友情','尽管'],a:'而',hint:'Здесь противопоставляются две привычки.',why:'而 соединяет противопоставленные мысли: не искать недостатки, а учиться хорошему.'},
+{n:26,q:'有时候，吃完晚饭，爸爸会（　）着爷爷奶奶去附近的公园走走。',opts:['陪','而','及时','友情','尽管'],a:'陪',hint:'Папа идёт в парк вместе с бабушкой и дедушкой.',why:'陪着 — «сопровождать, составлять компанию».'},
+{n:27,q:'你是南方人，能（　）北京的生活吗？',opts:['逛','差不多','温度','联系','适应'],a:'适应',hint:'Речь о привыкании к жизни в другом городе.',why:'适应生活 — «приспособиться к жизни».'},
+{n:28,q:'我和同事在外面（　）街呢，马上就回去。',opts:['逛','差不多','温度','联系','适应'],a:'逛',hint:'Устойчивое выражение означает «гулять по магазинам».',why:'逛街 — «гулять по магазинам».'},
+{n:29,q:'有几个同学毕业后就没（　）了，正好借这个机会见见。',opts:['逛','差不多','温度','联系','适应'],a:'联系',hint:'После выпуска люди перестали поддерживать общение.',why:'没联系了 — «больше не поддерживали связь».'},
+{n:30,q:'我是北京人，来南方工作（　）十年了。',opts:['逛','差不多','温度','联系','适应'],a:'差不多',hint:'Нужно сказать «почти десять лет».',why:'差不多十年 — «почти десять лет».'}
+];
+function init(){
+const host=document.querySelector('#workbook .personal-wb'),picker=host?.querySelector('#wbMainLesson');if(!picker||host.querySelector('.wb-lesson2-test'))return;
+const box=document.createElement('section');box.className='wb-lesson2-test';box.hidden=true;
+box.innerHTML='<div class="wb2-header">🌸 HSK 4 · Урок 2 · Чтение</div><div class="wb2-content"><div class="wb2-counter"></div><div class="wb2-dots"></div><div class="wb2-question"></div><div class="wb2-options"></div><details class="wb2-hint"><summary>💡 Подсказка</summary><p></p></details><div class="wb2-controls"><button type="button" class="wb2-prev">← Назад</button><button type="button" class="wb2-next">Далее →</button></div><div class="wb2-results" hidden><button type="button" class="wb2-submit">✅ Сдать задание</button><div class="wb2-score"></div></div></div>';
+const other=host.querySelector('.wb-other-lesson');(other||picker.closest('.wb-lesson-nav')).insertAdjacentElement('afterend',box);
+const answers=Array(qs.length).fill('');let pos=0,submitted=false;
+const dots=box.querySelector('.wb2-dots'),question=box.querySelector('.wb2-question'),options=box.querySelector('.wb2-options'),hint=box.querySelector('.wb2-hint'),score=box.querySelector('.wb2-score');
+function render(){
+const q=qs[pos];box.querySelector('.wb2-counter').textContent='Вопрос '+(pos+1)+' из '+qs.length+' · №'+q.n;
+dots.replaceChildren();qs.forEach((item,i)=>{const b=document.createElement('button');b.textContent=(i+1)+(submitted?(answers[i]===item.a?' ✓':' ✕'):answers[i]?' •':'');b.classList.toggle('active',i===pos);b.onclick=()=>{pos=i;render()};dots.appendChild(b)});
+question.textContent=q.q;options.replaceChildren();
+q.opts.forEach(v=>{const label=document.createElement('label');label.className='wb2-option';const radio=document.createElement('input');radio.type='radio';radio.name='wb2-answer';radio.value=v;radio.checked=answers[pos]===v;radio.onchange=()=>{answers[pos]=v;submitted=false;score.replaceChildren();render()};const span=document.createElement('span');span.textContent=v;label.append(radio,span);options.appendChild(label)});
+hint.querySelector('p').textContent=q.hint;hint.open=false;
+if(submitted){const r=document.createElement('div');r.className='wb2-review';r.textContent=(answers[pos]===q.a?'✓ Верно. ':'✕ Ошибка. Правильный ответ: '+q.a+'. ')+q.why;options.appendChild(r)}
+box.querySelector('.wb2-prev').disabled=pos===0;box.querySelector('.wb2-next').textContent=pos===qs.length-1?'К сдаче ↓':'Далее →';
+box.querySelector('.wb2-results').hidden=pos!==qs.length-1&&!submitted;
+}
+box.querySelector('.wb2-prev').onclick=()=>{pos=Math.max(0,pos-1);render()};
+box.querySelector('.wb2-next').onclick=()=>{if(pos<qs.length-1){pos++;render()}else{box.querySelector('.wb2-results').hidden=false;box.querySelector('.wb2-submit').scrollIntoView({behavior:'smooth',block:'center'})}};
+box.querySelector('.wb2-submit').onclick=()=>{submitted=true;render();box.querySelector('.wb2-results').hidden=false;const wrong=qs.filter((q,i)=>answers[i]!==q.a).map(q=>q.n);score.textContent='Верно: '+(qs.length-wrong.length)+' из '+qs.length+'. Ошибки: '+(wrong.join(', ')||'нет')+'. Нажми на номер вопроса, чтобы посмотреть правильный ответ и объяснение.'};
+function sync(){const is2=picker.value==='2';box.hidden=!is2;if(other)other.hidden=is2||picker.value==='1';if(is2){const audio=host.querySelector('#wbAudioLesson');if(audio){audio.value='2';audio.dispatchEvent(new Event('change',{bubbles:true}))}}}
+picker.addEventListener('change',()=>setTimeout(sync,0));render();sync();
+}
+window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,1000);setTimeout(init,2400)});
+})();
 </script></body></html>
