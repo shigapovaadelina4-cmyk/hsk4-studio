@@ -414,7 +414,7 @@ wrap.appendChild(list);wrap.appendChild(result);card.appendChild(wrap);
 function show(v){
 if(!v){result.textContent='Выбери вариант — результат появится сразу.';result.className='choice-result';return}
 const ok=v===key[n];result.className='choice-result '+(ok?'correct':'wrong');
-result.textContent=ok?'✓ Правильно! '+explanations[n]:'✕ Пока неверно. Подсказка: '+explanations[n];
+result.textContent=ok?'✓ Верно!':'✕ Неверно. Попробуй ещё раз.';
 }
 show(source?.value||'');
 });
@@ -446,7 +446,7 @@ function check(v){
 if(!result)return;
 if(!v){result.textContent='Нажми на подходящий вариант — проверка появится сразу.';result.className='choice-result';return}
 const ok=v===correct;result.className='choice-result '+(ok?'correct':'wrong');
-result.textContent=(ok?'✓ Правильно! ':'✕ Пока неверно. ')+explanations[n];
+result.textContent=ok?'✓ Верно!':'✕ Неверно. Попробуй ещё раз.';
 }
 radios.forEach(r=>r.addEventListener('change',()=>check(r.value)));
 check(source?.value||'');choices.dataset.repaired='1';
@@ -499,4 +499,4 @@ box.querySelectorAll('input[type="radio"]').forEach(r=>r.addEventListener('chang
 }
 window.addEventListener('DOMContentLoaded',()=>{attach();setTimeout(attach,900);setTimeout(attach,2200);setTimeout(attach,3700)});
 })();
-</script></body></html>
+</script><style>#workbook .original-exercises .source-task .exercise-choices .choice-result{display:none!important;visibility:hidden!important;height:0!important;overflow:hidden!important;margin:0!important;padding:0!important}#workbook .original-exercises .source-task .study-status{display:block!important}</style><script>(function(){function clean(){document.querySelectorAll('#workbook .original-exercises .source-task .exercise-choices .choice-result').forEach(el=>el.remove())}window.addEventListener('DOMContentLoaded',()=>{clean();setTimeout(clean,1000);setTimeout(clean,2600);setTimeout(clean,4400)})})();</script></body></html>
