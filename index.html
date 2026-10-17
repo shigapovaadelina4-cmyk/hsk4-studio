@@ -52,4 +52,29 @@ window.addEventListener('DOMContentLoaded',()=>{
   const candidates=[...document.querySelectorAll('section,div')].filter(x=>x.id && /^(wb|workbook)/i.test(x.id));
   const wb=document.getElementById('workbook');if(wb)wb.innerHTML=message;
 });
-</script><div style="position:fixed;right:12px;bottom:12px;z-index:999;background:#fff;border:1px solid #e4c9e3;border-radius:16px;padding:12px;box-shadow:0 4px 20px #44334433"><a style="color:#88428a;font-weight:700" href="./workbook.html">📒 Тетрадь · 20 уроков →</a></div></body></html>
+</script><style>
+#workbook .personal-wb{line-height:1.65}#workbook .personal-wb input[type=file]{max-width:100%;padding:12px;border:1px dashed #cda4d5;border-radius:12px;background:#fff}#workbook .personal-wb input[type=number]{width:85px;max-width:25%;padding:9px;border:1px solid #d9c2dd;border-radius:10px}#workbook .personal-wb textarea{display:block;box-sizing:border-box;width:100%;min-height:145px;padding:12px;border:1px solid #dac5e0;border-radius:12px;font:inherit;background:#fff}#workbook .personal-wb iframe{width:100%;height:70vh;min-height:430px;border:1px solid #ddc8e0;border-radius:12px;background:white}#workbook .personal-wb .wb-line{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}#workbook .personal-wb .wb-line button{padding:9px 13px}#workbook .personal-wb .wb-info{padding:12px;border-radius:12px;background:#f8eff9}
+</style>
+<script>
+(function(){
+const lessonNames=['简单的爱情','真正的朋友','经理对我印象不错','不要太着急赚钱','只买对的，不买贵的','一分钱一分货','最好的医生是自己','生活中不缺少美','阳光总在风雨后','幸福的标准','第11课','第12课','第13课','第14课','第15课','第16课','第17课','第18课','第19课','第20课'];
+let fileUrl='',page=1,lesson=1,notes={};try{notes=JSON.parse(localStorage.getItem('hsk4-personal-workbook-notes-v1')||'{}')}catch(e){}
+function store(){try{localStorage.setItem('hsk4-personal-workbook-notes-v1',JSON.stringify(notes))}catch(e){}}
+function render(){
+const wb=document.getElementById('workbook');if(!wb)return;
+wb.innerHTML='<div class="personal-wb"><h3>📒 Моя рабочая тетрадь · HSK 4</h3><p>Работаем только с твоим оригинальным PDF. Здесь нет добавленных мной заданий или слов.</p><div class="wb-info"><b>🔒 Твой PDF остаётся на твоём устройстве.</b> Выбери его ниже — файл не загружается на GitHub или сервер. На другом устройстве его нужно выбрать снова.</div><div class="wb-line"><label>Открыть PDF рабочей тетради (4A): <input id="privatePdf" type="file" accept="application/pdf,.pdf"></label></div><div class="wb-line"><label>Урок <select id="privateLesson">'+Array.from({length:20},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'</option>').join('')+'</select></label><label>Страница PDF <input id="privatePage" type="number" min="1" value="1"></label><button id="privatePrev">← Назад</button><button id="privateNext">Вперёд →</button></div><p id="privateStatus" class="muted small">Выбери свой PDF, чтобы увидеть страницы тетради здесь.</p><div id="privateViewer"></div><h4>✍️ Мои ответы и заметки</h4><p class="muted small">Ответы сохраняются в этом браузере отдельно для каждого урока и страницы.</p><textarea id="privateNotes" placeholder="Напиши ответы на задания этой страницы..."></textarea><div class="wb-line"><button class="primary" id="privateSave">Сохранить ответы</button><span id="privateSaved" role="status"></span></div><p class="muted small">Номера страниц задаются вручную, чтобы не перепутать страницы PDF с номерами в печатной книге. Для второй части HSK 4B можно выбрать её PDF отдельно.</p></div>';
+const byId=id=>document.getElementById(id);
+byId('privateLesson').value=String(lesson);byId('privatePage').value=String(page);
+function key(){return lesson+':'+page}function loadNotes(){byId('privateNotes').value=notes[key()]||'';byId('privateSaved').textContent='';}
+function saveNotes(){notes[key()]=byId('privateNotes').value;store();byId('privateSaved').textContent='✓ Сохранено на устройстве';}
+function showPage(){byId('privatePage').value=String(page);const viewer=byId('privateViewer');if(fileUrl){viewer.innerHTML='';const frame=document.createElement('iframe');frame.title='Страница оригинальной рабочей тетради';frame.src=fileUrl+'#page='+page+'&view=FitH';viewer.appendChild(frame);byId('privateStatus').textContent='Открыта страница PDF № '+page+'. Если браузер не переходит на неё, используй навигацию внутри PDF.';}loadNotes();}
+byId('privatePdf').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;if(file.type!=='application/pdf'&&!/\.pdf$/i.test(file.name)){alert('Выбери PDF-файл');return}if(fileUrl)URL.revokeObjectURL(fileUrl);fileUrl=URL.createObjectURL(file);showPage();});
+byId('privateLesson').addEventListener('change',e=>{saveNotes();lesson=+e.target.value;page=1;showPage()});
+byId('privatePage').addEventListener('change',e=>{saveNotes();page=Math.max(1,parseInt(e.target.value,10)||1);showPage()});
+byId('privatePrev').onclick=()=>{saveNotes();page=Math.max(1,page-1);showPage()};
+byId('privateNext').onclick=()=>{saveNotes();page++;showPage()};
+byId('privateSave').onclick=saveNotes;byId('privateNotes').addEventListener('input',()=>{notes[key()]=byId('privateNotes').value;store();byId('privateSaved').textContent='Автосохранено'});loadNotes();
+}
+window.addEventListener('DOMContentLoaded',render);
+})();
+</script></body></html>
