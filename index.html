@@ -635,4 +635,58 @@ update();
 }
 window.addEventListener('DOMContentLoaded',()=>{setupDashboard();setTimeout(setupDashboard,950);setTimeout(setupDashboard,2200);setTimeout(setupDashboard,4000)});
 })();
+</script><style>
+#workbook .source-task .submitted-explanation{display:none;margin-top:10px;border:1px solid #e1cbe6;border-radius:10px;padding:12px;background:#fff;line-height:1.65}
+#workbook .source-task .submitted-explanation.visible{display:block}
+#workbook .source-task .submitted-explanation b{color:#663c79}
+#workbook .wb-submit-dashboard .wb-submit-result .wb-review-note{font-size:14px;color:#745678}
+</style>
+<script>
+(function(){
+const keys={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+const reasons={
+23:'生活中 означает «в жизни». Сравнение говорит о том, что жизнь без юмора похожа на блюдо без соли.',
+24:'自然 здесь передаёт естественное, закономерное последствие: если долго не завтракать, это влияет на здоровье.',
+25:'互相认识 — «познакомиться друг с другом». Участники группы должны узнать друг друга.',
+26:'缺点 — «недостатки». Конструкция 虽然…但… противопоставляет недостатки человека и хорошее отношение к нему.',
+27:'刚买的 — «только что купленные». Речь о недавно купленных яблоках.',
+28:'不够 — «недостаточно, не хватит». Денег в кошельке может оказаться недостаточно.',
+29:'还是…吧 выражает совет: лучше подождать возвращения папы.',
+30:'俩 означает «двое»; 你们俩 — «вы двое».',
+31:'Сначала вводится мысль 茶不仅仅是一种饮料, затем идёт 而且还是一种文化. Это пара «не только… но и…».',
+32:'Сначала 第一次和王小姐见面 — первая встреча, затем 她就对我特别热情 — её отношение, и затем 所以我对她的印象很深 — вывод.',
+33:'Сначала 我觉得他很多地方都不错 — общее впечатление, затем 特别是脾气、性格很好 — уточнение, затем 这一点是他吸引我的主要原因 — причина симпатии.',
+34:'Сначала мнение о браке 结婚我认为只有爱情是远远不够的, затем о взаимопонимании 它更需要两个人互相理解和接受, затем о принятии достоинств и недостатков.'
+};
+function enableReview(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+const dash=host.querySelector('.wb-submit-dashboard');if(!dash||dash.dataset.reviewReady)return;
+const button=dash.querySelector('.wb-submit-btn');if(!button)return;
+const cards=[...host.querySelectorAll('.original-exercises .source-task')];
+for(const card of cards){
+const n=Number(card.querySelector('b')?.textContent.match(/\d+/)?.[0]);if(!keys[n])continue;
+const block=document.createElement('div');block.className='submitted-explanation';block.setAttribute('role','status');card.appendChild(block);
+}
+function clearReview(){
+cards.forEach(card=>{const block=card.querySelector('.submitted-explanation');if(block){block.classList.remove('visible');block.textContent=''}});
+}
+cards.forEach(card=>card.querySelectorAll('.exercise-choices input[type="radio"]').forEach(r=>r.addEventListener('change',clearReview)));
+button.addEventListener('click',()=>{
+let shown=0;
+for(const card of cards){
+const n=Number(card.querySelector('b')?.textContent.match(/\d+/)?.[0]);if(!keys[n])continue;
+const block=card.querySelector('.submitted-explanation');if(!block)continue;
+const v=card.querySelector('.exercise-choices input[type="radio"]:checked')?.value;
+block.replaceChildren();
+if(!v){block.classList.remove('visible');continue}
+const title=document.createElement('b');title.textContent=v===keys[n]?'✓ Правильно!':'✕ Ошибка. Правильный ответ: '+keys[n];
+const explanation=document.createElement('p');explanation.textContent='Почему: '+reasons[n];
+block.append(title,explanation);block.classList.add('visible');shown++;
+}
+const result=dash.querySelector('.wb-submit-result');if(result&&shown){const note=document.createElement('p');note.className='wb-review-note';note.textContent='После сдачи открой любое задание ниже: под ним показаны правильный ответ и объяснение.';result.appendChild(note)}
+});
+dash.dataset.reviewReady='1';
+}
+window.addEventListener('DOMContentLoaded',()=>{enableReview();setTimeout(enableReview,900);setTimeout(enableReview,2100);setTimeout(enableReview,4000)});
+})();
 </script></body></html>
