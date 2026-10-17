@@ -689,4 +689,51 @@ dash.dataset.reviewReady='1';
 }
 window.addEventListener('DOMContentLoaded',()=>{enableReview();setTimeout(enableReview,900);setTimeout(enableReview,2100);setTimeout(enableReview,4000)});
 })();
+</script><style>
+#workbook .wb-submit-dashboard{position:static!important;margin:22px 0!important}
+#workbook .original-exercises .source-task .submitted-explanation.visible{display:block!important;visibility:visible!important;height:auto!important}
+</style>
+<script>
+(function(){
+const keys={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+const explain={
+23:'生活中 означает «в жизни»: жизнь без юмора сравнивают с блюдом без соли.',
+24:'自然 выражает закономерное следствие: длительный отказ от завтрака влияет на здоровье.',
+25:'互相认识 означает «познакомиться друг с другом».',
+26:'缺点 — недостатки человека, которые упоминаются после 虽然.',
+27:'刚买的苹果 — яблоки, купленные только что.',
+28:'不够 — «не хватит», здесь речь о сумме денег.',
+29:'还是…吧 — совет: лучше подождать папу.',
+30:'俩 — двое, то есть 你们俩 — вы двое.',
+31:'不仅仅…而且… связывает «не только напиток» и «но и культура».',
+32:'Первая встреча → приветливое отношение → сильное впечатление.',
+33:'Общее впечатление → уточнение о характере → причина симпатии.',
+34:'Мнение о браке → необходимость взаимопонимания → принятие достоинств и недостатков.'
+};
+function setup(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+const dash=host.querySelector('.wb-submit-dashboard'),exercises=host.querySelector('.original-exercises');if(!dash||!exercises)return;
+if(exercises.nextElementSibling!==dash)exercises.insertAdjacentElement('afterend',dash);
+const button=dash.querySelector('.wb-submit-btn');if(!button||button.dataset.finalReview)return;
+button.dataset.finalReview='1';
+button.addEventListener('click',()=>{
+const cards=[...exercises.querySelectorAll('.source-task')];let correct=0,attempted=0;const mistakes=[],missing=[];
+for(const card of cards){
+const n=Number(card.querySelector('b')?.textContent.match(/\d+/)?.[0]);if(!keys[n])continue;
+const chosen=card.querySelector('.exercise-choices input[type="radio"]:checked')?.value||'';
+let block=card.querySelector('.submitted-explanation');
+if(!block){block=document.createElement('div');block.className='submitted-explanation';card.appendChild(block)}
+block.replaceChildren();
+const heading=document.createElement('strong');
+if(!chosen){missing.push(n);heading.textContent='○ Не отвечено. Правильный ответ: '+keys[n]}
+else{attempted++;if(chosen===keys[n]){correct++;heading.textContent='✓ Верно. Правильный ответ: '+keys[n]}else{mistakes.push(n);heading.textContent='✕ Ошибка. Твой ответ: '+chosen+'. Правильный ответ: '+keys[n]}}
+const p=document.createElement('p');p.textContent='Объяснение: '+explain[n];
+block.append(heading,p);block.className='submitted-explanation visible';block.style.display='block';
+}
+const result=dash.querySelector('.wb-submit-result');
+if(result){result.replaceChildren();const title=document.createElement('strong');title.textContent='Сдано! Правильно: '+correct+' из 12. ';result.appendChild(title);const p=document.createElement('p');p.textContent='Ошибки: '+(mistakes.join(', ')||'нет')+'. Без ответа: '+(missing.join(', ')||'нет')+'. Правильные ответы и объяснения теперь открыты под каждым заданием.';result.appendChild(p)}
+},false);
+}
+window.addEventListener('DOMContentLoaded',()=>{setup();setTimeout(setup,950);setTimeout(setup,2300);setTimeout(setup,4200)});
+})();
 </script></body></html>
