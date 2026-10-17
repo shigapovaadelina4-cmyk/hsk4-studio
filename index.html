@@ -499,4 +499,35 @@ box.querySelectorAll('input[type="radio"]').forEach(r=>r.addEventListener('chang
 }
 window.addEventListener('DOMContentLoaded',()=>{attach();setTimeout(attach,900);setTimeout(attach,2200);setTimeout(attach,3700)});
 })();
-</script><style>#workbook .original-exercises .source-task .exercise-choices .choice-result{display:none!important;visibility:hidden!important;height:0!important;overflow:hidden!important;margin:0!important;padding:0!important}#workbook .original-exercises .source-task .study-status{display:block!important}</style><script>(function(){function clean(){document.querySelectorAll('#workbook .original-exercises .source-task .exercise-choices .choice-result').forEach(el=>el.remove())}window.addEventListener('DOMContentLoaded',()=>{clean();setTimeout(clean,1000);setTimeout(clean,2600);setTimeout(clean,4400)})})();</script></body></html>
+</script><style>#workbook .original-exercises .source-task .exercise-choices .choice-result{display:none!important;visibility:hidden!important;height:0!important;overflow:hidden!important;margin:0!important;padding:0!important}#workbook .original-exercises .source-task .study-status{display:block!important}</style><script>(function(){function clean(){document.querySelectorAll('#workbook .original-exercises .source-task .exercise-choices .choice-result').forEach(el=>el.remove())}window.addEventListener('DOMContentLoaded',()=>{clean();setTimeout(clean,1000);setTimeout(clean,2600);setTimeout(clean,4400)})})();</script><style>
+#workbook .personal-wb .key-checker>#keyRows,#workbook .personal-wb .key-checker>.key-controls,#workbook .personal-wb .key-checker>#keyResult{display:none!important}
+#workbook .personal-wb>.wb-audio,#workbook .personal-wb .wb-direct-audio .wb-audio{display:block!important}
+#workbook .personal-wb .wb-direct-audio{margin:14px 0;padding:14px;border:1px solid #e5c8e8;border-radius:15px;background:#fff9fe}
+#workbook .personal-wb .wb-direct-audio .wb-audio{display:block!important;margin:0!important}
+#workbook .personal-wb .wb-direct-audio .wb-track{margin:10px 0;padding:10px;background:white;border-radius:10px}
+#workbook .personal-wb .wb-direct-audio audio{width:100%;max-width:520px}
+#workbook .personal-wb .wb-direct-audio .wb-audio>h3{margin-top:0}
+#workbook .personal-wb .wb-direct-audio .wb-audio>p:first-of-type{display:none}
+#workbook .personal-wb .key-checker>h3,#workbook .personal-wb .key-checker>p.muted:first-of-type{display:none!important}
+</style>
+<script>
+(function(){
+async function prepareAudio(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+const audio=host.querySelector('.wb-audio'),checker=host.querySelector('.key-checker');
+if(!audio||!checker)return;
+let holder=host.querySelector('.wb-direct-audio');
+if(!holder){holder=document.createElement('section');holder.className='wb-direct-audio';holder.innerHTML='<h3>🎧 Аудио рабочей тетради · Урок 1</h3><p class="muted small">Записи для заданий на аудирование 1–22. Если архив уже сохранялся в браузере, записи откроются автоматически.</p>';host.insertBefore(holder,checker)}
+if(audio.parentElement!==holder)holder.appendChild(audio);
+const lesson=audio.querySelector('#wbAudioLesson');if(lesson&&!lesson.dataset.fixed){lesson.value='1';lesson.dataset.fixed='1'}
+const status=audio.querySelector('#wbAudioStatus');
+if(status&&status.textContent.includes('Выбери ZIP')&&!status.dataset.loading){
+status.dataset.loading='1';
+const saved=await window.hsk4Vault?.get('zip-A');
+if(saved&&window.hsk4LoadSavedZip){await window.hsk4LoadSavedZip(saved,false);status.dataset.loading='done'}
+else{status.textContent='Чтобы включить оригинальное аудио, добавь архив HSK 4A один раз. Если браузер сохранит его, в следующий раз записи откроются сами.'}
+}
+}
+window.addEventListener('DOMContentLoaded',()=>{prepareAudio();setTimeout(prepareAudio,1100);setTimeout(prepareAudio,2500);setTimeout(prepareAudio,4300)});
+})();
+</script></body></html>
