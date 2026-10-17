@@ -291,4 +291,37 @@ const button=document.createElement('button');button.type='button';button.textCo
 }
 window.addEventListener('DOMContentLoaded',()=>{placeAnswers();setTimeout(placeAnswers,1100);setTimeout(placeAnswers,2800);setTimeout(placeAnswers,4500)});
 })();
+</script><style>
+#workbook .source-task .answer-right-here{margin-top:12px;padding:12px;border:1px solid #e4c8e8;border-radius:11px;background:#fff7fd}
+#workbook .source-task .answer-right-here label{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-weight:650}
+#workbook .source-task .answer-right-here select{min-width:170px;padding:10px;border:1px solid #caabd1;border-radius:9px;background:#fff;font:inherit}
+#workbook .source-task .answer-right-here .result{font-size:14px;margin-top:8px}
+#workbook .source-task .answer-right-here button{padding:9px 13px;border-radius:9px;border:1px solid #cdaed7;background:#f4e3f6;cursor:pointer}
+#workbook .original-exercises+.key-grid{margin-top:14px}
+</style>
+<script>
+(function(){
+const keys={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+function fixAnswers(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+const panel=host.querySelector('.key-checker');if(!panel)return;
+for(const card of host.querySelectorAll('.original-exercises .source-task')){
+if(card.querySelector('.answer-right-here'))continue;
+const n=Number(card.querySelector('b')?.textContent.match(/\d+/)?.[0]);if(!keys[n])continue;
+const source=panel.querySelector('#keyRows select[data-n="'+n+'"]');if(!source)continue;
+const originalLabel=source.closest('label');if(originalLabel)originalLabel.style.display='none';
+card.querySelectorAll('.inline-answer').forEach(x=>x.remove());
+const wrap=document.createElement('div');wrap.className='answer-right-here';
+const label=document.createElement('label');label.textContent='✍️ Мой ответ: ';
+const select=source.cloneNode(true);select.value=source.value;
+select.addEventListener('change',()=>{source.value=select.value;source.dispatchEvent(new Event('change',{bubbles:true}));result.textContent='Ответ сохранён';result.style.color=''});
+label.appendChild(select);wrap.appendChild(label);
+const button=document.createElement('button');button.type='button';button.textContent='Проверить ответ';
+const result=document.createElement('div');result.className='result';result.setAttribute('role','status');
+button.onclick=()=>{if(!select.value){result.textContent='Сначала выбери ответ';result.style.color='#9b3e56';return}const correct=keys[n];const ok=select.value===correct;result.textContent=ok?'✓ Правильно!':'✕ Неверно. Правильный ответ: '+correct;result.style.color=ok?'#187444':'#ae3547'};
+wrap.appendChild(button);wrap.appendChild(result);card.appendChild(wrap);
+}
+}
+window.addEventListener('DOMContentLoaded',()=>{fixAnswers();setTimeout(fixAnswers,700);setTimeout(fixAnswers,1700);setTimeout(fixAnswers,3200)});
+})();
 </script></body></html>
