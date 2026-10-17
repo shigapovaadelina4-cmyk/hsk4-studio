@@ -1113,30 +1113,13 @@ const next=document.createElement('button');next.className='primary';next.textCo
 }else{const p=document.createElement('p');p.textContent=active===2?'Урок 2: задания на чтение №23–30 доступны в разделе «Рабочая тетрадь» выше.':'Интерактивная рабочая тетрадь для урока 3 пока не перенесена.';const b=document.createElement('button');b.className='primary';b.textContent='Перейти к рабочей тетради';b.onclick=()=>{document.querySelector('[data-tab="workbook"]')?.click();document.querySelector('#wbMainLesson')?.scrollIntoView({behavior:'smooth'});const picker=document.querySelector('#wbMainLesson');if(picker){picker.value=String(active);picker.dispatchEvent(new Event('change',{bubbles:true}))}};body.append(p,b)}
 }
 studio.querySelectorAll('[data-ml]').forEach(b=>b.onclick=()=>{tab=b.dataset.ml;render()});
-document.addEventListener('hsk-main-lesson',e=>select(e.detail));function select(n){active=n;idx=0;qidx=0;score=0;flipped=false;tab='cards';studio.hidden=false;panel.style.display='none';render();studio.scrollIntoView({behavior:'smooth',block:'start'})}
+document.addEventListener('hsk-main-lesson',e=>select(e.detail));function select(n){lesson=n;renderLessons();active=n;idx=0;qidx=0;score=0;flipped=false;tab='cards';studio.hidden=false;panel.style.display='none';render();studio.scrollIntoView({behavior:'smooth',block:'start'})}
 function addButtons(){for(const n of [2,3]){const old=[...top.querySelectorAll('button.lesson')].find(b=>b.textContent.trim()==='Урок '+n);if(!old)continue;old.disabled=false;old.title='Открыть основной урок '+n;old.onclick=()=>select(n)}}
 addButtons();
 /* lesson buttons are wired directly by renderLessons */
 const b1=[...top.querySelectorAll('button.lesson')].find(b=>b.textContent.trim()==='Урок 1');if(b1)b1.addEventListener('click',()=>{studio.hidden=true;panel.style.display=''});
 }
 window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,1000)});
-})();
-</script><script>
-/* Do not present assistant-authored lesson sets as original textbook content. */
-(function(){
-function restrictUnsourcedLessons(){
-const top=document.querySelector('#partA');if(!top)return;
-for(const n of [2,3]){
-const btn=[...top.querySelectorAll('button.lesson')].find(b=>b.textContent.trim()==='Урок '+n);
-if(btn){btn.disabled=true;btn.title='Ожидаем страницы оригинального учебника';btn.onclick=null}
-}
-const studio=document.querySelector('#mainLessonStudio');
-if(studio&&!studio.hidden){
-studio.hidden=true;
-const panel=document.querySelector('.panel');if(panel)panel.style.display='';
-}
-}
-window.addEventListener('DOMContentLoaded',()=>{restrictUnsourcedLessons();setTimeout(restrictUnsourcedLessons,1100)});
 })();
 </script><style>
 #mainLessonStudio .ml-rating{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
