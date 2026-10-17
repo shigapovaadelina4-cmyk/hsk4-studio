@@ -207,4 +207,35 @@ checker.insertBefore(section,checker.querySelector('#keyRows'));
 }
 window.addEventListener('DOMContentLoaded',()=>{install();setTimeout(install,900);setTimeout(install,2500)});
 })();
+</script><style>
+#workbook .wb-lesson-direct{margin:0 0 14px;background:#fff4fb;border:1px solid #e4c6e3;border-radius:14px;padding:14px}
+#workbook .wb-lesson-direct h3{margin:0 0 6px}
+#workbook .wb-lesson-direct p{margin:4px 0}
+#workbook .wb-materials-details{margin:12px 0;border:1px solid #ead8ec;border-radius:14px;padding:12px}
+#workbook .wb-materials-details summary{cursor:pointer;font-weight:650}
+#workbook .wb-study-layout{display:block!important}
+#workbook .wb-study-layout .key-checker{width:auto;max-width:none}
+#workbook .wb-study-layout .wb-pdf-side{position:static!important}
+</style>
+<script>
+(function(){
+function tidy(){
+const host=document.querySelector('#workbook .personal-wb');
+if(!host||host.dataset.directReady)return;
+const checker=host.querySelector('.key-checker'),audio=host.querySelector('.wb-audio'),pdf=host.querySelector('.wb-pdf-side');
+if(!checker)return;
+const original=checker.querySelector('.original-exercises');
+const intro=document.createElement('div');intro.className='wb-lesson-direct';
+intro.innerHTML='<h3>📒 Урок 1 · Задания и проверка</h3><p>Ниже — встроенные задания 23–34. Выбирай ответы по их номерам и нажми «Проверить ответы».</p><p class="muted small">Другие задания и аудио пока не встроены полностью. Не нужно выбирать ZIP или PDF, чтобы выполнить задания 23–34.</p>';
+host.insertBefore(intro,host.firstChild);
+if(original){checker.insertBefore(original,checker.firstChild)}
+const details=document.createElement('details');details.className='wb-materials-details';const summary=document.createElement('summary');summary.textContent='📁 Дополнительно: мой PDF и аудиоархив';details.appendChild(summary);
+if(audio)details.appendChild(audio);
+if(pdf)details.appendChild(pdf);
+host.appendChild(details);
+const layout=host.querySelector('.wb-study-layout');if(layout){layout.style.display='block';layout.style.gridTemplateColumns='1fr';}
+host.dataset.directReady='1';
+}
+window.addEventListener('DOMContentLoaded',()=>{tidy();setTimeout(tidy,900);setTimeout(tidy,2600)});
+})();
 </script></body></html>
