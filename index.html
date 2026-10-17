@@ -421,4 +421,37 @@ show(source?.value||'');
 }
 window.addEventListener('DOMContentLoaded',()=>{build();setTimeout(build,650);setTimeout(build,1600);setTimeout(build,3000)});
 })();
+</script><style>
+#workbook .source-task .answer-right-here,#workbook .source-task .inline-answer{display:none!important}
+#workbook .source-task .exercise-choices{display:block!important}
+#workbook .source-task .exercise-choices .choice-list{display:grid!important;grid-template-columns:1fr!important}
+#workbook .source-task .exercise-choices .choice{display:flex!important;align-items:center!important}
+#workbook .source-task .exercise-choices .choice-result{display:block!important}
+</style>
+<script>
+(function(){
+const explanations={23:'生活中 — «в жизни». Здесь говорится, что жизнь без юмора похожа на блюдо без соли.',24:'自然 — «естественно, закономерно». Если долго не завтракать, это закономерно влияет на здоровье.',25:'互相 — «друг друга». 互相认识 — познакомиться друг с другом.',26:'缺点 — «недостатки». У человека могут быть недостатки, но он всё равно дорог.',27:'刚 — «только что». 刚买的苹果 — только что купленные яблоки.',28:'够 — «хватать». 不够 — недостаточно.',29:'还是 — «лучше всё-таки». Лучше дождаться папу, чтобы передвинуть кровать.',30:'俩 — «двое». 你们俩 — вы двое.',31:'Сначала говорится, что чай не только напиток, затем — что он ещё и культура.',32:'Сначала встреча, затем приветливое отношение, затем впечатление.',33:'Сначала общая оценка, затем черта характера, затем причина симпатии.',34:'Сначала мнение о браке, затем необходимость понимания и принятия.'};
+function repair(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+for(const card of host.querySelectorAll('.original-exercises .source-task')){
+const n=Number(card.querySelector('b')?.textContent.match(/\d+/)?.[0]);if(!(n>=23&&n<=34))continue;
+const choices=card.querySelector('.exercise-choices');if(!choices)continue;
+card.querySelectorAll('.answer-right-here,.inline-answer').forEach(x=>x.remove());
+const source=host.querySelector('#keyRows select[data-n="'+n+'"]');
+if(source?.closest('label'))source.closest('label').style.display='none';
+if(choices.dataset.repaired)continue;
+const result=choices.querySelector('.choice-result');const radios=choices.querySelectorAll('input[type=radio]');
+const correct={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'}[n];
+function check(v){
+if(!result)return;
+if(!v){result.textContent='Нажми на подходящий вариант — проверка появится сразу.';result.className='choice-result';return}
+const ok=v===correct;result.className='choice-result '+(ok?'correct':'wrong');
+result.textContent=(ok?'✓ Правильно! ':'✕ Пока неверно. ')+explanations[n];
+}
+radios.forEach(r=>r.addEventListener('change',()=>check(r.value)));
+check(source?.value||'');choices.dataset.repaired='1';
+}
+}
+window.addEventListener('DOMContentLoaded',()=>{repair();setTimeout(repair,900);setTimeout(repair,2000);setTimeout(repair,3600)});
+})();
 </script></body></html>
