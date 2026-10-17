@@ -847,4 +847,51 @@ exercises.dataset.stepperReady='1';go(0);
 }
 window.addEventListener('DOMContentLoaded',()=>{createStepper();setTimeout(createStepper,900);setTimeout(createStepper,2100);setTimeout(createStepper,4200)});
 })();
+</script><style>
+/* Focused mobile-app style workbook test */
+#workbook .personal-wb.wb-app-mode{max-width:780px!important;margin:auto!important}
+#workbook .personal-wb.wb-app-mode .wb-stepper{background:#fff!important;border:0!important;padding:0!important;box-shadow:none!important;margin:12px 0 0!important}
+#workbook .personal-wb.wb-app-mode .wb-app-header{background:#08afa8;color:#fff;padding:22px 20px;border-radius:20px 20px 0 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+#workbook .personal-wb.wb-app-mode .wb-app-header strong{font-size:18px;color:white}
+#workbook .personal-wb.wb-app-mode .wb-step-label{display:block;font-size:17px;color:#525965;font-weight:700;padding:17px 20px 3px}
+#workbook .personal-wb.wb-app-mode .wb-step-progress{height:6px;background:#d8f1ef;border-radius:0;margin:10px 20px}
+#workbook .personal-wb.wb-app-mode .wb-step-fill{background:#08afa8}
+#workbook .personal-wb.wb-app-mode .wb-jump{padding:0 20px;margin:6px 0 12px;gap:5px}
+#workbook .personal-wb.wb-app-mode .wb-jump button{border-radius:30px;padding:5px 10px;border:1px solid #d6e5e5;background:#fff;color:#677}
+#workbook .personal-wb.wb-app-mode .wb-jump button.active{background:#08afa8;color:#fff;border-color:#08afa8}
+#workbook .personal-wb.wb-app-mode .original-exercises{background:#fff!important;padding:0 20px 15px!important;border:0!important;box-shadow:none!important;margin:0!important}
+#workbook .personal-wb.wb-app-mode .original-exercises>.source-task.wb-current-card{padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+#workbook .personal-wb.wb-app-mode .source-task.wb-current-card>b{display:block;font-size:22px;color:#252e3b;margin:12px 0 16px}
+#workbook .personal-wb.wb-app-mode .source-task.wb-current-card>.exercise-choices{border:0!important;background:transparent!important;padding:5px 0!important}
+#workbook .personal-wb.wb-app-mode .exercise-choices .choice-title{font-size:15px;color:#5b6672;margin:12px 0}
+#workbook .personal-wb.wb-app-mode .exercise-choices .choice-list{gap:11px!important}
+#workbook .personal-wb.wb-app-mode .exercise-choices label.choice{background:#f8fbfb!important;border:1.5px solid #d9e7e7!important;border-radius:16px!important;padding:17px 18px!important;font-size:18px!important;min-height:54px!important}
+#workbook .personal-wb.wb-app-mode .exercise-choices label.choice:has(input:checked){background:#d9f6f3!important;border-color:#08afa8!important}
+#workbook .personal-wb.wb-app-mode .exercise-choices label.choice input{accent-color:#08afa8!important}
+#workbook .personal-wb.wb-app-mode .study-hint{border:1px solid #d7e9e8!important;background:#f9fdfd!important;border-radius:14px!important;margin:18px 0!important}
+#workbook .personal-wb.wb-app-mode .study-hint summary{color:#168b88!important}
+#workbook .personal-wb.wb-app-mode .wb-step-actions{position:sticky;bottom:10px;z-index:8;background:#fff;border:1px solid #e3ecec;border-radius:20px;padding:12px;display:flex;gap:12px;margin:12px 0 18px;box-shadow:0 5px 20px #0c55551a}
+#workbook .personal-wb.wb-app-mode .wb-step-actions button{flex:1;background:#eaf8f7!important;color:#087b77!important;border:0!important;border-radius:14px!important;font-weight:700;padding:15px!important}
+#workbook .personal-wb.wb-app-mode .wb-step-actions button.primary{background:#08afa8!important;color:#fff!important}
+#workbook .personal-wb.wb-app-mode .wb-submit-dashboard{background:#f8fdfd!important;border:1px solid #cde8e5!important}
+#workbook .personal-wb.wb-app-mode .wb-submit-btn{background:#08afa8!important}
+#workbook .personal-wb.wb-app-mode .wb-lesson-direct,#workbook .personal-wb.wb-app-mode .wb-direct-audio,#workbook .personal-wb.wb-app-mode .wb-materials-details{display:none!important}
+#workbook .personal-wb.wb-app-mode .key-checker>h3,#workbook .personal-wb.wb-app-mode .key-checker>p{display:none!important}
+@media(max-width:600px){#workbook .personal-wb.wb-app-mode .wb-app-header{border-radius:14px 14px 0 0}#workbook .personal-wb.wb-app-mode .original-exercises{padding:0 12px 10px!important}#workbook .personal-wb.wb-app-mode .wb-step-label{padding-left:12px}#workbook .personal-wb.wb-app-mode .wb-jump{padding:0 12px}}
+</style>
+<script>
+(function(){
+function polishTest(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+const nav=host.querySelector('.wb-stepper'),ex=host.querySelector('.original-exercises');if(!nav||!ex||host.dataset.appPolished)return;
+host.classList.add('wb-app-mode');
+const header=document.createElement('div');header.className='wb-app-header';header.innerHTML='<strong>⏱ HSK 4 · Тренировка</strong><span>🌸 Урок 1</span>';nav.insertBefore(header,nav.firstChild);
+const actions=nav.querySelector('.wb-step-actions');if(actions)ex.insertAdjacentElement('afterend',actions);
+const cards=[...ex.querySelectorAll('.source-task')];
+const observer=new MutationObserver(()=>{const current=cards.find(c=>c.classList.contains('wb-current-card'));if(current){const num=current.querySelector('b')?.textContent.match(/\d+/)?.[0];header.querySelector('span').textContent='Вопрос '+(num||'')+' / 34'}});
+observer.observe(ex,{attributes:true,subtree:true,attributeFilter:['class']});
+host.dataset.appPolished='1';
+}
+window.addEventListener('DOMContentLoaded',()=>{polishTest();setTimeout(polishTest,950);setTimeout(polishTest,2400);setTimeout(polishTest,4100)});
+})();
 </script></body></html>
