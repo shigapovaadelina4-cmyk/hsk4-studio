@@ -454,4 +454,49 @@ check(source?.value||'');choices.dataset.repaired='1';
 }
 window.addEventListener('DOMContentLoaded',()=>{repair();setTimeout(repair,900);setTimeout(repair,2000);setTimeout(repair,3600)});
 })();
+</script><style>
+#workbook .source-task .exercise-choices>.choice-result{display:none!important}
+#workbook .source-task .study-status{margin-top:11px;font-weight:700;font-size:15px}
+#workbook .source-task .study-status.ok{color:#177444}
+#workbook .source-task .study-status.no{color:#b03750}
+#workbook .source-task .study-hint{margin-top:10px;border:1px solid #e3cde8;border-radius:10px;background:#fff;padding:10px 12px}
+#workbook .source-task .study-hint summary{cursor:pointer;font-weight:650;color:#73468a}
+#workbook .source-task .study-hint p{margin:9px 0 2px;line-height:1.6;font-size:14px}
+</style>
+<script>
+(function(){
+const answers={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+const hints={
+23:'Подумай, о чём идёт речь в сравнении с блюдом без соли. Какое существительное подходит перед 中 («в, внутри»)?',
+24:'Здесь говорится о последствиях привычки не завтракать. Нужно наречие со значением «закономерно, естественным образом».',
+25:'Несколько людей знакомятся между собой. Обрати внимание на выражение 认识认识 — «познакомиться».',
+26:'В предложении есть 虽然…但… («хотя…но…»): речь о том, что у человека бывают не только достоинства.',
+27:'Обрати внимание на 买的苹果 — «купленные яблоки». Нужно указать, что их купили совсем недавно.',
+28:'В кошельке только 270 юаней. Собеседник сомневается, хватит ли этой суммы.',
+29:'Двое не могут передвинуть кровать. Нужно слово для совета: лучше подождать папу.',
+30:'Здесь говорят о знакомстве двух людей. Нужно разговорное обозначение «двое».',
+31:'Найди начало о чае, затем продолжение конструкции 不仅仅…而且… («не только…но и…»).',
+32:'Сначала должна произойти первая встреча, затем отношение собеседницы, а потом впечатление.',
+33:'Сначала общая оценка человека, затем уточнение черты характера, потом вывод.',
+34:'Сначала общее мнение о браке, затем мысль о понимании, затем уточнение о достоинствах и недостатках.'
+};
+function attach(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+host.querySelectorAll('.original-exercises .source-task').forEach(card=>{
+const n=Number(card.querySelector('b')?.textContent.match(/\d+/)?.[0]);if(!answers[n])return;
+const box=card.querySelector('.exercise-choices');if(!box||box.querySelector('.study-status'))return;
+const status=document.createElement('div');status.className='study-status';status.setAttribute('role','status');
+const details=document.createElement('details');details.className='study-hint';
+const summary=document.createElement('summary');summary.textContent='💡 Подсказка и объяснение';const p=document.createElement('p');p.textContent=hints[n];details.append(summary,p);
+box.append(status,details);
+function show(){
+const chosen=box.querySelector('input[type="radio"]:checked')?.value;
+status.className='study-status'+(chosen?(chosen===answers[n]?' ok':' no'):'');
+status.textContent=!chosen?'Выбери вариант ответа.':chosen===answers[n]?'✓ Верно!':'✕ Неверно. Попробуй ещё раз.';
+}
+box.querySelectorAll('input[type="radio"]').forEach(r=>r.addEventListener('change',show));show();
+});
+}
+window.addEventListener('DOMContentLoaded',()=>{attach();setTimeout(attach,900);setTimeout(attach,2200);setTimeout(attach,3700)});
+})();
 </script></body></html>
