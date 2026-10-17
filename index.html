@@ -932,4 +932,37 @@ p.onclick=jump;p.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault
 }
 window.addEventListener('DOMContentLoaded',()=>{setup();setTimeout(setup,900);setTimeout(setup,2100);setTimeout(setup,4000)});
 })();
+</script><style>
+#workbook .wb-stepper .wb-jump button.wb-nav-correct{background:#e6f8ee!important;border:1px solid #39b985!important;color:#16764e!important}
+#workbook .wb-stepper .wb-jump button.wb-nav-wrong{background:#fff0f2!important;border:1px solid #e15a73!important;color:#b22d4b!important}
+#workbook .wb-stepper .wb-jump button.wb-nav-missing{background:#fff5e5!important;border:1px solid #e3a94e!important;color:#895d17!important}
+#workbook .wb-stepper .wb-jump button.active{outline:2px solid #08afa8!important;outline-offset:2px}
+</style>
+<script>
+(function(){
+const answers={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+function ready(){
+const host=document.querySelector('#workbook .personal-wb');if(!host)return;
+const nav=host.querySelector('.wb-stepper'),dash=host.querySelector('.wb-submit-dashboard'),submit=dash?.querySelector('.wb-submit-btn');
+if(!nav||!submit||submit.dataset.navGrade)return;
+submit.dataset.navGrade='1';
+const buttons=[...nav.querySelectorAll('.wb-jump button')];
+const cards=[...host.querySelectorAll('.original-exercises .source-task')];
+function update(){
+buttons.forEach((button,i)=>{
+const n=i+23;if(!answers[n])return;
+const card=cards.find(c=>Number(c.querySelector('b')?.textContent.match(/\d+/)?.[0])===n);
+const chosen=card?.querySelector('.exercise-choices input[type="radio"]:checked')?.value||'';
+const type=!chosen?'missing':chosen===answers[n]?'correct':'wrong';
+button.classList.remove('wb-nav-correct','wb-nav-wrong','wb-nav-missing');
+button.classList.add('wb-nav-'+type);
+button.textContent=(i+1)+(type==='correct'?' ✓':type==='wrong'?' ✕':' ○');
+button.title='Задание '+n+': '+(type==='correct'?'верно':type==='wrong'?'ошибка':'нет ответа');
+});
+}
+submit.addEventListener('click',()=>{host.dataset.navSubmitted='1';setTimeout(update,0)});
+cards.forEach(card=>card.querySelectorAll('.exercise-choices input[type="radio"]').forEach(r=>r.addEventListener('change',()=>{if(host.dataset.navSubmitted==='1')setTimeout(update,0)})));
+}
+window.addEventListener('DOMContentLoaded',()=>{ready();setTimeout(ready,900);setTimeout(ready,2100);setTimeout(ready,4100)});
+})();
 </script></body></html>
