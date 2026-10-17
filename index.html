@@ -1155,11 +1155,11 @@ cards.insertAdjacentElement('afterend',row);row.insertAdjacentElement('afterend'
 window.addEventListener('DOMContentLoaded',()=>{setInterval(addRating,450)});
 })();
 </script><script>
-/* Keep lessons 2 and 3 selectable even if an earlier script resets the buttons. */
+/* Keep lessons 2, 3 and 4 selectable even if an earlier script resets the buttons. */
 (function(){
 function unlock(){
 const part=document.getElementById('partA');if(!part)return;
-for(const n of [2,3]){
+for(const n of [2,3,4]){
 const b=[...part.querySelectorAll('button')].find(x=>x.textContent.trim()==='Урок '+n);
 if(!b)continue;
 b.disabled=false;b.removeAttribute('disabled');b.title='Открыть урок '+n;
@@ -1168,5 +1168,15 @@ b.onclick=function(e){e.preventDefault();document.dispatchEvent(new CustomEvent(
 }
 document.addEventListener('DOMContentLoaded',()=>{unlock();setTimeout(unlock,300);setTimeout(unlock,1200)});
 window.addEventListener('pageshow',unlock);
+})();
+</script><script>
+(function(){
+function openRequestedLesson(){
+const n=Number(new URLSearchParams(location.search).get('lesson'));
+if(n!==4)return;
+const btn=[...document.querySelectorAll('#partA button.lesson')].find(b=>b.textContent.trim()==='Урок 4');
+if(btn){btn.disabled=false;btn.click()}
+}
+window.addEventListener('DOMContentLoaded',()=>setTimeout(openRequestedLesson,350));
 })();
 </script></body></html>
