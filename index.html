@@ -965,4 +965,43 @@ cards.forEach(card=>card.querySelectorAll('.exercise-choices input[type="radio"]
 }
 window.addEventListener('DOMContentLoaded',()=>{ready();setTimeout(ready,900);setTimeout(ready,2100);setTimeout(ready,4100)});
 })();
+</script><style>
+#workbook .wb-stepper .wb-jump button.wb-graded-wrong{background:#ffe8ed!important;color:#b32245!important;border:2px solid #df4868!important}
+#workbook .wb-stepper .wb-jump button.wb-graded-right{background:#e4f9ef!important;color:#16794f!important;border:2px solid #32af7a!important}
+#workbook .wb-stepper .wb-jump button.wb-graded-empty{background:#fff4e0!important;color:#92600f!important;border:2px solid #dda348!important}
+#workbook .wb-stepper .wb-jump button.wb-graded-wrong.active{background:#d93458!important;color:white!important}
+#workbook .wb-stepper .wb-jump button.wb-graded-right.active{background:#099d83!important;color:white!important}
+</style>
+<script>
+(function(){
+const key={23:'E',24:'A',25:'C',26:'B',27:'B',28:'E',29:'D',30:'A',31:'ACB',32:'CBA',33:'ACB',34:'BAC'};
+function init(){
+const host=document.querySelector('#workbook .personal-wb'),nav=host?.querySelector('.wb-stepper'),dash=host?.querySelector('.wb-submit-dashboard');
+if(!nav||!dash||nav.dataset.persistentGrades)return;
+const jump=nav.querySelector('.wb-jump'),submit=dash.querySelector('.wb-submit-btn');if(!jump||!submit)return;
+nav.dataset.persistentGrades='1';let busy=false;
+function paint(){
+if(host.dataset.navSubmitted!=='1')return;
+const buttons=[...jump.querySelectorAll('button')];
+busy=true;
+buttons.forEach((b,i)=>{
+const n=i+23,card=[...host.querySelectorAll('.original-exercises .source-task')].find(c=>Number(c.querySelector('b')?.textContent.match(/\d+/)?.[0])===n);
+if(!key[n])return;
+const v=card?.querySelector('.exercise-choices input[type="radio"]:checked')?.value||'';
+const state=!v?'empty':v===key[n]?'right':'wrong';
+b.classList.remove('wb-graded-wrong','wb-graded-right','wb-graded-empty');
+b.classList.add('wb-graded-'+state);
+const label=(i+1)+(state==='right'?' ✓':state==='wrong'?' ✕':' ○');
+if(b.textContent!==label)b.textContent=label;
+b.title='Задание '+n+': '+(state==='right'?'верно':state==='wrong'?'ошибка':'нет ответа');
+});
+busy=false;
+}
+submit.addEventListener('click',()=>{host.dataset.navSubmitted='1';paint();setTimeout(paint,80)});
+const observer=new MutationObserver(()=>{if(!busy&&host.dataset.navSubmitted==='1')paint()});
+observer.observe(jump,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});
+host.querySelectorAll('.original-exercises .exercise-choices input[type="radio"]').forEach(r=>r.addEventListener('change',()=>{if(host.dataset.navSubmitted==='1')paint()}));
+}
+window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,900);setTimeout(init,2200);setTimeout(init,4100)});
+})();
 </script></body></html>
