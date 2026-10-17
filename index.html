@@ -180,4 +180,31 @@ if(zip&&window.hsk4LoadSavedZip){await window.hsk4LoadSavedZip(zip,false)}
 }
 window.addEventListener('DOMContentLoaded',()=>{setTimeout(restore,2800)});
 })();
+</script><style>#workbook .source-task{border:1px solid #ead6ea;background:white;padding:13px;border-radius:12px;margin:10px 0;line-height:1.7}#workbook .source-task b{color:#6e3474}#workbook .source-task .parts{display:grid;gap:4px;margin-top:6px}#workbook .source-task .parts span{background:#faf3fa;border-radius:7px;padding:5px 9px}#workbook .original-exercises{margin:18px 0;padding:15px;border:1px solid #dbc1e1;border-radius:15px;background:#fffafd}#workbook .original-exercises h3{margin-top:0}</style>
+<script>
+(function(){
+const exercises=[
+[23,'（　）中少了幽默，就像菜里忘了加盐，总是让人觉得少了些什么。'],
+[24,'一些人不吃早饭就去上学或上班，时间长了，（　）会影响健康。'],
+[25,'刚开学，大家都还不太熟悉，请你们每个人都介绍一下自己，（　）认识认识。'],
+[26,'他的聪明、幽默深深地吸引了我。虽然他也有一些（　），但我还是认为他是最可爱的人，和他在一起很幸福。'],
+[27,'A：你买水果了吗？ B：这是我（　）买的苹果，都洗干净了，吃点儿吧。'],
+[28,'A：我钱包里只有270多块钱，可能不（　）。 B：没关系，我这儿有信用卡。'],
+[29,'A：咱们把床往后面搬一下，这样看电视更舒服些。 B：别开玩笑了，我们俩搬不动，（　）等你爸爸回来再说。'],
+[30,'A：那个男孩子不但长得好，而且性格也不错。如果你愿意，这个周末我就介绍你们（　）认识，好不好？ B：你把我的QQ号给他，我们先在网上聊聊吧。'],
+[31,['A 茶不仅仅是一种饮料','B 它在中国有着几千年的历史','C 而且还是一种文化']],
+[32,['A 所以我对她的印象很深','B 她就对我特别热情','C 第一次和王小姐见面']],
+[33,['A 我觉得他很多地方都不错','B 这一点是他吸引我的主要原因','C 特别是脾气、性格很好']],
+[34,['A 它更需要两个人互相理解和接受','B 结婚我认为只有爱情是远远不够的','C 不但要接受他的优点，还要接受他的缺点']]
+];
+function install(){
+const host=document.querySelector('#workbook .personal-wb'),checker=host?.querySelector('.key-checker');
+if(!checker||checker.querySelector('.original-exercises'))return;
+const section=document.createElement('section');section.className='original-exercises';
+section.innerHTML='<h3>📖 Оригинальные задания · Урок 1</h3><p>Чтение, №23–34. Задания перенесены из твоего HSK 4A Workbook. Выбирай ответ в поле с тем же номером справа или ниже.</p><p><b>№23–26 · 选词填空</b><br>A 自然 · B 缺点 · C 互相 · D 竟然 · E 生活</p>';
+for(const [n,content] of exercises){if(n===27){const p=document.createElement('p');p.innerHTML='<b>№27–30 · 选词填空</b><br>A 俩 · B 刚 · C 温度 · D 还是 · E 够';section.appendChild(p)}if(n===31){const p=document.createElement('p');p.innerHTML='<b>№31–34 · 排列顺序</b><br>Выбери порядок частей A, B, C.';section.appendChild(p)}const box=document.createElement('div');box.className='source-task';const title=document.createElement('b');title.textContent='Задание '+n;box.appendChild(title);if(Array.isArray(content)){const parts=document.createElement('div');parts.className='parts';content.forEach(t=>{const span=document.createElement('span');span.textContent=t;parts.appendChild(span)});box.appendChild(parts)}else{const p=document.createElement('p');p.textContent=content;box.appendChild(p)}section.appendChild(box)}
+checker.insertBefore(section,checker.querySelector('#keyRows'));
+}
+window.addEventListener('DOMContentLoaded',()=>{install();setTimeout(install,900);setTimeout(install,2500)});
+})();
 </script></body></html>
