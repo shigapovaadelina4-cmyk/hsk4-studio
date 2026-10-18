@@ -25,7 +25,11 @@ for(const [lesson,count] of Object.entries(expected)){
     assert(word.length===3||word.length===6,'Lesson '+lesson+' has invalid flashcard shape');
     assert(word.slice(0,3).every(v=>typeof v==='string'&&v.trim()),'Lesson '+lesson+' has empty Chinese/pinyin/Russian field');
     if(word.length===6) assert(word.slice(3).every(v=>typeof v==='string'),'Example fields must contain strings');
-    if(word.length===6)assert(!word[3].includes('我在学习“'),'Generic word-mention example found');
+    if(word.length===6){
+      assert(!word[3].includes('我在学习“'),'Generic word-mention example found');
+      assert(word[3]&&word[4]&&/[。！？]$/.test(word[3]),'Missing contextual Chinese / Russian example: lesson '+lesson+' '+word[0]);
+      assert(word[3].includes(word[0]),'Card example missing target headword: lesson '+lesson+' '+word[0]);
+    }
   }
 }
 
