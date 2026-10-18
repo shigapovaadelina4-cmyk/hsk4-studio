@@ -13,7 +13,8 @@ for(const [index,source] of scripts.entries()){
 const dataStart=html.indexOf('const data={');
 const dataEnd=html.indexOf('function init(){',dataStart);
 assert(dataStart>=0&&dataEnd>dataStart,'Cannot locate vocabulary data assembly');
-const context={console};
+const bank={};vm.runInNewContext(fs.readFileSync(new URL('../natural-examples.js',import.meta.url),'utf8'),{window:bank});
+const context={console,window:{HSKNaturalExamples:bank.HSKNaturalExamples,addEventListener(){}}};
 vm.runInNewContext(html.slice(dataStart,dataEnd)+'\n;globalThis.checkedData=data;',context);
 const expected={2:34,3:33,4:32,5:31,6:31,7:33,8:29,9:33,10:30};
 for(const [lesson,count] of Object.entries(expected)){
@@ -24,6 +25,7 @@ for(const [lesson,count] of Object.entries(expected)){
     assert(word.length===3||word.length===6,'Lesson '+lesson+' has invalid flashcard shape');
     assert(word.slice(0,3).every(v=>typeof v==='string'&&v.trim()),'Lesson '+lesson+' has empty Chinese/pinyin/Russian field');
     if(word.length===6) assert(word.slice(3).every(v=>typeof v==='string'),'Example fields must contain strings');
+    if(word.length===6)assert(!word[3].includes('我在学习“'),'Generic word-mention example found');
   }
 }
 
