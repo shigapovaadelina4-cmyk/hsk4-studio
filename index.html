@@ -13,7 +13,7 @@ const lesson1ProperNames=[
 {w:'高',p:'Gāo',r:'фамилия Гао',ex:'',er:'',source:'Имя собственное · 专有名词'}];
 demo.push(...lesson1ProperNames);
 for(const card of demo){const e=window.HSKNaturalExamples?.[card.w];if(e){card.ex=e[0];card.er=e[1];card.ep='';}}
-function refreshLesson1Pinyin(){const converter=window.pinyinPro?.pinyin;if(typeof converter!=='function')return;for(const c of demo)if(c.ex)c.ep=converter(c.ex,{toneType:'symbol'});if(typeof renderCard==='function')renderCard()}
+function refreshLesson1Pinyin(){const converter=window.pinyinPro?.pinyin;if(typeof converter!=='function')return;for(const c of demo)if(c.ex)c.ep=converter(c.ex,{toneType:'symbol'});if(document.readyState!=='loading'&&typeof renderCard==='function')renderCard()}
 window.addEventListener('hsk-pinyin-ready',refreshLesson1Pinyin);
 refreshLesson1Pinyin();
 
