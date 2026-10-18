@@ -54,6 +54,11 @@ try {
   // Match source pages: question 44 uses page start + 8.
   const sourcePage=await original.locator('.hsk-original-source input[type=number]').inputValue();
   assert.equal(Number(sourcePage),8+(lesson-1)*10+8,'Wrong original PDF page for lesson '+lesson);
+  const audioPicker=original.locator('input[aria-label="Загрузить три аудиозаписи текущего урока"]');
+  assert.equal(await audioPicker.count(),1,'Original audio upload missing');
+  await audioPicker.setInputFiles([0,1,2].map(i=>({name:'part'+(i+1)+'.mp3',mimeType:'audio/mpeg',buffer:Buffer.from([73,68,51,3,0,0,0,0,0,0])})));
+  await original.locator('.hsk-wb-sections button').filter({hasText:'听力 13–22'}).click();
+  assert.match(await original.locator('.hsk-original-source audio').getAttribute('src')||'',/^blob:/);
   const pdfInput=original.locator('.hsk-original-upload input[type=file]');
   await pdfInput.setInputFiles({name:'practice.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\\n1 0 obj <</Type /Catalog>> endobj\\n%%EOF')});
   await page.locator('#mainLessonStudio .hsk-wb-sections button').filter({hasText:'Дополнительная авторская практика'}).click();
