@@ -103,3 +103,12 @@
  #mainLessonStudio .hsk-original .hsk-wb-controls button{flex-basis:calc(50% - 8px);min-width:0}
  #mainLessonStudio .hsk-original .hsk-wb-nav button{width:41px;height:41px;min-width:41px}
 }
+
+/* Actual worksheet page is always within the active exercise, not inside a collapsed PDF tool. */
+#mainLessonStudio .hsk-original-embedded .hsk-original-upload{background:#fff;border:0;padding:0;margin:10px 0}
+#mainLessonStudio .hsk-original-embedded .hsk-original-frame{display:block;width:100%;height:min(83vh,950px);min-height:540px;border:1px solid #e8d9ed;background:#fff;border-radius:12px}
+#mainLessonStudio .hsk-original-embedded .hsk-original-upload > strong{font-size:15px;color:#70517e}
+#mainLessonStudio .hsk-original-embedded .hsk-original-materials{margin-top:14px}
+#mainLessonStudio .hsk-original .hsk-wb-question{border-top:1px solid #e9deed;padding-top:22px}
+#mainLessonStudio .hsk-original .hsk-wb-options button{font-size:17px;font-weight:650}
+@media(max-width:540px){#mainLessonStudio .hsk-original-embedded .hsk-original-frame{height:67vh;min-height:410px}#mainLessonStudio .hsk-original-embedded{padding:12px}}
