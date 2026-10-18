@@ -24,6 +24,16 @@ try {
   await original.locator('.hsk-wb-check').click();
   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/ключу/);
   assert.match(await original.locator('.hsk-wb-status').innerText(),/Проверено: 1 из 50/);
+  await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 31–34'}).click();
+  const exact=await page.evaluate(n=>window.HSK4OfficialAnswerCodes[n][31],lesson);
+  await original.locator('.hsk-wb-options input').fill(exact);
+  await original.locator('.hsk-wb-check').click();
+  assert.match(await original.locator('.hsk-wb-feedback').innerText(),/Правильно/);
+  await original.locator('.hsk-wb-sections button').filter({hasText:'书写 44–50'}).click();
+  await original.locator('.hsk-wb-options input').fill('我练习写汉字。');
+  await original.locator('.hsk-wb-check').click();
+  assert.match(await original.locator('.hsk-wb-feedback').innerText(),/手|Письменное|письменное/);
+  assert.match(await original.locator('.hsk-wb-status').innerText(),/Проверено: 3 из 50/);
   const pdfInput=original.locator('input[type=file]');
   await pdfInput.setInputFiles({name:'practice.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\\n1 0 obj <</Type /Catalog>> endobj\\n%%EOF')});
   await page.locator('#mainLessonStudio .hsk-wb-sections button').filter({hasText:'Дополнительная авторская практика'}).click();
