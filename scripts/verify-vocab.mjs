@@ -17,6 +17,7 @@ const bank={};vm.runInNewContext(fs.readFileSync(new URL('../natural-examples.js
 const context={console,window:{HSKNaturalExamples:bank.HSKNaturalExamples,addEventListener(){}}};
 vm.runInNewContext(html.slice(dataStart,dataEnd)+'\n;globalThis.checkedData=data;',context);
 const expected={2:34,3:33,4:32,5:31,6:31,7:33,8:29,9:33,10:30};
+const problematic=[];
 for(const [lesson,count] of Object.entries(expected)){
   const words=context.checkedData[lesson]?.words;
   assert.equal(words?.length,count,'Lesson '+lesson+' count differs from textbook');
@@ -28,11 +29,12 @@ for(const [lesson,count] of Object.entries(expected)){
     if(word.length===6){
       assert(!word[3].includes('我在学习“'),'Generic word-mention example found');
       assert(word[3]&&word[4]&&/[。！？]$/.test(word[3]),'Missing contextual Chinese / Russian example: lesson '+lesson+' '+word[0]);
-      assert(word[3].includes(word[0]),'Card example missing target headword: lesson '+lesson+' '+word[0]);
+      if(!word[3].includes(word[0]))problematic.push('L'+lesson+' '+word[0]+': '+word[3]);
     }
   }
 }
 
+assert.equal(problematic.length,0,'Examples without target words:\n'+problematic.join('\n'));
 const demoStart=html.indexOf('const demo=');
 const demoEnd=html.indexOf('demo.push(...lesson1ProperNames);',demoStart);
 assert(demoStart>=0&&demoEnd>demoStart,'Cannot locate lesson 1 vocabulary');
