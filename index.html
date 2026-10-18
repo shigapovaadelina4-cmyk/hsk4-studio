@@ -1154,8 +1154,56 @@ for(const [n,words] of Object.entries(textbookCards678))data[n]={title:textbookT
 const textbookCards910={"9":[["饼干","bǐnggān","печенье"],["难道","nándào","неужели"],["得","děi","нужно; должен"],["坚持","jiānchí","упорно продолжать"],["放弃","fàngqì","отказываться; бросать"],["主意","zhǔyi","идея; решение"],["网球","wǎngqiú","теннис"],["国际","guójì","международный"],["轻松","qīngsōng","лёгкий; непринуждённый"],["赢","yíng","побеждать"],["随便","suíbiàn","как угодно; произвольно"],["汗","hàn","пот"],["通过","tōngguò","через; посредством"],["篇","piān","счётное слово для статей"],["作家","zuòjiā","писатель"],["当时","dāngshí","тогда; в то время"],["可是","kěshì","но; однако"],["正确","zhèngquè","правильный"],["理想","lǐxiǎng","идеал; мечта"],["勇敢","yǒnggǎn","смелый"],["结果","jiéguǒ","результат"],["失败","shībài","терпеть неудачу"],["过程","guòchéng","процесс"],["至少","zhìshǎo","по меньшей мере"],["总结","zǒngjié","подводить итоги"],["取","qǔ","получать; брать"],["经历","jīnglì","переживать; опыт"],["许多","xǔduō","много"],["区别","qūbié","различие"],["暂时","zànshí","временно"],["面对","miànduì","сталкиваться лицом к лицу"]],"10":[["礼拜天","lǐbàitiān","воскресенье"],["空儿","kòngr","свободное время"],["母亲","mǔqīn","мать"],["不过","búguò","однако; но"],["永远","yǒngyuǎn","навсегда"],["方向","fāngxiàng","направление"],["优秀","yōuxiù","выдающийся; отличный"],["硕士","shuòshì","магистр"],["翻译","fānyì","переводить; переводчик"],["确实","quèshí","действительно"],["兴奋","xīngfèn","взволнованный"],["拉","lā","тянуть"],["建议","jiànyì","совет; предложение"],["职业","zhíyè","профессия"],["关键","guānjiàn","ключевой момент"],["将来","jiānglái","будущее"],["发展","fāzhǎn","развиваться"],["躺","tǎng","лежать"],["困","kùn","сонный"],["经济","jīngjì","экономика"],["条件","tiáojiàn","условие"],["富","fù","богатый"],["穷","qióng","бедный"],["等","děng","и так далее"],["由于","yóuyú","из-за; поскольку"],["比如","bǐrú","например"],["橡皮","xiàngpí","ластик"],["糖","táng","сахар; конфета"],["低","dī","низкий"],["答案","dá'àn","ответ"]]};
 for(const [n,words] of Object.entries(textbookCards910))data[n]={...data[n],words};
 
-/* Keep lesson flashcards strictly to numbered textbook vocabulary: no unsourced sentences. */
-for(const entry of Object.values(data)){for(const w of (entry.words||[]))w.length=3;}
+/* Author-created practice sentences. These are NOT quotations from the HSK textbook. */
+const memoryExamples={
+'法律':['我们应该遵守法律。','Wǒmen yīnggāi zūnshǒu fǎlǜ.','Мы должны соблюдать закон.'],
+'俩':['我们俩一起去吧。','Wǒmen liǎ yìqǐ qù ba.','Давай пойдём вдвоём.'],
+'印象':['他给我留下了好印象。','Tā gěi wǒ liúxià le hǎo yìnxiàng.','Он произвёл на меня хорошее впечатление.'],
+'幸福':['我觉得现在很幸福。','Wǒ juéde xiànzài hěn xìngfú.','Я чувствую себя счастливой сейчас.'],
+'浪漫':['这部电影很浪漫。','Zhè bù diànyǐng hěn làngmàn.','Этот фильм очень романтичный.'],
+'互相':['朋友应该互相帮助。','Péngyou yīnggāi hùxiāng bāngzhù.','Друзья должны помогать друг другу.'],
+'适应':['我慢慢适应了新生活。','Wǒ mànmàn shìyìng le xīn shēnghuó.','Я постепенно привыкла к новой жизни.'],
+'联系':['我们经常联系。','Wǒmen jīngcháng liánxì.','Мы часто поддерживаем связь.'],
+'友谊':['我们的友谊很珍贵。','Wǒmen de yǒuyì hěn zhēnguì.','Наша дружба очень ценна.'],
+'困难':['遇到困难不要放弃。','Yùdào kùnnan bú yào fàngqì.','Столкнувшись с трудностями, не сдавайся.'],
+'紧张':['考试前我有点紧张。','Kǎoshì qián wǒ yǒudiǎn jǐnzhāng.','Перед экзаменом я немного нервничаю.'],
+'信心':['我对自己有信心。','Wǒ duì zìjǐ yǒu xìnxīn.','Я уверена в себе.'],
+'招聘':['这家公司正在招聘。','Zhè jiā gōngsī zhèngzài zhāopìn.','Эта компания набирает сотрудников.'],
+'收入':['他的收入很稳定。','Tā de shōurù hěn wěndìng.','У него стабильный доход.'],
+'准时':['请准时到教室。','Qǐng zhǔnshí dào jiàoshì.','Приходи в класс вовремя.'],
+'赚钱':['我想努力赚钱。','Wǒ xiǎng nǔlì zhuànqián.','Я хочу усердно зарабатывать деньги.'],
+'计划':['我们需要一个计划。','Wǒmen xūyào yí ge jìhuà.','Нам нужен план.'],
+'提前':['请提前十分钟来。','Qǐng tíqián shí fēnzhōng lái.','Приходи на десять минут раньше.'],
+'工资':['这个月工资提高了。','Zhège yuè gōngzī tígāo le.','В этом месяце зарплата выросла.'],
+'责任':['这是我的责任。','Zhè shì wǒ de zérèn.','Это моя ответственность.'],
+'家具':['这家店的家具很漂亮。','Zhè jiā diàn de jiājù hěn piàoliang.','Мебель в этом магазине красивая.'],
+'沙发':['我坐在沙发上看书。','Wǒ zuò zài shāfā shàng kàn shū.','Я читаю книгу на диване.'],
+'打折':['这件衣服今天打折。','Zhè jiàn yīfu jīntiān dǎzhé.','Сегодня на эту одежду скидка.'],
+'价格':['这个价格太高了。','Zhège jiàgé tài gāo le.','Эта цена слишком высокая.'],
+'质量':['这件衣服的质量很好。','Zhè jiàn yīfu de zhìliàng hěn hǎo.','Качество этой одежды очень хорошее.'],
+'果汁':['我想喝一杯果汁。','Wǒ xiǎng hē yì bēi guǒzhī.','Я хочу выпить стакан сока.'],
+'免费':['这里的水是免费的。','Zhèlǐ de shuǐ shì miǎnfèi de.','Вода здесь бесплатная.'],
+'活动':['周末有一个活动。','Zhōumò yǒu yí ge huódòng.','На выходных будет мероприятие.'],
+'咳嗽':['他今天一直咳嗽。','Tā jīntiān yìzhí késou.','Он сегодня постоянно кашляет.'],
+'空气':['这里的空气很新鲜。','Zhèlǐ de kōngqì hěn xīnxiān.','Здесь очень свежий воздух.'],
+'散步':['晚饭后我们去散步。','Wǎnfàn hòu wǒmen qù sànbù.','После ужина мы идём гулять.'],
+'巧克力':['我喜欢吃巧克力。','Wǒ xǐhuan chī qiǎokèlì.','Я люблю шоколад.'],
+'压力':['最近工作压力很大。','Zuìjìn gōngzuò yālì hěn dà.','В последнее время на работе большой стресс.'],
+'阳光':['今天阳光很好。','Jīntiān yángguāng hěn hǎo.','Сегодня прекрасная солнечная погода.'],
+'坚持':['每天坚持学习汉语。','Měitiān jiānchí xuéxí Hànyǔ.','Продолжай учить китайский каждый день.'],
+'放弃':['不要轻易放弃。','Bú yào qīngyì fàngqì.','Не сдавайся слишком легко.'],
+'网球':['周末我们打网球。','Zhōumò wǒmen dǎ wǎngqiú.','На выходных мы играем в теннис.'],
+'失败':['失败也是一种经验。','Shībài yě shì yì zhǒng jīngyàn.','Неудача — тоже опыт.'],
+'母亲':['我的母亲很爱我。','Wǒ de mǔqīn hěn ài wǒ.','Моя мама меня очень любит.'],
+'翻译':['她正在翻译一篇文章。','Tā zhèngzài fānyì yì piān wénzhāng.','Она переводит статью.'],
+'将来':['将来我想当老师。','Jiānglái wǒ xiǎng dāng lǎoshī.','В будущем я хочу стать учителем.'],
+'答案':['我知道这个问题的答案。','Wǒ zhīdào zhège wèntí de dáàn.','Я знаю ответ на этот вопрос.']
+};
+for(const entry of Object.values(data)){for(const w of (entry.words||[])){
+const ex=memoryExamples[w[0]]||['我在学习“'+w[0]+'”这个词。','Wǒ zài xuéxí “'+w[1]+'” zhège cí.','Я изучаю слово «'+w[2]+'».'];
+w[3]=ex[0];w[4]=ex[2];w[5]=ex[1];
+}}
+
 /* Checked against the numbered 生词 lists (excluding separately listed proper names). */
 /* Proper-name boxes in the source are kept distinct from numbered 生词 words. */
 const textbookProperNames={
@@ -1183,11 +1231,11 @@ let active=4,tab='cards',idx=0,flipped=false,qidx=0,score=0;
 const head=studio.querySelector('.ml-head'),body=studio.querySelector('.ml-body');
 function speech(text){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='zh-CN';u.rate=.85;window.speechSynthesis.speak(u)}
 function render(){
-const d=data[active];head.textContent='🌸 Урок '+active+' · '+d.title;body.replaceChildren();if(active>=6&&active<=10){const note=document.createElement('p');note.style.cssText='background:#fff3dd;border-radius:12px;padding:12px 16px;color:#765522';note.textContent='📖 Слова урока сверены с пронумерованным словарём учебника HSK 4A. Примеры, не подтверждённые учебником, скрыты.';body.appendChild(note)}
+const d=data[active];head.textContent='🌸 Урок '+active+' · '+d.title;body.replaceChildren();if(active>=6&&active<=10){const note=document.createElement('p');note.style.cssText='background:#fff3dd;border-radius:12px;padding:12px 16px;color:#765522';note.textContent='📖 Слова урока сверены с пронумерованным словарём учебника HSK 4A. Примеры для запоминания составлены специально для сайта, это не цитаты из учебника.';body.appendChild(note)}
 studio.querySelectorAll('[data-ml]').forEach(b=>b.classList.toggle('active',b.dataset.ml===tab));
 if(tab==='cards'){
 const w=d.words[idx];const count=document.createElement('p');count.textContent='Слово '+(idx+1)+' из '+d.words.length;
-const card=document.createElement('div');card.className='ml-card';card.innerHTML='<div class="ml-hanzi"></div><p></p><p></p><p></p>';card.querySelector('.ml-hanzi').textContent=w[0];const ps=card.querySelectorAll('p');ps[0].textContent=flipped?w[1]:'Нажми на карточку, чтобы открыть перевод';ps[1].textContent=flipped?w[2]:'';ps[2].textContent='';if(flipped){const note=document.createElement('p');note.className='muted';note.textContent='Пример из учебника пока не подтверждён. Непроверенные предложения скрыты.';card.appendChild(note)}
+const card=document.createElement('div');card.className='ml-card';card.innerHTML='<div class="ml-hanzi"></div><p></p><p></p><p></p>';card.querySelector('.ml-hanzi').textContent=w[0];const ps=card.querySelectorAll('p');ps[0].textContent=flipped?w[1]:'Нажми на карточку, чтобы открыть перевод';ps[1].textContent=flipped?w[2]:'';ps[2].textContent='';if(flipped){const example=document.createElement('div');example.className='ml-card-example';example.style.cssText='margin-top:14px;padding:14px;background:#f8effb;border-radius:14px;text-align:left';const zh=document.createElement('p');zh.textContent='例句 · '+w[3];zh.style.fontSize='19px';const py=document.createElement('p');py.textContent=w[5];py.style.color='#7a4a8b';const ru=document.createElement('p');ru.textContent=w[4];const audio=document.createElement('button');audio.textContent='🔊 Пример';audio.onclick=()=>speech(w[3]);example.append(zh,py,ru,audio);card.appendChild(example)}
 card.onclick=e=>{if(e.target.closest('button'))return;flipped=!flipped;render()};
 const actions=document.createElement('div');actions.className='ml-actions';
 [['← Назад',()=>{idx=(idx+d.words.length-1)%d.words.length;flipped=false;render()}],['🔊 Слушать',()=>speech(w[0])],['Далее →',()=>{idx=(idx+1)%d.words.length;flipped=false;render()}]].forEach(([label,fn])=>{const b=document.createElement('button');b.textContent=label;b.onclick=fn;actions.appendChild(b)});
@@ -1284,13 +1332,12 @@ const examples=words.filter(x=>typeof x[3]==='string'&&x[3].trim()&&/[。！？]
 if(!examples.length){const note=document.createElement('p');note.textContent='Для этого урока пока нет проверенных предложений на карточках. Сначала добавим их по материалам учебника.';area.append(note)}
 else{
 const item=examples[round%examples.length],sentence=item[3].trim();
-const tokens=sentence.replace(/[。！？!?，,；;]/g,' ').trim().split(/\s+/).filter(Boolean);
-const chunks=tokens.length>1?tokens:Array.from(sentence.replace(/[。！？!?]/g,''));
+const cleaned=sentence.replace(/[。！？!?]/g,'');const chars=Array.from(cleaned);const chunks=[];for(let i=0;i<chars.length;i+=2)chunks.push(chars.slice(i,i+2).join(''));
 const chosen=[],selection=document.createElement('div'),pool=document.createElement('div'),feedback=document.createElement('p');
 selection.className='notice';selection.style.minHeight='50px';pool.className='ml-quiz-options';pool.style.gridTemplateColumns='repeat(auto-fit,minmax(95px,1fr))';
 const label=document.createElement('p');label.textContent='Расставь части предложения в правильном порядке:';
-const indexes=chunks.map((_,i)=>i).sort((a,b)=>((a*7+round*3)%17)-((b*7+round*3)%17));
-function paint(){selection.textContent=chosen.map(i=>chunks[i]).join(' ');pool.replaceChildren();indexes.forEach(i=>{const b=document.createElement('button');b.textContent=chunks[i];b.disabled=chosen.includes(i);b.onclick=()=>{chosen.push(i);feedback.textContent='';paint()};pool.append(b)})}
+const indexes=chunks.map((_,i)=>i).sort((a,b)=>((a*7+round*3+3)%17)-((b*7+round*3+3)%17));if(indexes.every((v,i)=>v===i)&&indexes.length>1)indexes.reverse();
+function paint(){selection.textContent=chosen.map(i=>chunks[i]).join('');pool.replaceChildren();indexes.forEach(i=>{const b=document.createElement('button');b.textContent=chunks[i];b.disabled=chosen.includes(i);b.onclick=()=>{chosen.push(i);feedback.textContent='';paint()};pool.append(b)})}
 paint();
 const actions=document.createElement('div');actions.className='ml-actions';
 const check=document.createElement('button');check.textContent='Проверить';check.onclick=()=>{feedback.textContent=chosen.length===chunks.length&&chosen.every((v,i)=>v===i)?'✓ Правильно!':'✕ Правильный порядок: '+sentence};
