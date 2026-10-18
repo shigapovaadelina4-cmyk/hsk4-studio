@@ -18,9 +18,12 @@ for(let n=2;n<=10;n++){
  assert(dataset?.words?.length>=29,'Missing lesson vocabulary '+n);
  assert(dataset?.grammar?.length>=4,'Missing lesson grammar '+n);
  const tasks=context.window.HSKWorkbook.build(dataset);
- assert.equal(tasks.length,60,'Expected sixty authored workbook tasks in lesson '+n);
- assert.equal(new Set(tasks.map(q=>q.id)).size,60,'Duplicate IDs '+n);
- assert.equal(new Set(tasks.map(q=>q.section)).size,6,'Missing exercise type '+n);
+ assert.equal(tasks.length,50,'Expected fifty authored workbook tasks in lesson '+n);
+ assert.equal(new Set(tasks.map(q=>q.id)).size,50,'Duplicate IDs '+n);
+ assert.equal(new Set(tasks.map(q=>q.section)).size,8,'Missing source-structured exercise section '+n);
+ assert.equal(tasks.filter(x=>x.audio).length,22,'Listening count '+n);
+ assert.equal(tasks.filter(x=>x.section.startsWith('阅读')).length,21,'Reading count '+n);
+ assert.equal(tasks.filter(x=>x.section.startsWith('书写')).length,7,'Writing count '+n);
  for(const q of tasks){
   assert(q.prompt&&q.answer&&q.explanation,'Incomplete task '+n+' '+q.id);
   if(q.kind==='choice')assert(q.options.includes(q.answer),'No correct option in '+q.id);
@@ -29,4 +32,4 @@ for(let n=2;n<=10;n++){
  }
  console.log('Lesson '+n+': '+tasks.length+' independently authored tasks across six types');
 }
-console.log('Workbook static task-generation verification passed (not a mobile browser test).');
+console.log('Workbook source-aligned authored practice verification passed (not a mobile browser test).');
