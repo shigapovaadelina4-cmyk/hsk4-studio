@@ -1184,7 +1184,7 @@ function init(){
 const top=document.querySelector('#partA');if(!top||document.querySelector('#mainLessonStudio'))return;
 const panel=document.querySelector('.panel');if(!panel)return;
 const studio=document.createElement('section');studio.id='mainLessonStudio';studio.hidden=true;
-studio.innerHTML='<div class="ml-head"></div><p class="muted small">Карточки каждого урока переключаются отдельно. Нажми на карточку для перевода, затем отметь «Знаю» или «Не знаю».</p><div class="ml-tabs"><button data-ml="cards">🀄 Слова</button><button data-ml="grammar">📖 Грамматика</button><button data-ml="practice">✍️ Тест</button><button data-ml="workbook">📒 Рабочая тетрадь</button></div><div class="ml-body"></div>';
+studio.innerHTML='<div class="ml-head"></div><p class="muted small">Карточки каждого урока переключаются отдельно. Нажми на карточку для перевода, затем отметь «Знаю» или «Не знаю».</p><div class="ml-tabs"><button data-ml="cards">🀄 Слова</button><button data-ml="grammar">📖 Грамматика</button><button data-ml="practice">✍️ Тест</button><button data-ml="audio">🎧 Аудирование</button><button data-ml="games">🎮 Игры</button><button data-ml="workbook">📒 Рабочая тетрадь</button></div><div class="ml-body"></div>';
 panel.insertAdjacentElement('afterend',studio);
 let active=4,tab='cards',idx=0,flipped=false,qidx=0,score=0;
 const head=studio.querySelector('.ml-head'),body=studio.querySelector('.ml-body');
@@ -1212,6 +1212,24 @@ const w=d.words[qidx%d.words.length],choices=[w[2],...d.words.filter(x=>x!==w).s
 const h=document.createElement('h3');h.textContent='Как переводится '+w[0]+'?';const meta=document.createElement('p');meta.textContent='Вопрос '+(qidx+1)+' из '+d.words.length+' · Верно: '+score;const opts=document.createElement('div');opts.className='ml-quiz-options';const feedback=document.createElement('p');
 choices.forEach(v=>{const b=document.createElement('button');b.textContent=v;b.onclick=()=>{opts.querySelectorAll('button').forEach(btn=>btn.disabled=true);if(v===w[2]){score++;feedback.textContent='✓ Правильно!'}else feedback.textContent='✕ Неверно. Верный ответ: '+w[2]};opts.appendChild(b)});
 const next=document.createElement('button');next.className='primary';next.textContent='Следующий вопрос →';next.onclick=()=>{qidx=(qidx+1)%d.words.length;if(qidx===0)score=0;render()};body.append(h,meta,opts,feedback,next);
+}else if(tab==='audio'){
+const h=document.createElement('h3');h.textContent='🎧 Тренировка восприятия на слух · Урок '+active;
+const p=document.createElement('p');p.textContent='Нажми «Слушать», попробуй узнать слово на слух и открой ответ. Озвучка синтезированная, не оригинальная запись учебника.';
+let shown=false;const reveal=document.createElement('div');reveal.className='notice';reveal.style.margin='14px 0';const w=d.words[qidx%d.words.length];
+function draw(){reveal.textContent=shown?w[0]+' · '+w[1]+' · '+w[2]:'Сначала послушай слово, затем открой ответ.'}draw();
+const actions=document.createElement('div');actions.className='ml-actions';
+const listen=document.createElement('button');listen.textContent='🔊 Слушать слово';listen.onclick=()=>speech(w[0]);
+const show=document.createElement('button');show.textContent='👁 Показать ответ';show.onclick=()=>{shown=true;draw()};
+const next=document.createElement('button');next.className='primary';next.textContent='Далее →';next.onclick=()=>{qidx=(qidx+1)%d.words.length;render()};
+actions.append(listen,show,next);body.append(h,p,reveal,actions);
+}else if(tab==='games'){
+const h=document.createElement('h3');h.textContent='🎮 Угадай слово · Урок '+active;
+const w=d.words[qidx%d.words.length];const p=document.createElement('p');p.textContent='Найди китайское слово для перевода: '+w[2];
+const options=document.createElement('div');options.className='ml-quiz-options';const feedback=document.createElement('p');
+const others=d.words.filter(x=>x[0]!==w[0]).slice((qidx*3)%Math.max(1,d.words.length-3)).slice(0,3);
+const pool=[w,...others].sort((a,b)=>((a[0].codePointAt(0)+qidx)%13)-((b[0].codePointAt(0)+qidx)%13));
+pool.forEach(x=>{const b=document.createElement('button');b.textContent=x[0];b.onclick=()=>{options.querySelectorAll('button').forEach(z=>z.disabled=true);feedback.textContent=x===w?'✓ Верно!':'✕ Правильное слово: '+w[0]+' · '+w[1]};options.appendChild(b)});
+const next=document.createElement('button');next.className='primary';next.textContent='Следующий раунд →';next.onclick=()=>{qidx=(qidx+1)%d.words.length;render()};body.append(h,p,options,feedback,next);
 }else{const p=document.createElement('p');p.textContent=active===2?'Урок 2: задания на чтение №23–30 доступны в разделе «Рабочая тетрадь» выше.':'Интерактивная рабочая тетрадь для урока 3 пока не перенесена.';const b=document.createElement('button');b.className='primary';b.textContent='Перейти к рабочей тетради';b.onclick=()=>{document.querySelector('[data-tab="workbook"]')?.click();document.querySelector('#wbMainLesson')?.scrollIntoView({behavior:'smooth'});const picker=document.querySelector('#wbMainLesson');if(picker){picker.value=String(active);picker.dispatchEvent(new Event('change',{bubbles:true}))}};body.append(p,b)}
 }
 studio.querySelectorAll('[data-ml]').forEach(b=>b.onclick=()=>{tab=b.dataset.ml;render()});
