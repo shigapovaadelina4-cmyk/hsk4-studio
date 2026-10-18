@@ -1,0 +1,33 @@
+
+/* Consistent pink/lilac workbook styling for lessons 2–10 */
+#mainLessonStudio .hsk-wb{max-width:100%;min-width:0;overflow-wrap:anywhere;color:#422d50}
+#mainLessonStudio .hsk-wb h3{font-size:clamp(20px,3vw,26px);margin:4px 0 10px}
+#mainLessonStudio .hsk-wb-note{color:#765e7f;line-height:1.55;background:#fcf6fc;border:1px solid #efdbef;border-radius:14px;padding:13px 16px}
+#mainLessonStudio .hsk-wb-status{font-weight:650;color:#70417d;margin:14px 0 8px}
+#mainLessonStudio .hsk-wb-bar{height:10px;border-radius:99px;background:#f0e0f2;overflow:hidden}
+#mainLessonStudio .hsk-wb-fill{height:100%;background:linear-gradient(100deg,#d99dcc,#8355a6);transition:width .2s}
+#mainLessonStudio .hsk-wb-sections,#mainLessonStudio .hsk-wb-nav,#mainLessonStudio .hsk-wb-controls,#mainLessonStudio .hsk-wb-tokens,#mainLessonStudio .hsk-wb-assembled{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}
+#mainLessonStudio .hsk-wb button{min-height:44px;border:1px solid #e3cce8;border-radius:12px;background:#fff;color:#5d3c6c;padding:10px 14px;font:inherit;cursor:pointer;max-width:100%;white-space:normal}
+#mainLessonStudio .hsk-wb button:hover{background:#f6eaf7}
+#mainLessonStudio .hsk-wb button:focus-visible,#mainLessonStudio .hsk-wb input:focus-visible{outline:3px solid #aa7db5;outline-offset:2px}
+#mainLessonStudio .hsk-wb-sections button.active,#mainLessonStudio .hsk-wb-nav button.active,#mainLessonStudio .hsk-wb-options button.selected{background:#80508f;color:white}
+#mainLessonStudio .hsk-wb-nav button{min-width:44px;padding:8px}
+#mainLessonStudio .hsk-wb-nav button.correct{border-color:#81b99c}
+#mainLessonStudio .hsk-wb-nav button.wrong{border-color:#d998a6}
+#mainLessonStudio .hsk-wb-question{border:1px solid #ead6ec;border-radius:19px;padding:clamp(14px,3vw,24px);margin:18px 0;background:#fffafd}
+#mainLessonStudio .hsk-wb-number{font-weight:700;color:#8b5794}
+#mainLessonStudio .hsk-wb-prompt{font-size:clamp(20px,3vw,25px);line-height:1.65;color:#40234d}
+#mainLessonStudio .hsk-wb-hint{color:#765d85}
+#mainLessonStudio .hsk-wb-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#mainLessonStudio .hsk-wb-options button{text-align:left;word-break:break-word}
+#mainLessonStudio .hsk-wb-answer{margin:14px 0;min-width:0}
+#mainLessonStudio .hsk-wb input{box-sizing:border-box;max-width:100%;width:min(420px,100%);padding:13px 14px;background:white;border:1px solid #dcbfdf;border-radius:12px;font:inherit;font-size:18px}
+#mainLessonStudio .hsk-wb-check{background:#80508f!important;color:#fff!important;margin:4px 9px 4px 0}
+#mainLessonStudio .hsk-wb-feedback{border-radius:13px;margin-top:14px;padding:13px;line-height:1.65;background:#fff}
+#mainLessonStudio .hsk-wb-feedback:empty{display:none}
+#mainLessonStudio .hsk-wb-feedback.good{background:#edf8f0;border:1px solid #b5ddc1}
+#mainLessonStudio .hsk-wb-feedback.bad{background:#fff2f3;border:1px solid #e5c1c8}
+#mainLessonStudio .hsk-wb-assembled{min-height:48px;padding:12px;border-radius:12px;background:#f7eff8}
+#mainLessonStudio .hsk-wb-controls button{flex:1;min-width:140px}
+#mainLessonStudio .hsk-wb button:disabled{opacity:.45;cursor:default}
+@media(max-width:540px){#mainLessonStudio .hsk-wb-options{grid-template-columns:1fr}#mainLessonStudio .hsk-wb-question{padding:14px}#mainLessonStudio .hsk-wb-controls button{flex-basis:100%}#mainLessonStudio .hsk-wb-sections button{flex:1 1 42%}}
