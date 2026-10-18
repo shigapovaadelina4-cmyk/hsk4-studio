@@ -33,3 +33,15 @@
 @media(max-width:540px){#mainLessonStudio .hsk-wb-options{grid-template-columns:1fr}#mainLessonStudio .hsk-wb-question{padding:14px}#mainLessonStudio .hsk-wb-controls button{flex-basis:100%}#mainLessonStudio .hsk-wb-sections button{flex:1 1 42%}}
 
 #mainLessonStudio .hsk-wb-passage{padding:16px 18px;border:1px solid #e6d1ec;border-radius:14px;background:#f6eef9;font-size:clamp(19px,3vw,24px);line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0}
+
+#mainLessonStudio .hsk-original{max-width:100%;overflow-wrap:anywhere;color:#483151}
+#mainLessonStudio .hsk-original-upload{border:1px solid #e9d6ec;border-radius:18px;padding:15px;background:#fffafd;margin:15px 0}
+#mainLessonStudio .hsk-original-upload input[type=file]{display:block;width:100%;box-sizing:border-box;margin:10px 0}
+#mainLessonStudio .hsk-original-frame{display:block;width:100%;height:min(72vh,780px);min-height:400px;border:1px solid #e4cde8;border-radius:14px;background:white}
+#mainLessonStudio .hsk-original .hsk-wb-controls{align-items:center}
+#mainLessonStudio .hsk-original .hsk-wb-controls input[type=number]{width:90px;max-width:100%;padding:9px}
+#mainLessonStudio .hsk-original .hsk-wb-options{display:flex;flex-wrap:wrap;gap:8px}
+#mainLessonStudio .hsk-original .hsk-wb-options button{min-width:72px;text-align:center}
+#mainLessonStudio .hsk-original .hsk-wb-nav button.correct{background:#e7f5ea}
+#mainLessonStudio .hsk-original .hsk-wb-nav button.wrong{background:#fff1f3}
+@media(max-width:540px){#mainLessonStudio .hsk-original-frame{height:58vh;min-height:360px}#mainLessonStudio .hsk-original .hsk-wb-options button{flex:1;min-width:80px}}
