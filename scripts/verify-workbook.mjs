@@ -33,3 +33,23 @@ for(let n=2;n<=10;n++){
  console.log('Lesson '+n+': '+tasks.length+' independently authored tasks across six types');
 }
 console.log('Workbook source-aligned authored practice verification passed (not a mobile browser test).');
+
+const officialCodes=fs.readFileSync(new URL('workbook-answer-codes.js',root),'utf8');
+const companion=fs.readFileSync(new URL('workbook-original-companion.js',root),'utf8');
+new vm.Script(officialCodes,{filename:'workbook-answer-codes.js'});
+new vm.Script(companion,{filename:'workbook-original-companion.js'});
+assert(html.includes('workbook-original-companion.js'),'Original source companion not linked');
+assert(html.includes('workbook-answer-codes.js'),'Official answer codes not linked');
+const keyContext={window:{}};
+vm.runInNewContext(officialCodes,keyContext);
+for(let n=1;n<=10;n++){
+ const k=keyContext.window.HSK4OfficialAnswerCodes[n];
+ assert.equal(Object.keys(k).length,43,'Original key answer count '+n);
+ for(let i=1;i<=43;i++){
+  assert(typeof k[i]==='string'&&k[i].length>0,'Missing official workbook key '+n+'/'+i);
+  if(i<=5)assert(['Верно','Неверно'].includes(k[i]));
+  else if(i>=31&&i<=34)assert(/^[ABC]{3}$/.test(k[i]));
+  else assert(/^[ABCDE]$/.test(k[i]));
+ }
+}
+console.log('Ten original workbook keyed answer sheets validated against expected question types.');
