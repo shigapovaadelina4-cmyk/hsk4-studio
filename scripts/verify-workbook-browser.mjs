@@ -49,8 +49,9 @@ try {
   await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 23–30'}).click();
   assert.equal(await original.locator('.hsk-original-exercise .hsk-wb-nav button').count(),12);
   assert.match(await original.locator('.hsk-original-step-header').innerText(),/Задание 23 · 1 из 12/);
-  await original.locator('.hsk-wb-question button').filter({hasText:'Показать страницу задания'}).click();
-  assert.equal(await original.locator('.hsk-original-materials').getAttribute('open'),'');
+  assert.equal(await original.locator('.hsk-original-embedded .hsk-original-upload .hsk-original-frame').count(),1);
+  assert.equal(await original.locator('.hsk-original-materials').getAttribute('open'),null);
+  assert.match(await original.locator('.hsk-original-instruction').innerText(),/оригинальная страница/);
   await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 31–34'}).click();
   const exact=await page.evaluate(n=>window.HSK4OfficialAnswerCodes[n][31],lesson);
   for(const character of exact)await original.locator('.hsk-wb-tokens button').filter({hasText:character}).click();
