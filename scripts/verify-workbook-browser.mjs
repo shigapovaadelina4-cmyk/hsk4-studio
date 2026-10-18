@@ -67,7 +67,7 @@ try {
   await original.locator('.hsk-wb-check').click();
   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/Правильно/);
   await original.locator('.hsk-wb-sections button').filter({hasText:'书写 44–50'}).click();
-  await original.locator('.hsk-wb-options input').fill('我练习写汉字。');
+  if(lesson===2){assert.match(await original.locator('.hsk-source-question').innerText(),/幽默的人/);await original.locator('.hsk-wb-tokens button').first().click()}else await original.locator('.hsk-wb-options input').fill('我练习写汉字。');
   await original.locator('.hsk-wb-check').click();
   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/手|Письменное|письменное/);
   assert.match(await original.locator('.hsk-wb-status').innerText(),/Проверено: 3 из 50/);
