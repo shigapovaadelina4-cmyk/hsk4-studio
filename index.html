@@ -1227,7 +1227,11 @@ const textbookProperNames={
  4:[['王','Wáng','фамилия Ван']],
  9:[['王红','Wáng Hóng','имя: Ван Хун'],['爱迪生','Àidíshēng','Томас Эдисон']]
 };
-for(const [n,proper] of Object.entries(textbookProperNames)){for(const w of proper){w[3]='这是名字“'+w[0]+'”。';w[4]='Это имя или фамилия: '+w[2]+'.';w[5]='Zhè shì míngzi “'+w[1]+'”.';data[n].words.push(w)}}
+for(const [n,proper] of Object.entries(textbookProperNames)){for(const w of proper){
+const example=window.HSKNaturalExamples?.[w[0]];
+w[3]=example?.[0]||'';w[4]=example?.[1]||'';w[5]='';data[n].words.push(w);
+}}
+updateAuthoredPinyin();
 
 /* Grammar topics checked against HSK Standard Course 4A: lesson 6 PDF pp.78-83;
    lesson 7 pp.90-95; lesson 8 pp.102-107; lesson 9 pp.114-119;
