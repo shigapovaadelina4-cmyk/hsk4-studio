@@ -1213,6 +1213,48 @@ const textbookProperNames={
  9:[['王红','Wáng Hóng','имя: Ван Хун'],['爱迪生','Àidíshēng','Томас Эдисон']]
 };
 for(const [n,proper] of Object.entries(textbookProperNames)){for(const w of proper){w[3]='这是名字“'+w[0]+'”。';w[4]='Это имя или фамилия: '+w[2]+'.';w[5]='Zhè shì míngzi “'+w[1]+'”.';data[n].words.push(w)}}
+
+/* Grammar topics checked against HSK Standard Course 4A: lesson 6 PDF pp.78-83;
+   lesson 7 pp.90-95; lesson 8 pp.102-107; lesson 9 pp.114-119;
+   lesson 10 pp.128-133. Chinese example sentences below are AUTHOR-CREATED. */
+const textbookGrammar610={
+6:[
+['竟然','Неожиданный результат, который удивляет говорящего.','他竟然记得我的生日。','Он неожиданно вспомнил мой день рождения.','Подлежащее + 竟然 + глагол / сказуемое','Tā jìngrán jìde wǒ de shēngrì.','Не употребляй 竟然 для обычного ожидаемого события.'],
+['倍','Во сколько раз одна величина больше другой.','今年的收入是去年的两倍。','Доход этого года вдвое больше прошлогоднего.','A + 是 + B + 的 + число + 倍','Jīnnián de shōurù shì qùnián de liǎng bèi.','Сначала назови величину сравнения, затем 倍.'],
+['值得','Что-то стоит сделать или заслуживает внимания.','这本书值得读。','Эту книгу стоит прочитать.','Предмет + 值得 + глагол','Zhè běn shū zhíde dú.','После 值得 можно поставить действие, ради которого стоит постараться.'],
+['其中','Одна часть внутри названного ранее целого.','我们买了五种水果，其中两种是苹果。','Мы купили пять видов фруктов, из них два — яблоки.','Общее количество， 其中 + часть','Wǒmen mǎi le wǔ zhǒng shuǐguǒ, qízhōng liǎng zhǒng shì píngguǒ.','Сначала обозначь целое, затем выдели часть с 其中.'],
+['在……下','Указывает условие или обстоятельства действия.','在老师的帮助下，我通过了考试。','С помощью преподавателя я сдал экзамен.','在 + условие / обстоятельство + 下，+ результат','Zài lǎoshī de bāngzhù xià, wǒ tōngguò le kǎoshì.','Не путай с обычным указанием места 在 + место.']
+],
+7:[
+['估计','Приблизительная оценка или предположение.','我估计他十分钟后到。','Полагаю, он придёт через десять минут.','Подлежащее + 估计 + предположение','Wǒ gūjì tā shí fēnzhōng hòu dào.','估计 выражает оценку, а не точное знание.'],
+['来不及','Не успеть сделать что-то из-за нехватки времени.','再不出发，我们就来不及了。','Если не выйдем сейчас, мы уже не успеем.','Подлежащее + 来不及 + (глагол)','Zài bù chūfā, wǒmen jiù láibují le.','Не путай с 不来: 来不及 относится к недостатку времени.'],
+['离合词重叠','Повторение разделяемого глагола обозначает краткое, лёгкое действие.','周末我们去散散步吧。','Давай немного погуляем на выходных.','Глагол: 散步 → 散散步','Zhōumò wǒmen qù sàn san bù ba.','Для разделяемых глаголов повторяется глагольная часть, а не вся связка.'],
+['要是……就……','Условие «если…, то…».','要是明天下雨，我们就不去散步了。','Если завтра пойдёт дождь, мы не пойдём гулять.','要是 + условие，+ 就 + результат','Yàoshi míngtiān xiàyǔ, wǒmen jiù bú qù sànbù le.','就 обычно относится к последствию условия.'],
+['既……又/也/还……','Два одновременно верных качества или действия.','他既聪明又幽默。','Он и умный, и с чувством юмора.','Подлежащее + 既 + качество 1 + 又 + качество 2','Tā jì cōngming yòu yōumò.','Оба элемента относятся к одному предмету или человеку.']
+],
+8:[
+['使','Причинять результат, заставлять кого-то что-то почувствовать.','这个消息使我很高兴。','Эта новость очень обрадовала меня.','Причина + 使 + человек + результат','Zhège xiāoxi shǐ wǒ hěn gāoxìng.','После 使 требуется указать, что изменилось.'],
+['只要……就……','Достаточное условие «стоит лишь…, и…».','只要坚持练习，就会有进步。','Если регулярно упражняться, будет прогресс.','只要 + условие，+ 就 + результат','Zhǐyào jiānchí liànxí, jiù huì yǒu jìnbù.','Не путай с 只有……才……: там условие необходимое.'],
+['可不是','Разговорное эмоциональное согласие «ещё бы!», «и правда!».','A：今天真冷！ B：可不是！','А: Сегодня очень холодно! Б: И не говори!','Утверждение собеседника → 可不是！','A: Jīntiān zhēn lěng! B: Kě bú shì!','Это подтверждение чужой мысли, а не обычное отрицание 是.'],
+['因此','Следствие ранее названной причины.','他每天练习，因此进步很快。','Он упражняется каждый день, поэтому быстро прогрессирует.','Причина，因此 + следствие','Tā měitiān liànxí, yīncǐ jìnbù hěn kuài.','因此 обычно вводит логический вывод или результат.'],
+['往往','Часто происходит в похожих условиях.','冬天这里往往很冷。','Зимой здесь зачастую бывает очень холодно.','Условие + 往往 + повторяющийся результат','Dōngtiān zhèlǐ wǎngwǎng hěn lěng.','往往 характеризует закономерность, не единичный случай.']
+],
+9:[
+['难道','Риторический вопрос с удивлением или возражением.','难道你不想试一次吗？','Неужели ты не хочешь попробовать хоть раз?','难道 + вопрос + 吗？','Nándào nǐ bù xiǎng shì yí cì ma?','Часто говорящий уже подразумевает ответ.'],
+['通过','Средство, способ или процесс достижения результата.','我们通过练习提高汉语水平。','Мы улучшаем китайский язык благодаря практике.','通过 + способ / действие + результат','Wǒmen tōngguò liànxí tígāo Hànyǔ shuǐpíng.','Не смешивай с 经过: акценты употребления различаются.'],
+['可是','Противопоставление, неожиданное продолжение.','我想去，可是今天没有时间。','Я хочу пойти, но сегодня нет времени.','Первая часть，可是 + противопоставление','Wǒ xiǎng qù, kěshì jīntiān méiyǒu shíjiān.','可是 связывает два противопоставленных сообщения.'],
+['结果','Результат ранее описанного действия или ситуации.','我们准备了很久，结果考试很顺利。','Мы долго готовились, и в итоге экзамен прошёл успешно.','Событие，结果 + итог','Wǒmen zhǔnbèi le hěn jiǔ, jiéguǒ kǎoshì hěn shùnlì.','结果 сообщает, чем закончилась ситуация.']
+],
+10:[
+['不过','Переход к уточнению или возражению «однако».','这件衣服很好看，不过有点贵。','Эта одежда красивая, но немного дорогая.','Утверждение，不过 + уточнение','Zhè jiàn yīfu hěn hǎokàn, búguò yǒudiǎn guì.','После 不过 часто добавляется ограничение к первой мысли.'],
+['确实','Подтверждение реального факта «действительно».','这个办法确实有用。','Этот способ действительно полезен.','Подлежащее + 确实 + сказуемое','Zhège bànfǎ quèshí yǒuyòng.','确实 усиливает уверенное утверждение.'],
+['在……看来','С точки зрения человека или группы людей.','在我看来，健康最重要。','По моему мнению, здоровье важнее всего.','在 + чья точка зрения + 看来，+ мнение','Zài wǒ kànlái, jiànkāng zuì zhòngyào.','Не путай с 看起来: последнее описывает видимость.'],
+['由于','Указывает причину: «вследствие», «поскольку».','由于天气不好，活动取消了。','Из-за плохой погоды мероприятие отменили.','由于 + причина，+ результат','Yóuyú tiānqì bù hǎo, huódòng qǔxiāo le.','После 由于 назови именно причину происходящего.'],
+['比如','Приводит пример из более общего списка.','我喜欢运动，比如网球和游泳。','Мне нравится спорт, например теннис и плавание.','Общее утверждение，比如 + пример','Wǒ xǐhuan yùndòng, bǐrú wǎngqiú hé yóuyǒng.','比如 вводит пример, не вывод.']
+]
+};
+for(const [n,topics] of Object.entries(textbookGrammar610))data[n].grammar=topics;
+
 const textbookWordCounts={2:34,3:33,4:32,5:31,6:31,7:33,8:29,9:33,10:30};
 for(const [n,expected] of Object.entries(textbookWordCounts)){
  const words=data[n].words;
@@ -1271,11 +1313,11 @@ const escapeText=x=>String(x||'');
 function renderTopic(){topics.replaceChildren();d.grammar.forEach((g,i)=>{const btn=document.createElement('button');btn.textContent=(i+1)+'. '+g[0];btn.className=i===selected?'active':'';btn.onclick=()=>{selected=i;renderTopic()};topics.append(btn)});
 const g=d.grammar[selected];explanation.replaceChildren();
 const h=document.createElement('h3');h.textContent=g[1];const description=document.createElement('p');description.textContent='Конструкция: '+g[0]+'. '+g[1]+'.';
-const schema=document.createElement('p');schema.className='ml-grammar-schema';schema.textContent='Схема: '+g[0];
+const schema=document.createElement('p');schema.className='ml-grammar-schema';schema.textContent='Схема: '+(g[4]||g[0]);
 const zh=document.createElement('p');zh.className='ml-grammar-example';zh.textContent=escapeText(g[2]);
-const ru=document.createElement('p');ru.textContent=escapeText(g[3]);
-const tip=document.createElement('p');tip.className='ml-grammar-tip';tip.textContent='Запомни: обрати внимание на порядок слов и значение конструкции в примере.';
-const speak=document.createElement('button');speak.textContent='🔊 Прослушать пример';speak.onclick=()=>speech(g[2]);explanation.append(h,description,schema,zh,ru,tip,speak)}
+const py=document.createElement('p');py.className='ml-grammar-pinyin';py.textContent=g[5]||'';const ru=document.createElement('p');ru.textContent=escapeText(g[3]);
+const tip=document.createElement('p');tip.className='ml-grammar-tip';tip.textContent=g[6]||'Запомни порядок слов и значение конструкции в примере.';
+const speak=document.createElement('button');speak.textContent='🔊 Прослушать пример';speak.onclick=()=>speech(g[2]);const authored=document.createElement('p');authored.className='muted';authored.textContent='Пример для тренировки (составлен для сайта)';explanation.append(h,description,schema,authored,zh,py,ru,tip,speak)}
 function renderExercise(){choices.replaceChildren();feedback.textContent='';stats.textContent=correct+' верно · '+answered+' выполнено';
 const candidates=d.grammar.map(g=>({g,word:(g[0].match(/[\\u3400-\\u9fff]+/g)||[])[0]||''})).filter(x=>x.word&&x.g[2]&&x.g[2].includes(x.word));
 if(!candidates.length){prompt.textContent='Для этого урока пока нет проверенных предложений с пропусками.';translation.textContent='Добавим их после сверки с учебником.';next.disabled=true;return}
@@ -1517,4 +1559,4 @@ window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,700)});
 #mainLessonStudio .ml-grammar-detail{background:#f8effb!important;border-radius:18px!important;padding:24px!important}
 #mainLessonStudio .ml-grammar-training{background:white!important;border:1px solid #ecd9ee!important;border-radius:18px!important}
 #mainLessonStudio .ml-grammar-training .ml-grammar-choices button{background:#fff!important;border:1px solid #ead5ed!important}
-</style></body></html>
+#mainLessonStudio .ml-grammar-pinyin{color:#80508f;font-size:16px;font-weight:600}#mainLessonStudio .ml-grammar-schema{background:#f4e9fa;padding:12px 15px;border-radius:12px}#mainLessonStudio .ml-grammar-training button{min-height:46px}</style></body></html>
