@@ -1107,6 +1107,63 @@ const draftCards={
 10:{title:'Практика слов · Урок 10',words:[['成功','chénggōng','успех; успешный'],['努力','nǔlì','стараться'],['目标','mùbiāo','цель'],['计划','jìhuà','план'],['完成','wánchéng','завершать'],['发展','fāzhǎn','развиваться'],['改变','gǎibiàn','изменять'],['提高','tígāo','повышать'],['进步','jìnbù','прогресс'],['希望','xīwàng','надежда; надеяться']]}
 };
 for(const [n,entry] of Object.entries(draftCards))data[n]={...entry,grammar:[]};
+
+/* Short original usage examples for cards. These are illustrative,
+   not quotations from the HSK textbook. */
+const cardExamples={
+'负责':['这件事由我负责。','За это дело отвечаю я.'],
+'讨论':['我们一起讨论这个问题。','Давай обсудим этот вопрос вместе.'],
+'决定':['我决定明天出发。','Я решила отправиться завтра.'],
+'机会':['这是一个好机会。','Это хорошая возможность.'],
+'重要':['健康很重要。','Здоровье очень важно.'],
+'参加':['我想参加这个活动。','Я хочу участвовать в этом мероприятии.'],
+'活动':['学校今天有活动。','Сегодня в школе мероприятие.'],
+'准备':['我正在准备考试。','Я готовлюсь к экзамену.'],
+'需要':['我需要一点时间。','Мне нужно немного времени.'],
+'建议':['我建议你早点休息。','Советую тебе пораньше отдохнуть.'],
+'考虑':['让我考虑一下。','Дай мне немного подумать.'],
+'健康':['祝你身体健康！','Желаю тебе здоровья!'],
+'运动':['每天运动对身体好。','Ежедневный спорт полезен для здоровья.'],
+'锻炼':['我每天早上锻炼。','Я тренируюсь каждое утро.'],
+'习惯':['我习惯早起。','Я привыкла рано вставать.'],
+'身体':['你要注意身体。','Береги своё здоровье.'],
+'舒服':['这里很舒服。','Здесь очень комфортно.'],
+'压力':['最近工作压力很大。','В последнее время на работе много стресса.'],
+'休息':['你应该休息一下。','Тебе стоит немного отдохнуть.'],
+'精神':['他今天很有精神。','Сегодня он полон энергии.'],
+'坚持':['坚持学习就会进步。','Если продолжать учиться, будет прогресс.'],
+'旅行':['我喜欢和朋友一起旅行。','Мне нравится путешествовать с друзьями.'],
+'旅游':['我们暑假去北京旅游。','На летних каникулах мы поедем в Пекин путешествовать.'],
+'风景':['这里的风景很美。','Здесь очень красивые пейзажи.'],
+'环境':['这里的环境很安静。','Здесь спокойная обстановка.'],
+'交通':['这个城市的交通很方便。','В этом городе удобный транспорт.'],
+'方便':['坐地铁很方便。','На метро ездить удобно.'],
+'方向':['你走错方向了。','Ты пошла не в ту сторону.'],
+'距离':['学校离我家距离不远。','Школа недалеко от моего дома.'],
+'地图':['我在地图上找到了这里。','Я нашла это место на карте.'],
+'安排':['我已经安排好了时间。','Я уже распланировала время.'],
+'文化':['我对中国文化很感兴趣。','Мне очень интересна китайская культура.'],
+'传统':['这是中国的传统节日。','Это традиционный китайский праздник.'],
+'历史':['我喜欢学习历史。','Мне нравится изучать историю.'],
+'社会':['社会在不断变化。','Общество постоянно меняется.'],
+'经验':['她有很多工作经验。','У неё большой опыт работы.'],
+'了解':['我想多了解中国。','Я хочу больше узнать о Китае.'],
+'交流':['我们用中文交流。','Мы общаемся на китайском.'],
+'尊重':['我们应该尊重别人。','Мы должны уважать других.'],
+'关系':['他们的关系很好。','У них хорошие отношения.'],
+'不同':['每个人都有不同的想法。','У каждого человека свои мысли.'],
+'成功':['祝你考试成功！','Желаю успешно сдать экзамен!'],
+'努力':['她一直很努力。','Она всегда очень старается.'],
+'目标':['我的目标是通过考试。','Моя цель — сдать экзамен.'],
+'计划':['我有一个新计划。','У меня новый план.'],
+'完成':['我已经完成作业了。','Я уже закончила домашнее задание.'],
+'发展':['这个城市发展得很快。','Этот город быстро развивается.'],
+'改变':['我想改变这个习惯。','Я хочу изменить эту привычку.'],
+'提高':['我要提高汉语水平。','Я хочу улучшить уровень китайского.'],
+'进步':['你的汉语进步很大。','Ты сильно продвинулась в китайском.'],
+'希望':['希望明天天气好。','Надеюсь, завтра будет хорошая погода.']
+};
+for(const lessonData of Object.values(data)){if(!lessonData.words)continue;for(const word of lessonData.words){if(!word[3]&&cardExamples[word[0]]){word[3]=cardExamples[word[0]][0];word[4]=cardExamples[word[0]][1]}}}
 function init(){
 const top=document.querySelector('#partA');if(!top||document.querySelector('#mainLessonStudio'))return;
 const panel=document.querySelector('.panel');if(!panel)return;
@@ -1121,8 +1178,8 @@ const d=data[active];head.textContent='🌸 Урок '+active+' · '+d.title;bod
 studio.querySelectorAll('[data-ml]').forEach(b=>b.classList.toggle('active',b.dataset.ml===tab));
 if(tab==='cards'){
 const w=d.words[idx];const count=document.createElement('p');count.textContent='Слово '+(idx+1)+' из '+d.words.length;
-const card=document.createElement('div');card.className='ml-card';card.innerHTML='<div class="ml-hanzi"></div><p></p><p></p><p></p>';card.querySelector('.ml-hanzi').textContent=w[0];const ps=card.querySelectorAll('p');ps[0].textContent=flipped?w[1]:'Нажми на карточку, чтобы открыть перевод';ps[1].textContent=flipped?w[2]:'';ps[2].textContent=flipped?(w[3]?w[3]+' — '+(w[4]||''):''):'';
-card.onclick=()=>{flipped=!flipped;render()};
+const card=document.createElement('div');card.className='ml-card';card.innerHTML='<div class="ml-hanzi"></div><p></p><p></p><p></p>';card.querySelector('.ml-hanzi').textContent=w[0];const ps=card.querySelectorAll('p');ps[0].textContent=flipped?w[1]:'Нажми на карточку, чтобы открыть перевод';ps[1].textContent=flipped?w[2]:'';ps[2].textContent='';if(flipped&&w[3]){const example=document.createElement('div');example.className='ml-example';example.innerHTML='<strong>📖 Пример употребления</strong><p class="ml-example-zh"></p><p class="ml-example-ru"></p><button type="button" class="ml-example-speak">🔊 Слушать пример</button>';example.querySelector('.ml-example-zh').textContent=w[3];example.querySelector('.ml-example-ru').textContent=w[4]||'';example.querySelector('button').onclick=e=>{e.stopPropagation();speech(w[3])};card.appendChild(example)}
+card.onclick=e=>{if(e.target.closest('button'))return;flipped=!flipped;render()};
 const actions=document.createElement('div');actions.className='ml-actions';
 [['← Назад',()=>{idx=(idx+d.words.length-1)%d.words.length;flipped=false;render()}],['🔊 Слушать',()=>speech(w[0])],['Далее →',()=>{idx=(idx+1)%d.words.length;flipped=false;render()}]].forEach(([label,fn])=>{const b=document.createElement('button');b.textContent=label;b.onclick=fn;actions.appendChild(b)});
 const rating=document.createElement('div');rating.className='ml-rating';
@@ -1266,4 +1323,10 @@ const b1=[...top.querySelectorAll('button.lesson')].find(b=>b.textContent.trim()
 }
 window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,700)});
 })();
-</script><script src="./study-tools.js?v=compact-review-1" defer></script><script src="./vocab-sprint.js?v=1" defer></script></body></html>
+</script><script src="./study-tools.js?v=compact-review-1" defer></script><script src="./vocab-sprint.js?v=1" defer></script><style>
+#mainLessonStudio .ml-example{margin:16px auto 0;max-width:640px;padding:17px 20px;background:#f5edfa;border:1px solid #e4cde9;border-radius:15px;text-align:left;line-height:1.55}
+#mainLessonStudio .ml-example strong{font-size:15px;color:#693b7d}
+#mainLessonStudio .ml-example-zh{font-size:23px;margin:10px 0 4px}
+#mainLessonStudio .ml-example-ru{font-size:16px;color:#715779;margin:4px 0 10px}
+#mainLessonStudio .ml-example-speak{border:1px solid #d6b9df;background:white;border-radius:10px;padding:9px 14px;cursor:pointer}
+</style></body></html>
