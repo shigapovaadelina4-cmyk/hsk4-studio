@@ -8,6 +8,22 @@ const browser=await chromium.launch({headless:true});
 let tested=0;
 try {
  await sleep(1200);
+ const lessonOne=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+ const l1errors=[];lessonOne.on('pageerror',e=>l1errors.push(e.message));
+ await lessonOne.route('**/cdn.jsdelivr.net/**',route=>route.abort());
+ await lessonOne.goto('http://127.0.0.1:8123/',{waitUntil:'domcontentloaded'});
+ for(let i=0;i<37;i++){
+  await lessonOne.locator('#flash').click();
+  const example=await lessonOne.locator('#example').innerText();
+  const word=await lessonOne.locator('#backWord').innerText();
+  assert.ok(example.includes(word),'Missing lesson 1 contextual example for '+word);
+  assert.ok((await lessonOne.locator('#exampleRu').innerText()).length>8);
+  await lessonOne.locator('#cards [data-rate="yes"]').click();
+ }
+ assert.equal(await lessonOne.locator('#speakExample').count(),1);
+ assert.deepEqual(l1errors,[],'Lesson 1 flashcard JavaScript errors');
+ await lessonOne.close();
+ console.log('Interactive mobile flashcard test passed: lesson 1, all 37 cards');
  for(let lesson=2;lesson<=10;lesson++){
   const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
