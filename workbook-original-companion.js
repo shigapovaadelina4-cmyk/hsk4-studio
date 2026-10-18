@@ -20,8 +20,8 @@ function mount(host,lesson){
  let state={};try{state=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
  const persist=()=>{try{localStorage.setItem(key,JSON.stringify(state))}catch(e){status.textContent='Не удалось сохранить прогресс.'}};
  const shell=el('section',undefined,'hsk-original');host.append(shell);
- shell.append(el('h3','📒 Оригинальная рабочая тетрадь · Урок '+lesson));
- shell.append(el('p','Здесь проверяются ответы на настоящие задания №1–50 из твоей HSK Standard Course 4A Workbook. Сначала открой свой PDF. Сайт не публикует страницы книги и не подменяет её текст авторскими вопросами.','hsk-wb-note'));
+ const banner=el('div',undefined,'hsk-original-banner');banner.append(el('strong','🧠 HSK 4 · Тренировка'),el('span','🌸 Урок '+lesson));shell.append(banner);
+ shell.append(el('p','📖 Задания из твоей HSK 4A Workbook: отвечай по номеру и сразу проверяй результат. Оригинальные страницы доступны по кнопке «Показать страницу».','hsk-original-lead'));
  const upload=el('div',undefined,'hsk-original-upload');
  upload.append(el('strong','Твоя рабочая тетрадь (PDF, хранится только на устройстве)'));
  const input=el('input');input.type='file';input.accept='application/pdf,.pdf';input.setAttribute('aria-label','Загрузить свою рабочую тетрадь HSK 4A');upload.append(input);
@@ -72,19 +72,31 @@ function mount(host,lesson){
 
  const status=el('p',undefined,'hsk-wb-status');status.setAttribute('role','status');
  const nav=el('div',undefined,'hsk-wb-sections'),jump=el('div',undefined,'hsk-wb-nav'),task=el('div',undefined,'hsk-wb-question'),actions=el('div',undefined,'hsk-wb-controls');
+ const stepHeader=el('div',undefined,'hsk-original-step-header');
+ const progressTrack=el('div',undefined,'hsk-original-progress');const progressFill=el('div',undefined,'hsk-original-progress-fill');progressTrack.append(progressFill);
+ const originalBox=el('div',undefined,'hsk-original-embedded');const originalTitle=el('h3','📖 Оригинальное задание · Урок '+lesson);
+ const originalBody=el('div',undefined,'hsk-original-embedded-body');const originalCopy=el('p',undefined,'hsk-original-instruction');
+ originalBox.append(originalTitle,originalCopy,originalBody);
  const sections=[['听力 1–5',1,5],['听力 6–12',6,12],['听力 13–22',13,22],['阅读 23–30',23,30],['阅读 31–34',31,34],['阅读 35–43',35,43],['书写 44–50',44,50]];
  let current=1;
  function correct(i){const r=state[i];return i<=43&&r?.checked&&norm(r.value)===norm(answers[i])}
- function progress(){const done=Object.keys(state).filter(k=>state[k]?.checked).length;const score=Array.from({length:43},(_,i)=>i+1).filter(correct).length;status.textContent='Проверено: '+done+' из 50 · Верно (№1–43): '+score+' из 43 · №44–50 — самостоятельная сверка с ключом.'}
+ function progress(){const done=Object.keys(state).filter(k=>state[k]?.checked).length;const score=Array.from({length:43},(_,i)=>i+1).filter(correct).length;status.textContent='Проверено: '+done+' из 50 · Верно (№1–43): '+score+' из 43 · №44–50 — самостоятельная сверка с ключом.';
+ const group=current>=23&&current<=34?[23,34]:current>=35&&current<=43?[35,43]:current>=44?[44,50]:current<=5?[1,5]:current<=12?[6,12]:[13,22];
+ const answered=Array.from({length:group[1]-group[0]+1},(_,i)=>group[0]+i).filter(i=>state[i]?.checked).length;
+ stepHeader.textContent='Задание '+current+' · '+(current-group[0]+1)+' из '+(group[1]-group[0]+1)+' · Отвечено: '+answered;
+ progressFill.style.width=(100*answered/(group[1]-group[0]+1))+'%'}
  function display(){
   const n=current,old=state[n]||{value:'',checked:false};nav.replaceChildren();jump.replaceChildren();task.replaceChildren();
   const targetPage=pageFor(lesson,n);if(page!==targetPage){page=targetPage;showPage()}updateAudio(n)
   sections.forEach(([label,a,b])=>nav.append(btn(label,()=>{current=a;display()},n>=a&&n<=b?'active':'')));
   const group=sections.find(([,a,b])=>n>=a&&n<=b);
-  for(let i=group[1];i<=group[2];i++){const c=btn(String(i),()=>{current=i;display()},(i===n?'active ':'')+(state[i]?.checked?(i<=43?(correct(i)?'correct':'wrong'):'correct'):''));jump.append(c)}
-  task.append(el('p','Задание '+n+' / 50 · '+group[0]+' · страница PDF '+targetPage,'hsk-wb-number'));
+  const navigationRange=n>=23&&n<=34?[23,34]:[group[1],group[2]];
+  for(let i=navigationRange[0];i<=navigationRange[1];i++){const c=btn(String(i),()=>{current=i;display()},(i===n?'active ':'')+(state[i]?.checked?(i<=43?(correct(i)?'correct':'wrong'):'correct'):''));jump.append(c)}
+  task.append(el('h3','Задание '+n,'hsk-original-task-title'));
+  task.append(el('p',group[0]+' · Страница '+targetPage+' твоей рабочей тетради','hsk-wb-number'));
+  originalCopy.textContent='Задание №'+n+' · страница '+targetPage+'. Открой свой PDF один раз, затем выполняй упражнение, не выходя из тренировки.';
   task.append(el('p','Прочитай оригинальное условие №'+n+' на странице слева (или выше на телефоне). Здесь выполни его и проверь ответ.','hsk-wb-hint'));
-  task.append(btn('📖 К странице задания',()=>{page=targetPage;showPage();upload.scrollIntoView({behavior:'smooth',block:'start'})},'hsk-wb-audio'));
+  task.append(btn('📖 Показать страницу задания',()=>{page=targetPage;showPage();materials.open=true;originalBox.scrollIntoView({behavior:'smooth',block:'start'})},'hsk-wb-audio'));
   if(n>=23&&n<=26)task.append(el('p','阅读 第一部分 · подбери подходящее слово A–E к пропуску.','hsk-wb-hint'));
   if(n>=27&&n<=30)task.append(el('p','阅读 第二部分 · подбери соответствующий вариант A–E.','hsk-wb-hint'));
   if(n>=31&&n<=34)task.append(el('p','阅读 第三部分 · поставь части A, B, C в правильном порядке.','hsk-wb-hint'));
@@ -121,8 +133,11 @@ function mount(host,lesson){
  }
  const layout=el('div',undefined,'hsk-original-layout');
  const sourceCol=el('div',undefined,'hsk-original-source');const exerciseCol=el('div',undefined,'hsk-original-exercise');
- sourceCol.append(upload,audioSection,keySection);exerciseCol.append(status,nav,jump,task,actions);
- layout.append(sourceCol,exerciseCol);shell.append(layout);display();
+ const materials=el('details',undefined,'hsk-original-materials');const materialHeading=el('summary','📚 Открыть страницы учебника, записи и ключи');
+ materials.append(materialHeading,sourceCol);sourceCol.append(upload,audioSection,keySection);
+ originalBody.append(materials);
+ exerciseCol.append(status,nav,stepHeader,progressTrack,jump,originalBox,task,actions);
+ layout.append(exerciseCol);shell.append(layout);display();
 }
 window.HSKOriginalWorkbook={mount};
 })();
