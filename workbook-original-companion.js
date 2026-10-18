@@ -103,8 +103,8 @@ function mount(host,lesson){
    if(sourceItem.type==='order')sourceText.append(el('p','Нажми на A, B, C в правильном порядке.','hsk-source-task-note'));
    originalCopy.textContent='Урок '+lesson+' · задание №'+n+' · сверено с твоим PDF (страница '+targetPage+').';
   }else originalCopy.textContent='Задание №'+n+' · оригинальная страница '+targetPage+'. Открой PDF, чтобы увидеть условие целиком.';
-  upload.hidden=!!sourceItem;
-  reference.open=!sourceItem; // Show the actual PDF page immediately when no verified text transcription exists.
+  upload.hidden=!!sourceItem&&sourceItem.type!=='picture-write';
+  reference.open=!sourceItem||sourceItem.type==='picture-write'; // Pictures must remain visible for writing tasks.
   task.append(el('p','Выбери ответ на задание №'+n+' со страницы выше.','hsk-wb-hint'));
   task.append(btn('📖 Открыть исходную страницу',()=>{page=targetPage;showPage();upload.hidden=false;reference.open=true;originalBox.scrollIntoView({behavior:'smooth',block:'start'})},'hsk-wb-audio'));
   if(n>=23&&n<=26)task.append(el('p','阅读 第一部分 · подбери подходящее слово A–E к пропуску.','hsk-wb-hint'));
