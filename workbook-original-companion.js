@@ -76,6 +76,7 @@ function mount(host,lesson){
  const progressTrack=el('div',undefined,'hsk-original-progress');const progressFill=el('div',undefined,'hsk-original-progress-fill');progressTrack.append(progressFill);
  const originalBox=el('div',undefined,'hsk-original-embedded');const originalTitle=el('h3','📖 Оригинальное задание · Урок '+lesson);
  const originalBody=el('div',undefined,'hsk-original-embedded-body');const originalCopy=el('p',undefined,'hsk-original-instruction');
+ const sourceText=el('div',undefined,'hsk-source-text');sourceText.setAttribute('lang','zh-Hans');originalBody.append(sourceText);
  originalBox.append(originalTitle,originalCopy,originalBody);
  const sections=[['听力 1–5',1,5],['听力 6–12',6,12],['听力 13–22',13,22],['阅读 23–30',23,30],['阅读 31–34',31,34],['阅读 35–43',35,43],['书写 44–50',44,50]];
  let current=1;
@@ -94,9 +95,17 @@ function mount(host,lesson){
   for(let i=navigationRange[0];i<=navigationRange[1];i++){const c=btn(String(i),()=>{current=i;display()},(i===n?'active ':'')+(state[i]?.checked?(i<=43?(correct(i)?'correct':'wrong'):'correct'):''));jump.append(c)}
   task.append(el('h3','Задание '+n,'hsk-original-task-title'));
   task.append(el('p',group[0]+' · Страница '+targetPage+' твоей рабочей тетради','hsk-wb-number'));
-  originalCopy.textContent='Задание №'+n+' · оригинальная страница '+targetPage+' (показана ниже).';
+  const sourceItem=window.HSKWorkbookSourceItems?.[lesson]?.[n];
+  sourceText.replaceChildren();
+  if(sourceItem){
+   const question=el('p',sourceItem.text,'hsk-source-question');sourceText.append(question);
+   if(sourceItem.choices){const choicesList=el('p',sourceItem.choices.map((v,i)=>'ABCDE'[i]+' '+v).join(' · '),'hsk-source-bank');sourceText.append(choicesList)}
+   if(sourceItem.type==='order')sourceText.append(el('p','Нажми на A, B, C в правильном порядке.','hsk-source-task-note'));
+   originalCopy.textContent='Урок '+lesson+' · задание №'+n+' · сверено с твоим PDF (страница '+targetPage+').';
+  }else originalCopy.textContent='Задание №'+n+' · оригинальная страница '+targetPage+'. Открой PDF, чтобы увидеть условие целиком.';
+  upload.hidden=!!sourceItem;
   task.append(el('p','Выбери ответ на задание №'+n+' со страницы выше.','hsk-wb-hint'));
-  task.append(btn('📖 Вернуться к странице',()=>{page=targetPage;showPage();originalBox.scrollIntoView({behavior:'smooth',block:'start'})},'hsk-wb-audio'));
+  task.append(btn('📖 Открыть исходную страницу',()=>{page=targetPage;showPage();upload.hidden=false;reference.open=true;originalBox.scrollIntoView({behavior:'smooth',block:'start'})},'hsk-wb-audio'));
   if(n>=23&&n<=26)task.append(el('p','阅读 第一部分 · подбери подходящее слово A–E к пропуску.','hsk-wb-hint'));
   if(n>=27&&n<=30)task.append(el('p','阅读 第二部分 · подбери соответствующий вариант A–E.','hsk-wb-hint'));
   if(n>=31&&n<=34)task.append(el('p','阅读 第三部分 · поставь части A, B, C в правильном порядке.','hsk-wb-hint'));
@@ -136,7 +145,11 @@ function mount(host,lesson){
  const materials=el('details',undefined,'hsk-original-materials');const materialHeading=el('summary','🎧 Дополнительно: аудио и официальные ключи');
  materials.append(materialHeading,sourceCol);sourceCol.append(audioSection,keySection);
  // The actual workbook page must be visible inside the question card, never hidden in a separate sidebar or drawer.
- originalBody.append(upload,materials);
+ // When the original prompt is available as text, keep its PDF available only as an optional reference.
+ const reference=el('details',undefined,'hsk-source-reference');reference.append(el('summary','📄 Оригинальная страница PDF'));reference.append(upload);
+ originalBody.append(reference,materials);
+ const showRef=()=>{if(upload.hidden){upload.hidden=false;reference.open=true}else reference.open=true};
+ originalBox.addEventListener('click',e=>{if(e.target.closest('.hsk-show-original'))showRef()});
  exerciseCol.append(status,nav,stepHeader,progressTrack,jump,originalBox,task,actions);
  layout.append(exerciseCol);shell.append(layout);display();
 }
