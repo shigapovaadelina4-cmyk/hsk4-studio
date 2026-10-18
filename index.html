@@ -1236,9 +1236,15 @@ const ru=document.createElement('p');ru.textContent=escapeText(g[3]);
 const tip=document.createElement('p');tip.className='ml-grammar-tip';tip.textContent='Запомни: обрати внимание на порядок слов и значение конструкции в примере.';
 const speak=document.createElement('button');speak.textContent='🔊 Прослушать пример';speak.onclick=()=>speech(g[2]);explanation.append(h,description,schema,zh,ru,tip,speak)}
 function renderExercise(){choices.replaceChildren();feedback.textContent='';stats.textContent=correct+' верно · '+answered+' выполнено';
-const g=d.grammar[exercise%d.grammar.length];prompt.textContent=g[2];translation.textContent=g[3];
-const pool=d.grammar.map(x=>x[0]);if(pool.length<2){const b=document.createElement('button');b.textContent=g[0];b.onclick=()=>{feedback.textContent='✓ Это конструкция '+g[0];answered++;correct++;stats.textContent=correct+' верно · '+answered+' выполнено';b.disabled=true};choices.append(b);return}
-pool.forEach(v=>{const btn=document.createElement('button');btn.textContent=v;btn.onclick=()=>{choices.querySelectorAll('button').forEach(x=>x.disabled=true);answered++;if(v===g[0]){correct++;feedback.textContent='✓ Верно! '+g[1]}else feedback.textContent='✕ Неверно. Правильная конструкция: '+g[0]+'. '+g[1];stats.textContent=correct+' верно · '+answered+' выполнено'};choices.append(btn)})}
+const candidates=d.grammar.map(g=>({g,word:(g[0].match(/[\\u3400-\\u9fff]+/g)||[])[0]||''})).filter(x=>x.word&&x.g[2]&&x.g[2].includes(x.word));
+if(!candidates.length){prompt.textContent='Для этого урока пока нет проверенных предложений с пропусками.';translation.textContent='Добавим их после сверки с учебником.';next.disabled=true;return}
+next.disabled=false;
+const current=candidates[exercise%candidates.length],g=current.g,answer=current.word;
+prompt.textContent='Вставь подходящее слово в предложение: '+g[2].replace(answer,'＿＿＿');
+translation.textContent='Перевод: '+g[3];
+const pool=[...new Set(d.grammar.map(x=>(x[0].match(/[\\u3400-\\u9fff]+/g)||[])[0]).filter(Boolean))];
+if(pool.length<2){const inp=document.createElement('input');inp.placeholder='Впиши иероглифы';inp.setAttribute('aria-label','Ответ');const check=document.createElement('button');check.textContent='Проверить';check.onclick=()=>{check.disabled=true;inp.disabled=true;answered++;if(inp.value.trim()===answer){correct++;feedback.textContent='✓ Верно! '+g[2]}else feedback.textContent='✕ Правильно: '+answer+'. Полное предложение: '+g[2];stats.textContent=correct+' верно · '+answered+' выполнено'};choices.append(inp,check);return}
+pool.forEach(v=>{const btn=document.createElement('button');btn.textContent=v;btn.onclick=()=>{choices.querySelectorAll('button').forEach(x=>x.disabled=true);answered++;if(v===answer){correct++;feedback.textContent='✓ Верно! '+g[2]}else feedback.textContent='✕ Неверно. Правильное слово: '+answer+'. Полное предложение: '+g[2];stats.textContent=correct+' верно · '+answered+' выполнено'};choices.append(btn)})}
 next.onclick=()=>{exercise++;renderExercise()};reset.onclick=()=>{exercise=0;correct=0;answered=0;renderExercise()};
 body.append(topics,explanation,training);renderTopic();renderExercise()
 }
