@@ -1432,19 +1432,7 @@ candidates.forEach(value=>{const b=document.createElement('button');b.textConten
 area.append(prompt,choices,feedback);
 }else{
 const examples=words.filter(x=>typeof x[3]==='string'&&x[3].trim()&&/[。！？]/.test(x[3]));
-// Авторские тренировочные предложения: доступны даже там, где карточки ещё без примеров.
-if(!examples.length){
- const templates=[
-  w=>['请用“'+w[0]+'”造一个句子。','Составь предложение со словом «'+w[0]+'».'],
-  w=>['你知道“'+w[0]+'”怎么读吗？','Ты знаешь, как произносится «'+w[0]+'»?'],
-  w=>['我想知道“'+w[0]+'”是什么意思。','Я хочу узнать, что означает «'+w[0]+'».']
- ];
- words.slice(0,Math.min(12,words.length)).forEach((w,i)=>{
-  const [zh,ru]=templates[i%templates.length](w);
-  const py=window.pinyinPro?.pinyin?.(zh,{toneType:'symbol'})||'Пиньинь предложения пока недоступен';
-  examples.push([w[0],w[1],w[2],zh,ru,py]);
- });
-}
+// Игра использует только полноценные естественные предложения из карточек.
 if(!examples.length){const note=document.createElement('p');note.textContent='Для этого урока пока нет проверенных предложений на карточках. Сначала добавим их по материалам учебника.';area.append(note)}
 else{
 const lessonExamples=examples.slice(0,Math.max(10,examples.length));const item=lessonExamples[round%lessonExamples.length],sentence=item[3].trim();
