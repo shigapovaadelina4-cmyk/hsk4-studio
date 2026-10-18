@@ -99,6 +99,7 @@ function mount(host,lesson){
   sourceText.replaceChildren();
   if(sourceItem){
    const question=el('p',sourceItem.text,'hsk-source-question');sourceText.append(question);
+   if(sourceItem.prompt)sourceText.append(el('p','★ '+sourceItem.prompt,'hsk-source-prompt'));
    if(sourceItem.choices){const choicesList=el('p',sourceItem.choices.map((v,i)=>'ABCDE'[i]+' '+v).join(' · '),'hsk-source-bank');sourceText.append(choicesList)}
    if(sourceItem.type==='order')sourceText.append(el('p','Нажми на A, B, C в правильном порядке.','hsk-source-task-note'));
    originalCopy.textContent='Урок '+lesson+' · задание №'+n+' · сверено с твоим PDF (страница '+targetPage+').';
