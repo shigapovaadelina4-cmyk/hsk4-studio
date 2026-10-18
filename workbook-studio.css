@@ -45,3 +45,21 @@
 #mainLessonStudio .hsk-original .hsk-wb-nav button.correct{background:#e7f5ea}
 #mainLessonStudio .hsk-original .hsk-wb-nav button.wrong{background:#fff1f3}
 @media(max-width:540px){#mainLessonStudio .hsk-original-frame{height:58vh;min-height:360px}#mainLessonStudio .hsk-original .hsk-wb-options button{flex:1;min-width:80px}}
+
+/* Source-faithful workbook interface: the student's own PDF beside the answer form */
+#mainLessonStudio .hsk-original-layout{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:18px;align-items:start;margin-top:18px}
+#mainLessonStudio .hsk-original-source,#mainLessonStudio .hsk-original-exercise{min-width:0}
+#mainLessonStudio .hsk-original-source{position:sticky;top:12px}
+#mainLessonStudio .hsk-original-frame{height:min(75vh,850px);min-height:420px}
+#mainLessonStudio .hsk-original .hsk-wb-tokens button{min-width:65px;font-size:19px}
+#mainLessonStudio .hsk-original .hsk-wb-assembled{font-size:20px;min-height:50px}
+#mainLessonStudio .hsk-original-exercise .hsk-wb-question{margin:16px 0}
+#mainLessonStudio .hsk-original-exercise .hsk-wb-nav{gap:5px}
+#mainLessonStudio .hsk-original-source details{padding:12px;border:1px solid #ebdaec;border-radius:14px;background:#fff9fe}
+#mainLessonStudio .hsk-original-source summary{font-weight:650;cursor:pointer}
+@media(max-width:780px){
+ #mainLessonStudio .hsk-original-layout{grid-template-columns:minmax(0,1fr)}
+ #mainLessonStudio .hsk-original-source{position:static}
+ #mainLessonStudio .hsk-original-frame{height:52vh;min-height:310px}
+ #mainLessonStudio .hsk-original-exercise{min-width:0}
+}
