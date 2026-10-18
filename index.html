@@ -1357,7 +1357,7 @@ const h=document.createElement('h3');h.textContent='🎮 Игры · Урок '+
 const menu=document.createElement('div');menu.className='ml-actions';
 const area=document.createElement('div');
 body.append(h,menu,area);
-const games=[['guess','🎯 Угадай слово'],['sentence','🧩 Собери предложение'],['pinyin','🕵️ Пиньинь-детектив']];
+const games=[['guess','🎯 Угадай слово'],['sentence','🧩 Собери предложение'],['pinyin','🕵️ Пиньинь-детектив'],['fill','✍️ Заполни пропуск'],['review','🌸 Трудные слова']];
 let mode=window.__hskGameMode||'guess',round=window.__hskGameRound||0;
 function switchGame(next){mode=next;round=0;window.__hskGameMode=mode;window.__hskGameRound=round;draw()}
 function nextRound(){round++;window.__hskGameRound=round;draw()}
@@ -1366,7 +1366,15 @@ menu.replaceChildren();area.replaceChildren();
 games.forEach(([key,label])=>{const b=document.createElement('button');b.textContent=label;if(key===mode)b.className='primary';b.onclick=()=>switchGame(key);menu.append(b)});
 const words=d.words||[];if(!words.length){area.textContent='Для этого урока пока нет слов.';return}
 const w=words[round%words.length];
-if(mode==='guess'||mode==='pinyin'){
+if(mode==='fill'||mode==='review'){
+const hard=mode==='review'?words.filter(x=>{try{return JSON.parse(localStorage.getItem('hsk4-card-rating-'+active)||'{}')[x[0]]==='no'}catch(e){return false}}):words;
+const list=hard.length?hard:words;const target=list[round%list.length];
+const label=document.createElement('p');label.textContent=mode==='fill'?'Впиши китайское слово по переводу: '+target[2]:'Повтори трудное слово: '+target[2];
+const input=document.createElement('input');input.placeholder='Иероглифы';input.autocomplete='off';input.style.maxWidth='100%';
+const check=document.createElement('button');check.textContent='Проверить';const response=document.createElement('p');response.setAttribute('role','status');
+check.onclick=()=>{const ok=input.value.trim()===target[0];response.textContent=(ok?'✓ Верно! ':'✕ Правильный ответ: '+target[0]+'. ')+'Пиньинь: '+target[1]+' · '+target[2];input.disabled=true;check.disabled=true};
+area.append(label,input,check,response);
+}else if(mode==='guess'||mode==='pinyin'){
 const prompt=document.createElement('p');prompt.textContent=mode==='guess'?'Найди китайское слово: '+w[2]:'Выбери правильный пиньинь: '+w[0];
 const choices=document.createElement('div');choices.className='ml-quiz-options';
 const feedback=document.createElement('p');feedback.setAttribute('role','status');
@@ -1377,23 +1385,36 @@ candidates.forEach(value=>{const b=document.createElement('button');b.textConten
 area.append(prompt,choices,feedback);
 }else{
 const examples=words.filter(x=>typeof x[3]==='string'&&x[3].trim()&&/[。！？]/.test(x[3]));
+// Авторские тренировочные предложения: доступны даже там, где карточки ещё без примеров.
+if(!examples.length){
+ const templates=[
+  w=>['请用“'+w[0]+'”造一个句子。','Составь предложение со словом «'+w[0]+'».'],
+  w=>['你知道“'+w[0]+'”怎么读吗？','Ты знаешь, как произносится «'+w[0]+'»?'],
+  w=>['我想知道“'+w[0]+'”是什么意思。','Я хочу узнать, что означает «'+w[0]+'».']
+ ];
+ words.slice(0,Math.min(12,words.length)).forEach((w,i)=>{
+  const [zh,ru]=templates[i%templates.length](w);
+  const py=window.pinyinPro?.pinyin?.(zh,{toneType:'symbol'})||'Пиньинь предложения пока недоступен';
+  examples.push([w[0],w[1],w[2],zh,ru,py]);
+ });
+}
 if(!examples.length){const note=document.createElement('p');note.textContent='Для этого урока пока нет проверенных предложений на карточках. Сначала добавим их по материалам учебника.';area.append(note)}
 else{
 const lessonExamples=examples.slice(0,Math.max(10,examples.length));const item=lessonExamples[round%lessonExamples.length],sentence=item[3].trim();
 const cleaned=sentence.replace(/[。！？!?]/g,'');const lexicon=['我们','他们','你们','自己','这个','那个','现在','今天','明天','每天','周末','一起','正在','应该','不要','没有','可以','因为','所以','但是','如果','还是','已经','一个','一种','一篇','一名','一下','一点','有点','时候','什么','问题','工作','学习','汉语','老师','朋友','公司','学校','考试','文章','生活','觉得','知道','希望','喜欢','需要','非常','真的','比较','很多','很好','怎么','为什么','怎么样','越来越',...words.map(x=>x[0])].sort((a,b)=>b.length-a.length);const chunks=[];for(let i=0;i<cleaned.length;){if(/[“”‘’«»，,：:、\s]/.test(cleaned[i])){chunks.push(cleaned[i]);i++;continue}const match=lexicon.find(x=>cleaned.startsWith(x,i));if(match){chunks.push(match);i+=match.length}else{chunks.push(cleaned[i]);i++}}
 const chosen=[],selection=document.createElement('div'),pool=document.createElement('div'),feedback=document.createElement('p');
 selection.className='notice';selection.style.minHeight='50px';pool.className='ml-quiz-options';pool.style.gridTemplateColumns='repeat(auto-fit,minmax(95px,1fr))';
-const label=document.createElement('p');label.textContent='🧩 Собери предложение · '+(round%lessonExamples.length+1)+' из '+lessonExamples.length+'. Нажимай на слова по очереди:';const meaning=document.createElement('p');meaning.textContent='Перевод: '+(item[4]||'');const pronunciation=document.createElement('p');pronunciation.textContent='Пиньинь: '+(item[5]||'');
+const label=document.createElement('p');label.textContent='🧩 Собери предложение · '+(round%lessonExamples.length+1)+' из '+lessonExamples.length+'. Нажимай на слова по очереди:';const meaning=document.createElement('p');meaning.textContent='Авторское тренировочное предложение · Перевод: '+(item[4]||'');const pronunciation=document.createElement('p');pronunciation.textContent='Пиньинь: '+(item[5]||'');
 const indexes=chunks.map((_,i)=>i);for(let i=indexes.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[indexes[i],indexes[j]]=[indexes[j],indexes[i]]}if(indexes.every((v,i)=>v===i)&&indexes.length>1)indexes.reverse();
 function paint(){selection.textContent=chosen.map(i=>chunks[i]).join('');pool.replaceChildren();indexes.forEach(i=>{const b=document.createElement('button');b.textContent=chunks[i];b.disabled=chosen.includes(i);b.onclick=()=>{chosen.push(i);feedback.textContent='';paint()};pool.append(b)})}
 paint();
 const actions=document.createElement('div');actions.className='ml-actions';
-const check=document.createElement('button');check.textContent='Проверить';check.onclick=()=>{const correct=chosen.length===chunks.length&&chosen.every((v,i)=>v===i);feedback.textContent=(correct?'✓ Верно!':'✕ Неверно. Правильный порядок: '+sentence)+' · '+(item[5]||'')+' · '+(item[4]||'');let progress={};try{progress=JSON.parse(localStorage.getItem('hsk4-sentence-progress-'+active)||'{}')}catch(e){}progress[item[0]]={correct,when:Date.now()};localStorage.setItem('hsk4-sentence-progress-'+active,JSON.stringify(progress))};
+const check=document.createElement('button');check.textContent='Проверить';check.onclick=()=>{const correct=chosen.length===chunks.length&&chosen.every((v,i)=>v===i);feedback.textContent=(correct?'✓ Верно! ':'✕ Порядок слов нарушен. Сравни расположение частей предложения. ')+'Правильный порядок: '+sentence+' · Пиньинь: '+(item[5]||'не указан')+' · Перевод: '+(item[4]||'не указан');let progress={};try{progress=JSON.parse(localStorage.getItem('hsk4-sentence-progress-'+active)||'{}')}catch(e){}progress[item[0]]={correct,when:Date.now()};localStorage.setItem('hsk4-sentence-progress-'+active,JSON.stringify(progress))};
 const undo=document.createElement('button');undo.textContent='↶ Отменить';undo.onclick=()=>{chosen.pop();feedback.textContent='';paint()};
 const reset=document.createElement('button');reset.textContent='Сбросить ↻';reset.onclick=()=>{chosen.length=0;feedback.textContent='';paint()};
 actions.append(check,undo,reset);area.append(label,meaning,selection,pool,feedback,pronunciation,actions);
 }}
-const next=document.createElement('button');next.className='primary';next.textContent='Следующий раунд →';next.onclick=nextRound;area.append(next);
+const next=document.createElement('button');next.className='primary';next.textContent=mode==='sentence'?'Следующее →':'Следующий раунд →';next.onclick=nextRound;area.append(next);
 }
 draw();
 }else{const p=document.createElement('p');p.textContent=active===2?'Урок 2: задания на чтение №23–30 доступны в разделе «Рабочая тетрадь» выше.':'Интерактивная рабочая тетрадь для урока 3 пока не перенесена.';const b=document.createElement('button');b.className='primary';b.textContent='Перейти к рабочей тетради';b.onclick=()=>{document.querySelector('[data-tab="workbook"]')?.click();document.querySelector('#wbMainLesson')?.scrollIntoView({behavior:'smooth'});const picker=document.querySelector('#wbMainLesson');if(picker){picker.value=String(active);picker.dispatchEvent(new Event('change',{bubbles:true}))}};body.append(p,b)}
