@@ -18,33 +18,44 @@ function build(lesson){
  const words=lesson.words.filter(w=>w[0]&&w[1]&&w[2]);
  const grammar=lesson.grammar.filter(g=>g[2]&&g[3]);
  const items=[];
- const getOptions=(correct,other,seed)=>shuffle([correct,...other.filter(x=>x!==correct).slice(0,3)],seed);
- for(let i=0;i<10;i++){
-  const w=words[i%words.length],other=words.filter(x=>x!==w).map(x=>x[0]);
-  items.push({id:'listen-'+i,kind:'choice',section:'Аудирование',prompt:'Прослушай синтезированное слово и выбери иероглифы.',audio:w[0],options:getOptions(w[0],other,i+3),answer:w[0],explanation:w[0]+' · '+w[1]+' · '+w[2]});
+ const opts=(right,wrong,seed)=>shuffle([right,...[...new Set(wrong.filter(x=>x&&x!==right))].slice(0,3)],seed);
+ const w=i=>words[i%words.length],g=i=>grammar[i%grammar.length];
+ const add=(id,section,kind,prompt,answer,explanation,extra={})=>items.push({id,section,kind,prompt,answer,explanation,...extra});
+ // Original workbook structure: 听力 1–22, 阅读 23–43, 书写 44–50.
+ // These 50 prompts are ORIGINAL TRAINING ANALOGUES, not the copyrighted questions.
+ for(let i=0;i<5;i++){
+  const x=w(i);
+  add('a-'+(i+1),'听力 1–5 · Аудирование','choice','Прослушай слово и выбери его перевод.',x[2],x[0]+' · '+x[1]+' · '+x[2],{audio:x[0],options:opts(x[2],words.map(y=>y[2]),i)});
+ }
+ for(let i=0;i<7;i++){
+  const x=w(i+5);
+  add('a-'+(i+6),'听力 6–12 · Аудирование','choice','Прослушай слово и выбери иероглифы.',x[0],x[0]+' · '+x[1]+' · '+x[2],{audio:x[0],options:opts(x[0],words.map(y=>y[0]),i+9)});
  }
  for(let i=0;i<10;i++){
-  const w=words[(i+10)%words.length];items.push({id:'choice-'+i,kind:'choice',section:'Лексика',prompt:'Как переводится «'+w[0]+'»?',options:getOptions(w[2],words.filter(x=>x!==w).map(x=>x[2]),i+10),answer:w[2],explanation:w[0]+' · '+w[1]+' · '+w[2]});
+  const x=g(i),other=grammar.filter(y=>y!==x).map(y=>y[3]);
+  add('a-'+(i+13),'听力 13–22 · Аудирование','choice','Прослушай авторское предложение и выбери перевод.',x[3],x[2]+' · '+(x[5]||'')+' · '+x[3]+' · '+x[1],{audio:x[2],options:opts(x[3],other,i+23)});
  }
- for(let i=0;i<10;i++){
-  const w=words[(i+20)%words.length];items.push({id:'write-'+i,kind:'text',section:'Письмо',prompt:'Напиши иероглифами: '+w[2],hint:'Пиньинь: '+w[1],answer:w[0],explanation:w[0]+' · '+w[1]+' · '+w[2]});
+ for(let i=0;i<8;i++){
+  const x=w(i+12);
+  add('a-'+(i+23),'阅读 23–30 · Чтение','choice','Прочитай слово «'+x[0]+'» и выбери перевод.',x[2],x[0]+' · '+x[1]+' · '+x[2],{options:opts(x[2],words.map(y=>y[2]),i+35)});
  }
- for(let i=0;i<10;i++){
-  const g=grammar[i%grammar.length];if(!g)continue;
-  const matches=g[0].match(/[\u3400-\u9fff]+/g)||[];
-  const answer=matches.find(x=>g[2].includes(x))||matches.flatMap(x=>[...x]).find(x=>g[2].includes(x))||((g[2].match(/[\u3400-\u9fff]{2,}/g)||[])[0]||'').slice(0,2);
-  if(!answer)continue;
-  items.push({id:'cloze-'+i,kind:'text',section:'Грамматика',prompt:'Вставь пропущенные иероглифы: '+g[2].replace(answer,'＿＿＿'),hint:g[3],answer,explanation:'Полное предложение: '+g[2]+' · '+(g[5]||'')+' · '+g[3]+' · Правило: '+g[1]});
+ for(let i=0;i<4;i++){
+  const x=g(i);
+  add('a-'+(i+31),'阅读 31–34 · Чтение','choice','Прочитай авторское предложение и выбери его перевод: '+x[2],x[3],x[2]+' · '+(x[5]||'')+' · '+x[3]+' · '+x[1],{options:opts(x[3],grammar.map(y=>y[3]),i+45)});
  }
- for(let i=0;i<10;i++){
-  const g=grammar[i%grammar.length];if(!g)continue;
-  const tokens=splitSentence(g[2],words);if(tokens.length<2)continue;
-  items.push({id:'build-'+i,kind:'order',section:'Составь предложение',prompt:'Собери предложение по переводу: '+g[3],tokens,answer:tokens.join(''),explanation:g[2]+' · '+(g[5]||'')+' · '+g[3]+' · '+g[1]});
+ for(let i=0;i<9;i++){
+  const x=g(i+4),matches=(x[0].match(/[\u3400-\u9fff]+/g)||[]);
+  const answer=matches.find(t=>x[2].includes(t))||matches.flatMap(t=>[...t]).find(t=>x[2].includes(t))||((x[2].match(/[\u3400-\u9fff]{2,}/g)||[])[0]||'').slice(0,2);
+  if(!answer)throw Error('Cannot generate grammar cloze');
+  add('a-'+(i+35),'阅读 35–43 · Чтение','text','Вставь пропущенное слово: '+x[2].replace(answer,'＿＿＿'),answer,'Полное предложение: '+x[2]+' · '+(x[5]||'')+' · '+x[3]+' · Правило: '+x[1],{hint:'Перевод: '+x[3]});
  }
- for(let i=0;i<10;i++){
-  const g=grammar[i%grammar.length];if(!g)continue;
-  const other=grammar.filter(x=>x!==g).map(x=>x[3]);
-  items.push({id:'read-'+i,kind:'choice',section:'Чтение',prompt:'Прочитай предложение и выбери подходящий перевод: '+g[2],options:getOptions(g[3],other,i+31),answer:g[3],explanation:g[2]+' · '+(g[5]||'')+' · '+g[3]});
+ for(let i=0;i<5;i++){
+  const x=w(i+20);
+  add('a-'+(i+44),'书写 44–48 · Письмо','text','Напиши китайскими иероглифами: '+x[2],x[0],x[0]+' · '+x[1]+' · '+x[2],{hint:'Пиньинь: '+x[1]});
+ }
+ for(let i=0;i<2;i++){
+  const x=g(i+2),tokens=splitSentence(x[2],words);
+  add('a-'+(i+49),'书写 49–50 · Письмо','order','Собери авторское предложение: '+x[3],tokens.join(''),x[2]+' · '+(x[5]||'')+' · '+x[3]+' · '+x[1],{tokens});
  }
  return items;
 }
@@ -55,7 +66,7 @@ function mount(host,n,data,speak){
  const save=()=>{try{localStorage.setItem(key,JSON.stringify(responses))}catch(e){note.textContent='Не получилось сохранить ответы на этом устройстве.'}};
  const shell=$('section','hsk-wb');host.append(shell);
  const heading=$('h3','','📒 Рабочая тетрадь · Урок '+n);
- const note=$('p','hsk-wb-note','Авторские упражнения по словарю и грамматике урока. Не являются заданиями или официальными ключами HSK Standard Course Workbook. Озвучка синтезированная.');
+ const note=$('p','hsk-wb-note','50 авторских тренировочных заданий по структуре HSK 4A Workbook: 22 аудирования, 21 чтение, 7 письма. Это не оригинальные вопросы и не официальные ключи. Озвучка синтезированная.');
  const status=$('p','hsk-wb-status');status.setAttribute('role','status');
  const bar=$('div','hsk-wb-bar'),fill=$('div','hsk-wb-fill');bar.append(fill);
  const sections=$('div','hsk-wb-sections'),nav=$('div','hsk-wb-nav'),question=$('div','hsk-wb-question');
