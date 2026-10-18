@@ -46,6 +46,30 @@ function mount(host,lesson){
  keyInput.onchange=async()=>{const file=keyInput.files?.[0];if(!file)return;openKey(file);try{await saveFile(file,'keys-4A')}catch(e){keyInfo.textContent+=' (Повторно выбери файл после обновления.)'}};
  getFile('keys-4A').then(file=>{if(file&&!keyUrl)openKey(file)}).catch(()=>{});
  keySection.append(keyInfo,keyInput,keyFrame);shell.append(keySection);
+ // Local audio from the learner's own licensed workbook package (three listening parts).
+ const audioSection=el('details');audioSection.open=false;
+ audioSection.append(el('summary','🎧 Оригинальное аудирование · части 1–3'));
+ audioSection.append(el('p','Выбери три файла аудио этого урока по порядку. Файлы хранятся локально в браузере, без публикации или отправки на сервер.','hsk-wb-hint'));
+ const audioInput=el('input');audioInput.type='file';audioInput.accept='audio/*,.mp3,.m4a,.wav,.ogg';audioInput.multiple=true;audioInput.setAttribute('aria-label','Загрузить три аудиозаписи текущего урока');
+ const audioStatus=el('p','Аудиофайлы ещё не выбраны.','hsk-wb-hint');
+ const player=el('audio');player.controls=true;player.preload='none';player.style.width='100%';
+ const recordings=[null,null,null];const audioUrls=[null,null,null];
+ const audioPart=n=>n<=5?0:n<=12?1:2;
+ function updateAudio(n){
+  if(n>22){player.hidden=true;return}
+  player.hidden=false;const part=audioPart(n);const file=recordings[part];
+  if(file){if(!audioUrls[part])audioUrls[part]=URL.createObjectURL(file);if(player.src!==audioUrls[part]){player.pause();player.src=audioUrls[part]}}
+  else{player.pause();player.removeAttribute('src');player.load()}
+  audioStatus.textContent=file?'Запись '+(part+1)+' · '+file.name:'Для заданий '+(part===0?'1–5':part===1?'6–12':'13–22')+' загрузи запись '+(part+1)+' своего урока.';
+ }
+ audioInput.onchange=async()=>{
+  const files=[...(audioInput.files||[])].slice(0,3);
+  for(let i=0;i<files.length;i++){recordings[i]=files[i];if(audioUrls[i])URL.revokeObjectURL(audioUrls[i]);audioUrls[i]=null;try{await saveFile(files[i],'audio-'+lesson+'-'+i)}catch(e){}}
+  updateAudio(current);
+ };
+ for(let i=0;i<3;i++)getFile('audio-'+lesson+'-'+i).then(f=>{if(f){recordings[i]=f;updateAudio(current)}}).catch(()=>{});
+ audioSection.append(audioInput,audioStatus,player);shell.append(audioSection);
+
  const status=el('p',undefined,'hsk-wb-status');status.setAttribute('role','status');
  const nav=el('div',undefined,'hsk-wb-sections'),jump=el('div',undefined,'hsk-wb-nav'),task=el('div',undefined,'hsk-wb-question'),actions=el('div',undefined,'hsk-wb-controls');
  const sections=[['听力 1–5',1,5],['听力 6–12',6,12],['听力 13–22',13,22],['阅读 23–30',23,30],['阅读 31–34',31,34],['阅读 35–43',35,43],['书写 44–50',44,50]];
@@ -54,7 +78,7 @@ function mount(host,lesson){
  function progress(){const done=Object.keys(state).filter(k=>state[k]?.checked).length;const score=Array.from({length:43},(_,i)=>i+1).filter(correct).length;status.textContent='Проверено: '+done+' из 50 · Верно (№1–43): '+score+' из 43 · №44–50 — самостоятельная сверка с ключом.'}
  function display(){
   const n=current,old=state[n]||{value:'',checked:false};nav.replaceChildren();jump.replaceChildren();task.replaceChildren();
-  const targetPage=pageFor(lesson,n);if(page!==targetPage){page=targetPage;showPage()}
+  const targetPage=pageFor(lesson,n);if(page!==targetPage){page=targetPage;showPage()}updateAudio(n)
   sections.forEach(([label,a,b])=>nav.append(btn(label,()=>{current=a;display()},n>=a&&n<=b?'active':'')));
   const group=sections.find(([,a,b])=>n>=a&&n<=b);
   for(let i=group[1];i<=group[2];i++){const c=btn(String(i),()=>{current=i;display()},(i===n?'active ':'')+(state[i]?.checked?(i<=43?(correct(i)?'correct':'wrong'):'correct'):''));jump.append(c)}
@@ -97,7 +121,7 @@ function mount(host,lesson){
  }
  const layout=el('div',undefined,'hsk-original-layout');
  const sourceCol=el('div',undefined,'hsk-original-source');const exerciseCol=el('div',undefined,'hsk-original-exercise');
- sourceCol.append(upload,keySection);exerciseCol.append(status,nav,jump,task,actions);
+ sourceCol.append(upload,audioSection,keySection);exerciseCol.append(status,nav,jump,task,actions);
  layout.append(sourceCol,exerciseCol);shell.append(layout);display();
 }
 window.HSKOriginalWorkbook={mount};
