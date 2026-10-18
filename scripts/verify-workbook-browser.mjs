@@ -72,7 +72,7 @@ try {
   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/Твой вариант|Письменное|письменное/);
   assert.match(await original.locator('.hsk-wb-status').innerText(),new RegExp('Проверено: '+(lesson===2?4:3)+' из 50'));
   // Match source pages: question 44 uses page start + 8.
-  const sourcePage=await original.locator('.hsk-original-source input[type=number]').inputValue();
+  const sourcePage=await original.locator('.hsk-original-embedded input[type=number]').inputValue();
   assert.equal(Number(sourcePage),8+(lesson-1)*10+8,'Wrong original PDF page for lesson '+lesson);
   const audioPicker=original.locator('input[aria-label="Загрузить три аудиозаписи текущего урока"]');
   assert.equal(await audioPicker.count(),1,'Original audio upload missing');
