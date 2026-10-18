@@ -9,8 +9,8 @@ const norm=s=>String(s||'').trim().replace(/\s/g,'').toUpperCase();
 function dbOpen(){
  return new Promise((resolve,reject)=>{const q=indexedDB.open('hsk4-private-source-v1',1);q.onupgradeneeded=()=>q.result.createObjectStore('pdf');q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)});
 }
-async function saveFile(file){const db=await dbOpen();return new Promise((res,rej)=>{const t=db.transaction('pdf','readwrite');t.objectStore('pdf').put(file,'4A');t.oncomplete=()=>{db.close();res()};t.onerror=()=>rej(t.error)})}
-async function getFile(){const db=await dbOpen();return new Promise((res,rej)=>{const t=db.transaction('pdf','readonly');const r=t.objectStore('pdf').get('4A');r.onsuccess=()=>{db.close();res(r.result)};r.onerror=()=>rej(r.error)})}
+async function saveFile(file,id='4A'){const db=await dbOpen();return new Promise((res,rej)=>{const t=db.transaction('pdf','readwrite');t.objectStore('pdf').put(file,id);t.oncomplete=()=>{db.close();res()};t.onerror=()=>rej(t.error)})}
+async function getFile(id='4A'){const db=await dbOpen();return new Promise((res,rej)=>{const t=db.transaction('pdf','readonly');const r=t.objectStore('pdf').get(id);r.onsuccess=()=>{db.close();res(r.result)};r.onerror=()=>rej(r.error)})}
 function mount(host,lesson){
  const answers=window.HSK4OfficialAnswerCodes?.[lesson];
  if(!answers){host.append(el('p','Официальные ответы для этого урока ещё не проверены.'));return}
@@ -35,6 +35,15 @@ function mount(host,lesson){
  input.onchange=async()=>{const f=input.files?.[0];if(!f)return;openFile(f);try{await saveFile(f);pdfStatus.textContent+=' Сохранён в браузере.'}catch(e){pdfStatus.textContent+=' Сохранение PDF недоступно: выбери файл после перезагрузки.'}};
  getFile().then(f=>{if(f&&!fileUrl)openFile(f)}).catch(()=>{});
  upload.append(pdfStatus,pager,frame);shell.append(upload);
+ // Private answer-key PDF is never published; page 4/8/... contains answer list.
+ const keySection=el('details');const keySummary=el('summary','📑 Мои официальные ключи — сравнить письменные №44–50');keySection.append(keySummary);
+ const keyInfo=el('p','Выбери HSK 4A (上) workbook keys. Ключи остаются на устройстве, а не в GitHub.');
+ const keyInput=el('input');keyInput.type='file';keyInput.accept='.pdf,application/pdf';keyInput.setAttribute('aria-label','Загрузить официальный файл ключей HSK 4A');
+ const keyFrame=el('iframe');keyFrame.title='Твои официальные ключи HSK 4A';keyFrame.className='hsk-original-frame';
+ let keyUrl=null;const openKey=blob=>{if(keyUrl)URL.revokeObjectURL(keyUrl);keyUrl=URL.createObjectURL(blob);keyFrame.src=keyUrl+'#page='+(lesson*4)+'&zoom=page-width';keyInfo.textContent='✓ Официальные ключи открыты. Листай файл для сверки задания №44–50.'};
+ keyInput.onchange=async()=>{const file=keyInput.files?.[0];if(!file)return;openKey(file);try{await saveFile(file,'keys-4A')}catch(e){keyInfo.textContent+=' (Повторно выбери файл после обновления.)'}};
+ getFile('keys-4A').then(file=>{if(file&&!keyUrl)openKey(file)}).catch(()=>{});
+ keySection.append(keyInfo,keyInput,keyFrame);shell.append(keySection);
  const status=el('p',undefined,'hsk-wb-status');status.setAttribute('role','status');
  const nav=el('div',undefined,'hsk-wb-sections'),jump=el('div',undefined,'hsk-wb-nav'),task=el('div',undefined,'hsk-wb-question'),actions=el('div',undefined,'hsk-wb-controls');
  const sections=[['听力 1–5',1,5],['听力 6–12',6,12],['听力 13–22',13,22],['阅读 23–30',23,30],['阅读 31–34',31,34],['阅读 35–43',35,43],['书写 44–50',44,50]];
