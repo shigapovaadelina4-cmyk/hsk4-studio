@@ -63,3 +63,43 @@
  #mainLessonStudio .hsk-original-frame{height:52vh;min-height:310px}
  #mainLessonStudio .hsk-original-exercise{min-width:0}
 }
+
+
+/* Lesson 1-style workbook stepper, shared by lessons 2–10. */
+#mainLessonStudio .hsk-original{border:1px solid #e4d3e6;border-radius:23px;background:#fff;overflow:hidden;padding:0 0 20px}
+#mainLessonStudio .hsk-original-banner{background:#0aa9a5;color:white;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:18px 22px;font-size:20px}
+#mainLessonStudio .hsk-original-banner strong{font-size:21px;font-weight:800}
+#mainLessonStudio .hsk-original-lead{padding:16px 22px 0;line-height:1.6;color:#655069;margin:0}
+#mainLessonStudio .hsk-original-layout{display:block!important;margin:0!important}
+#mainLessonStudio .hsk-original-exercise{padding:12px clamp(12px,3vw,26px)}
+#mainLessonStudio .hsk-original .hsk-wb-status{font-size:14px;margin:6px 0 14px;color:#655069}
+#mainLessonStudio .hsk-original-step-header{font-size:19px;font-weight:750;color:#46515d;margin:12px 0 16px}
+#mainLessonStudio .hsk-original-progress{height:7px;background:#d7f1f0;border-radius:3px;overflow:hidden;margin:0 0 15px}
+#mainLessonStudio .hsk-original-progress-fill{height:100%;background:#08aaa5;width:0%;transition:width .22s}
+#mainLessonStudio .hsk-original .hsk-wb-nav{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0 20px}
+#mainLessonStudio .hsk-original .hsk-wb-nav button{width:43px;height:43px;min-width:43px;padding:0;border-radius:999px;background:white;border:1px solid #d6e8e7;color:#59616b;font-size:14px}
+#mainLessonStudio .hsk-original .hsk-wb-nav button.active{background:#00aaa6;color:white;border-color:#00aaa6;box-shadow:0 0 0 3px #e0f8f6}
+#mainLessonStudio .hsk-original .hsk-wb-sections{margin:12px 0;gap:8px}
+#mainLessonStudio .hsk-original .hsk-wb-sections button{border-radius:14px;flex:0 1 auto}
+#mainLessonStudio .hsk-original-embedded{border:1px solid #e8ddec;border-radius:18px;background:white;padding:20px;margin:14px 0}
+#mainLessonStudio .hsk-original-embedded h3{margin:0 0 10px;color:#33243d;font-size:22px}
+#mainLessonStudio .hsk-original-instruction{line-height:1.7;margin:8px 0 12px;color:#6a5770}
+#mainLessonStudio .hsk-original-materials{border:1px solid #e9d8ec;border-radius:13px;background:#fdf7fd;padding:11px 14px}
+#mainLessonStudio .hsk-original-materials summary{cursor:pointer;font-weight:700;color:#795486;min-height:35px;display:list-item}
+#mainLessonStudio .hsk-original-materials[open] summary{margin-bottom:14px}
+#mainLessonStudio .hsk-original-source{position:static!important;width:100%}
+#mainLessonStudio .hsk-original .hsk-wb-question{background:#fff;padding:12px 4px;border:0;margin:10px 0}
+#mainLessonStudio .hsk-original-task-title{font-size:clamp(22px,3vw,27px);color:#30243c;margin:0 0 10px}
+#mainLessonStudio .hsk-original .hsk-wb-options{margin:18px 0}
+#mainLessonStudio .hsk-original .hsk-wb-options button{min-width:75px;padding:13px 18px}
+#mainLessonStudio .hsk-original .hsk-wb-check{background:#00a9a5!important;border-color:#00a9a5!important}
+#mainLessonStudio .hsk-original .hsk-wb-controls{display:flex;gap:9px;flex-wrap:wrap}
+#mainLessonStudio .hsk-original .hsk-wb-controls button{flex:1;min-width:125px}
+@media(max-width:540px){
+ #mainLessonStudio .hsk-original-banner{padding:14px;font-size:16px}
+ #mainLessonStudio .hsk-original-banner strong{font-size:17px}
+ #mainLessonStudio .hsk-original-embedded{padding:14px}
+ #mainLessonStudio .hsk-original-exercise{padding:12px}
+ #mainLessonStudio .hsk-original .hsk-wb-controls button{flex-basis:calc(50% - 8px);min-width:0}
+ #mainLessonStudio .hsk-original .hsk-wb-nav button{width:41px;height:41px;min-width:41px}
+}
