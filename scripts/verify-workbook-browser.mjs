@@ -16,6 +16,17 @@ try {
   await page.locator('#mainLessonStudio').waitFor({state:'attached',timeout:20000});
   await page.evaluate(n=>document.dispatchEvent(new CustomEvent('hsk-main-lesson',{detail:n})),lesson);
   await page.locator('#mainLessonStudio [data-ml="workbook"]').click();
+  // Verify real workbook mode first: original PDF upload and 50 numbered answers.
+  const original=page.locator('#mainLessonStudio .hsk-original');
+  await original.waitFor({state:'visible'});
+  assert.equal(await original.locator('.hsk-wb-sections button').count(),7);
+  await original.locator('.hsk-wb-options button').first().click();
+  await original.locator('.hsk-wb-check').click();
+  assert.match(await original.locator('.hsk-wb-feedback').innerText(),/ключу/);
+  assert.match(await original.locator('.hsk-wb-status').innerText(),/Проверено: 1 из 50/);
+  const pdfInput=original.locator('input[type=file]');
+  await pdfInput.setInputFiles({name:'practice.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\\n1 0 obj <</Type /Catalog>> endobj\\n%%EOF')});
+  await page.locator('#mainLessonStudio .hsk-wb-sections button').filter({hasText:'Дополнительная авторская практика'}).click();
   const wb=page.locator('#mainLessonStudio .hsk-wb');
   await wb.waitFor({state:'visible'});
   assert.match(await wb.locator('.hsk-wb-status').innerText(),/из 50/);
@@ -45,6 +56,8 @@ try {
   await page.locator('#mainLessonStudio').waitFor({state:'attached'});
   await page.evaluate(n=>document.dispatchEvent(new CustomEvent('hsk-main-lesson',{detail:n})),lesson);
   await page.locator('#mainLessonStudio [data-ml="workbook"]').click();
+  assert.match(await page.locator('#mainLessonStudio .hsk-original .hsk-wb-status').innerText(),/Проверено: 1 из 50/);
+  await page.locator('#mainLessonStudio .hsk-wb-sections button').filter({hasText:'Дополнительная авторская практика'}).click();
   const progress=await wb.locator('.hsk-wb-status').innerText();
   assert.match(progress,/Выполнено: [1-9]/,'Progress must survive reload');
   const overflow=await wb.evaluate(el=>el.scrollWidth>window.innerWidth+2);
