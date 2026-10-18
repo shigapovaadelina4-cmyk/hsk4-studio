@@ -49,10 +49,18 @@ try {
   await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 23–30'}).click();
   assert.equal(await original.locator('.hsk-original-exercise .hsk-wb-nav button').count(),12);
   assert.match(await original.locator('.hsk-original-step-header').innerText(),/Задание 23 · 1 из 12/);
+  if(lesson===2){
+   assert.match(await original.locator('.hsk-source-question').innerText(),/如果有什么问题/);
+   assert.match(await original.locator('.hsk-source-bank').innerText(),/C 及时/);
+   await original.locator('.hsk-wb-options button').filter({hasText:'C'}).click();
+   await original.locator('.hsk-wb-check').click();
+   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/正确|Правильно/);
+  }
   assert.equal(await original.locator('.hsk-original-embedded .hsk-original-upload .hsk-original-frame').count(),1);
   assert.equal(await original.locator('.hsk-original-materials').getAttribute('open'),null);
   assert.match(await original.locator('.hsk-original-instruction').innerText(),/оригинальная страница/);
   await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 31–34'}).click();
+  if(lesson===2)assert.match(await original.locator('.hsk-source-question').innerText(),/来北京半年多了/);
   const exact=await page.evaluate(n=>window.HSK4OfficialAnswerCodes[n][31],lesson);
   for(const character of exact)await original.locator('.hsk-wb-tokens button').filter({hasText:character}).click();
   assert.equal(await original.locator('.hsk-wb-assembled').innerText(),exact);
