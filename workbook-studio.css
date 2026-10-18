@@ -31,3 +31,5 @@
 #mainLessonStudio .hsk-wb-controls button{flex:1;min-width:140px}
 #mainLessonStudio .hsk-wb button:disabled{opacity:.45;cursor:default}
 @media(max-width:540px){#mainLessonStudio .hsk-wb-options{grid-template-columns:1fr}#mainLessonStudio .hsk-wb-question{padding:14px}#mainLessonStudio .hsk-wb-controls button{flex-basis:100%}#mainLessonStudio .hsk-wb-sections button{flex:1 1 42%}}
+
+#mainLessonStudio .hsk-wb-passage{padding:16px 18px;border:1px solid #e6d1ec;border-radius:14px;background:#f6eef9;font-size:clamp(19px,3vw,24px);line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0}
