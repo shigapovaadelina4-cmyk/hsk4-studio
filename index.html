@@ -1215,13 +1215,13 @@ function init(){
 const top=document.querySelector('#partA');if(!top||document.querySelector('#mainLessonStudio'))return;
 const panel=document.querySelector('.panel');if(!panel)return;
 const studio=document.createElement('section');studio.id='mainLessonStudio';studio.hidden=true;
-studio.innerHTML='<div class="ml-head"></div><p class="muted small">Материалы каждого урока открываются в одинаковом оформлении. Словарь уроков 6–10 пока требует сверки с учебником.</p><div class="ml-tabs"><button data-ml="cards">🀄 Карточки</button><button data-ml="grammar">📖 Грамматика</button><button data-ml="practice">✍️ Практика</button><button data-ml="audio">🎧 Аудирование</button><button data-ml="games">🎮 Игры</button><button data-ml="workbook">📒 Рабочая тетрадь</button></div><div class="ml-body"></div>';
+studio.innerHTML='<div class="ml-head"></div><p class="muted small">Материалы каждого урока открываются в одинаковом оформлении. Карточки уроков 1–10 сверены со словарями HSK 4A.</p><div class="ml-tabs"><button data-ml="cards">🀄 Карточки</button><button data-ml="grammar">📖 Грамматика</button><button data-ml="practice">✍️ Практика</button><button data-ml="audio">🎧 Аудирование</button><button data-ml="games">🎮 Игры</button><button data-ml="workbook">📒 Рабочая тетрадь</button></div><div class="ml-body"></div>';
 panel.insertAdjacentElement('afterend',studio);
 let active=4,tab='cards',idx=0,flipped=false,qidx=0,score=0;
 const head=studio.querySelector('.ml-head'),body=studio.querySelector('.ml-body');
 function speech(text){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='zh-CN';u.rate=.85;window.speechSynthesis.speak(u)}
 function render(){
-const d=data[active];head.textContent='🌸 Урок '+active+' · '+d.title;body.replaceChildren();if(active>=6&&active<=10){const note=document.createElement('p');note.style.cssText='background:#fff3dd;border-radius:12px;padding:12px 16px;color:#765522';note.textContent='⚠️ Пока это тренировочные слова уровня HSK 4, а не проверенный список из твоего учебника. Карточки уже работают; точный список ещё нужно сверить.';body.appendChild(note)}
+const d=data[active];head.textContent='🌸 Урок '+active+' · '+d.title;body.replaceChildren();if(active>=6&&active<=10){const note=document.createElement('p');note.style.cssText='background:#fff3dd;border-radius:12px;padding:12px 16px;color:#765522';note.textContent='📖 Слова урока сверены с пронумерованным словарём учебника HSK 4A. Примеры, не подтверждённые учебником, скрыты.';body.appendChild(note)}
 studio.querySelectorAll('[data-ml]').forEach(b=>b.classList.toggle('active',b.dataset.ml===tab));
 if(tab==='cards'){
 const w=d.words[idx];const count=document.createElement('p');count.textContent='Слово '+(idx+1)+' из '+d.words.length;
@@ -1341,7 +1341,7 @@ draw();
 }else{const p=document.createElement('p');p.textContent=active===2?'Урок 2: задания на чтение №23–30 доступны в разделе «Рабочая тетрадь» выше.':'Интерактивная рабочая тетрадь для урока 3 пока не перенесена.';const b=document.createElement('button');b.className='primary';b.textContent='Перейти к рабочей тетради';b.onclick=()=>{document.querySelector('[data-tab="workbook"]')?.click();document.querySelector('#wbMainLesson')?.scrollIntoView({behavior:'smooth'});const picker=document.querySelector('#wbMainLesson');if(picker){picker.value=String(active);picker.dispatchEvent(new Event('change',{bubbles:true}))}};body.append(p,b)}
 }
 studio.querySelectorAll('[data-ml]').forEach(b=>b.onclick=()=>{tab=b.dataset.ml;render()});
-document.addEventListener('hsk-main-lesson',e=>select(e.detail));function select(n){lesson=n;renderLessons();active=n;idx=0;qidx=0;score=0;flipped=false;tab='cards';studio.hidden=false;panel.style.display='none';render();studio.scrollIntoView({behavior:'smooth',block:'start'})}
+document.addEventListener('hsk-main-lesson',e=>select(e.detail));function select(n){active=n;idx=0;qidx=0;score=0;flipped=false;tab='cards';for(const b of document.querySelectorAll('#partA button.lesson, #partB button.lesson'))b.classList.toggle('active',b.textContent.trim()==='Урок '+n);for(const b of document.querySelectorAll('#hskQuickLessonButtons button'))b.style.background=b.textContent.trim()==='Урок '+n?'#00aaa3':'#f9f4fa';studio.hidden=false;panel.style.display='none';render();studio.scrollIntoView({behavior:'smooth',block:'start'})}
 function addButtons(){for(const n of [2,3,4,5,6,7,8,9,10]){const old=[...top.querySelectorAll('button.lesson')].find(b=>b.textContent.trim()==='Урок '+n);if(!old)continue;old.disabled=false;old.title='Открыть основной урок '+n;old.onclick=()=>select(n)}}
 addButtons();
 /* lesson buttons are wired directly by renderLessons */
