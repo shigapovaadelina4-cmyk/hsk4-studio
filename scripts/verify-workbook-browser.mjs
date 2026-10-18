@@ -34,7 +34,7 @@ try {
   await original.locator('.hsk-wb-check').click();
   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/手|Письменное|письменное/);
   assert.match(await original.locator('.hsk-wb-status').innerText(),/Проверено: 3 из 50/);
-  const pdfInput=original.locator('input[type=file]');
+  const pdfInput=original.locator('.hsk-original-upload input[type=file]');
   await pdfInput.setInputFiles({name:'practice.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\\n1 0 obj <</Type /Catalog>> endobj\\n%%EOF')});
   await page.locator('#mainLessonStudio .hsk-wb-sections button').filter({hasText:'Дополнительная авторская практика'}).click();
   const wb=page.locator('#mainLessonStudio .hsk-wb');
@@ -66,7 +66,7 @@ try {
   await page.locator('#mainLessonStudio').waitFor({state:'attached'});
   await page.evaluate(n=>document.dispatchEvent(new CustomEvent('hsk-main-lesson',{detail:n})),lesson);
   await page.locator('#mainLessonStudio [data-ml="workbook"]').click();
-  assert.match(await page.locator('#mainLessonStudio .hsk-original .hsk-wb-status').innerText(),/Проверено: 1 из 50/);
+  assert.match(await page.locator('#mainLessonStudio .hsk-original .hsk-wb-status').innerText(),/Проверено: 3 из 50/);
   await page.locator('#mainLessonStudio .hsk-wb-sections button').filter({hasText:'Дополнительная авторская практика'}).click();
   const progress=await wb.locator('.hsk-wb-status').innerText();
   assert.match(progress,/Выполнено: [1-9]/,'Progress must survive reload');
