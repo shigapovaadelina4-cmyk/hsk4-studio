@@ -1264,13 +1264,50 @@ const show=document.createElement('button');show.textContent='👁 Показа�
 const next=document.createElement('button');next.className='primary';next.textContent='Далее →';next.onclick=()=>{qidx=(qidx+1)%d.words.length;render()};
 actions.append(listen,show,next);body.append(h,p,reveal,actions);
 }else if(tab==='games'){
-const h=document.createElement('h3');h.textContent='🎮 Угадай слово · Урок '+active;
-const w=d.words[qidx%d.words.length];const p=document.createElement('p');p.textContent='Найди китайское слово для перевода: '+w[2];
-const options=document.createElement('div');options.className='ml-quiz-options';const feedback=document.createElement('p');
-const others=d.words.filter(x=>x[0]!==w[0]).slice((qidx*3)%Math.max(1,d.words.length-3)).slice(0,3);
-const pool=[w,...others].sort((a,b)=>((a[0].codePointAt(0)+qidx)%13)-((b[0].codePointAt(0)+qidx)%13));
-pool.forEach(x=>{const b=document.createElement('button');b.textContent=x[0];b.onclick=()=>{options.querySelectorAll('button').forEach(z=>z.disabled=true);feedback.textContent=x===w?'✓ Верно!':'✕ Правильное слово: '+w[0]+' · '+w[1]};options.appendChild(b)});
-const next=document.createElement('button');next.className='primary';next.textContent='Следующий раунд →';next.onclick=()=>{qidx=(qidx+1)%d.words.length;render()};body.append(h,p,options,feedback,next);
+const h=document.createElement('h3');h.textContent='🎮 Игры · Урок '+active;
+const menu=document.createElement('div');menu.className='ml-actions';
+const area=document.createElement('div');
+body.append(h,menu,area);
+const games=[['guess','🎯 Угадай слово'],['sentence','🧩 Собери предложение'],['pinyin','🕵️ Пиньинь-детектив']];
+let mode=window.__hskGameMode||'guess',round=window.__hskGameRound||0;
+function switchGame(next){mode=next;round=0;window.__hskGameMode=mode;window.__hskGameRound=round;draw()}
+function nextRound(){round++;window.__hskGameRound=round;draw()}
+function draw(){
+menu.replaceChildren();area.replaceChildren();
+games.forEach(([key,label])=>{const b=document.createElement('button');b.textContent=label;if(key===mode)b.className='primary';b.onclick=()=>switchGame(key);menu.append(b)});
+const words=d.words||[];if(!words.length){area.textContent='Для этого урока пока нет слов.';return}
+const w=words[round%words.length];
+if(mode==='guess'||mode==='pinyin'){
+const prompt=document.createElement('p');prompt.textContent=mode==='guess'?'Найди китайское слово: '+w[2]:'Выбери правильный пиньинь: '+w[0];
+const choices=document.createElement('div');choices.className='ml-quiz-options';
+const feedback=document.createElement('p');feedback.setAttribute('role','status');
+const answer=mode==='guess'?w[0]:w[1];
+const candidates=[answer,...words.filter(x=>x!==w).map(x=>mode==='guess'?x[0]:x[1]).filter(x=>x&&x!==answer)].filter((x,i,a)=>a.indexOf(x)===i).slice(0,4);
+candidates.sort((a,b)=>((a.length*7+a.codePointAt(0)+round)%19)-((b.length*7+b.codePointAt(0)+round)%19));
+candidates.forEach(value=>{const b=document.createElement('button');b.textContent=value;b.onclick=()=>{choices.querySelectorAll('button').forEach(z=>z.disabled=true);feedback.textContent=value===answer?'✓ Верно!':'✕ Правильный ответ: '+answer};choices.append(b)});
+area.append(prompt,choices,feedback);
+}else{
+const examples=words.filter(x=>typeof x[3]==='string'&&x[3].trim()&&/[。！？]/.test(x[3]));
+if(!examples.length){const note=document.createElement('p');note.textContent='Для этого урока пока нет проверенных предложений на карточках. Сначала добавим их по материалам учебника.';area.append(note)}
+else{
+const item=examples[round%examples.length],sentence=item[3].trim();
+const tokens=sentence.replace(/[。！？!?，,；;]/g,' ').trim().split(/\s+/).filter(Boolean);
+const chunks=tokens.length>1?tokens:Array.from(sentence.replace(/[。！？!?]/g,''));
+const chosen=[],selection=document.createElement('div'),pool=document.createElement('div'),feedback=document.createElement('p');
+selection.className='notice';selection.style.minHeight='50px';pool.className='ml-quiz-options';pool.style.gridTemplateColumns='repeat(auto-fit,minmax(95px,1fr))';
+const label=document.createElement('p');label.textContent='Расставь части предложения в правильном порядке:';
+const indexes=chunks.map((_,i)=>i).sort((a,b)=>((a*7+round*3)%17)-((b*7+round*3)%17));
+function paint(){selection.textContent=chosen.map(i=>chunks[i]).join(' ');pool.replaceChildren();indexes.forEach(i=>{const b=document.createElement('button');b.textContent=chunks[i];b.disabled=chosen.includes(i);b.onclick=()=>{chosen.push(i);feedback.textContent='';paint()};pool.append(b)})}
+paint();
+const actions=document.createElement('div');actions.className='ml-actions';
+const check=document.createElement('button');check.textContent='Проверить';check.onclick=()=>{feedback.textContent=chosen.length===chunks.length&&chosen.every((v,i)=>v===i)?'✓ Правильно!':'✕ Правильный порядок: '+sentence};
+const reset=document.createElement('button');reset.textContent='Сбросить ↻';reset.onclick=()=>{chosen.length=0;feedback.textContent='';paint()};
+actions.append(check,reset);area.append(label,selection,pool,feedback,actions);
+}}
+}
+const next=document.createElement('button');next.className='primary';next.textContent='Следующий раунд →';next.onclick=nextRound;area.append(next);
+}
+draw();
 }else{const p=document.createElement('p');p.textContent=active===2?'Урок 2: задания на чтение №23–30 доступны в разделе «Рабочая тетрадь» выше.':'Интерактивная рабочая тетрадь для урока 3 пока не перенесена.';const b=document.createElement('button');b.className='primary';b.textContent='Перейти к рабочей тетради';b.onclick=()=>{document.querySelector('[data-tab="workbook"]')?.click();document.querySelector('#wbMainLesson')?.scrollIntoView({behavior:'smooth'});const picker=document.querySelector('#wbMainLesson');if(picker){picker.value=String(active);picker.dispatchEvent(new Event('change',{bubbles:true}))}};body.append(p,b)}
 }
 studio.querySelectorAll('[data-ml]').forEach(b=>b.onclick=()=>{tab=b.dataset.ml;render()});
