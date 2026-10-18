@@ -1206,10 +1206,42 @@ const stats=document.createElement('p');stats.className='ml-rating-status';const
 const jump=document.createElement('div');jump.style.cssText='display:flex;gap:6px;flex-wrap:wrap;margin-top:12px';for(let j=0;j<d.words.length;j++){const b=document.createElement('button');b.type='button';b.textContent=String(j+1);b.title='Слово '+(j+1);b.style.cssText='border:1px solid #c9dedb;border-radius:9px;min-width:34px;padding:7px;background:'+(j===idx?'#0aa99f;color:white':'white');b.onclick=()=>{idx=j;flipped=false;render()};jump.appendChild(b)}
 body.append(count,card,rating,stats,actions,jump);
 }else if(tab==='grammar'){
-const intro=document.createElement('h3');intro.textContent='📖 Грамматика урока '+active;body.appendChild(intro);
-if(!d.grammar.length){const note=document.createElement('p');note.className='notice';note.textContent='Грамматика этого урока ещё не сверена с оригинальным учебником. Непроверенные правила не добавлены.';body.appendChild(note)}
-d.grammar.forEach(([rule,meaning,ex,ru],gi)=>{const el=document.createElement('div');el.className='notice ml-grammar-topic';el.style.marginBottom='14px';const h=document.createElement('h3');h.textContent=(gi+1)+'. '+rule;const p=document.createElement('p');p.textContent='📌 Объяснение: '+meaning;const zh=document.createElement('p');zh.className='ml-grammar-zh';zh.textContent=ex;const tr=document.createElement('p');tr.textContent='Перевод: '+ru;const listen=document.createElement('button');listen.textContent='🔊 Слушать предложение';listen.onclick=()=>speech(ex);el.append(h,p,zh,tr,listen);body.appendChild(el)});
-if(d.grammar.length){const test=document.createElement('section');test.className='notice ml-grammar-training';const h=document.createElement('h3');h.textContent='✍️ Проверь грамматику';const rule=d.grammar[qidx%d.grammar.length];const prompt=document.createElement('p');prompt.textContent='Какое правило означает: «'+rule[1]+'»?';const options=document.createElement('div');options.className='ml-quiz-options';const feedback=document.createElement('p');d.grammar.forEach(g=>{const b=document.createElement('button');b.textContent=g[0];b.onclick=()=>{options.querySelectorAll('button').forEach(x=>x.disabled=true);feedback.textContent=g===rule?'✓ Правильно!':'✕ Неверно. Повтори правило: '+rule[0]};options.appendChild(b)});const next=document.createElement('button');next.className='primary';next.textContent='Следующий вопрос →';next.onclick=()=>{qidx=(qidx+1)%d.grammar.length;render()};test.append(h,prompt,options,feedback,next);body.appendChild(test)}
+const heading=document.createElement('h3');heading.textContent='📖 Грамматика урока '+active;
+const subtitle=document.createElement('p');subtitle.className='muted';subtitle.textContent='Выбери конструкцию, прочитай объяснение и потренируйся. Тренировка составлена на основе доступных правил этого урока.';
+body.append(heading,subtitle);
+if(!d.grammar.length){const note=document.createElement('div');note.className='notice';note.textContent='Грамматика этого урока ещё не сверена с оригинальным учебником.';body.append(note)}
+else{
+let selected=0,exercise=0,correct=0,answered=0;
+const topics=document.createElement('div');topics.className='ml-grammar-tabs';
+const explanation=document.createElement('div');explanation.className='ml-grammar-detail';
+const training=document.createElement('section');training.className='ml-grammar-training';
+const head=document.createElement('div');head.className='ml-grammar-training-head';
+const name=document.createElement('h3');name.textContent='✍️ Отработка грамматики';
+const stats=document.createElement('span');stats.className='muted';head.append(name,stats);
+const prompt=document.createElement('p');prompt.className='ml-grammar-question';
+const translation=document.createElement('p');translation.className='muted';
+const choices=document.createElement('div');choices.className='ml-grammar-choices';
+const feedback=document.createElement('p');feedback.setAttribute('aria-live','polite');
+const controls=document.createElement('div');controls.className='ml-actions';
+const next=document.createElement('button');next.textContent='Следующий вопрос →';next.className='primary';
+const reset=document.createElement('button');reset.textContent='Начать заново ↻';
+controls.append(next,reset);training.append(head,prompt,translation,choices,feedback,controls);
+const escapeText=x=>String(x||'');
+function renderTopic(){topics.replaceChildren();d.grammar.forEach((g,i)=>{const btn=document.createElement('button');btn.textContent=(i+1)+'. '+g[0];btn.className=i===selected?'active':'';btn.onclick=()=>{selected=i;renderTopic()};topics.append(btn)});
+const g=d.grammar[selected];explanation.replaceChildren();
+const h=document.createElement('h3');h.textContent=g[1];const description=document.createElement('p');description.textContent='Конструкция: '+g[0]+'. '+g[1]+'.';
+const schema=document.createElement('p');schema.className='ml-grammar-schema';schema.textContent='Схема: '+g[0];
+const zh=document.createElement('p');zh.className='ml-grammar-example';zh.textContent=escapeText(g[2]);
+const ru=document.createElement('p');ru.textContent=escapeText(g[3]);
+const tip=document.createElement('p');tip.className='ml-grammar-tip';tip.textContent='Запомни: обрати внимание на порядок слов и значение конструкции в примере.';
+const speak=document.createElement('button');speak.textContent='🔊 Прослушать пример';speak.onclick=()=>speech(g[2]);explanation.append(h,description,schema,zh,ru,tip,speak)}
+function renderExercise(){choices.replaceChildren();feedback.textContent='';stats.textContent=correct+' верно · '+answered+' выполнено';
+const g=d.grammar[exercise%d.grammar.length];prompt.textContent=g[2];translation.textContent=g[3];
+const pool=d.grammar.map(x=>x[0]);if(pool.length<2){const b=document.createElement('button');b.textContent=g[0];b.onclick=()=>{feedback.textContent='✓ Это конструкция '+g[0];answered++;correct++;stats.textContent=correct+' верно · '+answered+' выполнено';b.disabled=true};choices.append(b);return}
+pool.forEach(v=>{const btn=document.createElement('button');btn.textContent=v;btn.onclick=()=>{choices.querySelectorAll('button').forEach(x=>x.disabled=true);answered++;if(v===g[0]){correct++;feedback.textContent='✓ Верно! '+g[1]}else feedback.textContent='✕ Неверно. Правильная конструкция: '+g[0]+'. '+g[1];stats.textContent=correct+' верно · '+answered+' выполнено'};choices.append(btn)})}
+next.onclick=()=>{exercise++;renderExercise()};reset.onclick=()=>{exercise=0;correct=0;answered=0;renderExercise()};
+body.append(topics,explanation,training);renderTopic();renderExercise()
+}
 }else if(tab==='practice'){
 const w=d.words[qidx%d.words.length],choices=[w[2],...d.words.filter(x=>x!==w).slice((qidx+2)%4,(qidx+2)%4+3).map(x=>x[2])];while(choices.length<4)choices.push(d.words[(qidx+choices.length)%d.words.length][2]);choices.sort((a,b)=>((a.length+qidx)%7)-((b.length+qidx)%7));
 const h=document.createElement('h3');h.textContent='Как переводится '+w[0]+'?';const meta=document.createElement('p');meta.textContent='Вопрос '+(qidx+1)+' из '+d.words.length+' · Верно: '+score;const opts=document.createElement('div');opts.className='ml-quiz-options';const feedback=document.createElement('p');
@@ -1379,4 +1411,20 @@ window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,700)});
 #mainLessonStudio .ml-grammar-training{margin-top:24px;border:1px solid #ead4e6;border-radius:18px;padding:20px}
 #mainLessonStudio .ml-actions button,#mainLessonStudio .ml-quiz-options button{border:1px solid #ead4e6;border-radius:12px;background:#f8eff9;padding:12px 17px;font:inherit;cursor:pointer}
 @media(max-width:600px){#mainLessonStudio{padding:15px;border-radius:18px}#mainLessonStudio .ml-tabs button{padding:11px 13px;font-size:14px}}
+</style><style>
+#mainLessonStudio .ml-grammar-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+#mainLessonStudio .ml-grammar-tabs button{background:#f8effb;border:1px solid #e9d6ed;border-radius:13px;padding:13px 15px;color:#4b3157;font:inherit;cursor:pointer}
+#mainLessonStudio .ml-grammar-tabs button.active{background:#80508f;color:white}
+#mainLessonStudio .ml-grammar-detail{background:#f8effb;border-radius:18px;padding:22px;margin:16px 0 20px;line-height:1.8}
+#mainLessonStudio .ml-grammar-detail h3{margin:0 0 14px}
+#mainLessonStudio .ml-grammar-schema{font-weight:700;color:#654078}
+#mainLessonStudio .ml-grammar-example{font-size:22px;color:#654078}
+#mainLessonStudio .ml-grammar-tip{border-left:3px solid #a878c0;padding-left:12px}
+#mainLessonStudio .ml-grammar-training{background:#fff;border:1px solid #ead6e6;border-radius:18px;padding:20px}
+#mainLessonStudio .ml-grammar-training-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+#mainLessonStudio .ml-grammar-question{font-size:21px;font-weight:700}
+#mainLessonStudio .ml-grammar-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}
+#mainLessonStudio .ml-grammar-choices button{padding:16px 10px;background:#fff;border:1px solid #e8d4ec;border-radius:14px;color:#4b3157;font:inherit;cursor:pointer}
+#mainLessonStudio .ml-grammar-choices button:disabled{opacity:.65}
+@media(max-width:600px){#mainLessonStudio .ml-grammar-choices{grid-template-columns:1fr}}
 </style></body></html>
