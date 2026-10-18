@@ -1328,9 +1328,14 @@ function renderExercise(){
 choices.replaceChildren();feedback.textContent='';stats.textContent=correct+' верно · '+answered+' выполнено';
 // Все примеры авторские; темы берутся исключительно из грамматики текущего урока.
 const candidates=d.grammar.flatMap(g=>{
- const terms=(g[0].match(/[\u3400-\u9fff]+/g)||[]).filter(x=>x.length>0);
- const word=terms.find(x=>g[2]?.includes(x))||terms.map(x=>[...x]).flat().find(x=>g[2]?.includes(x));
- return word&&g[2]?.includes(word)?[{g,word}]:[];
+ const sentence=g[2]||'';
+ const terms=(g[0].match(/[\u3400-\u9fff]+/g)||[]);
+ let word=terms.find(x=>sentence.includes(x));
+ if(!word)word=terms.flatMap(x=>[...x]).find(x=>sentence.includes(x));
+ // Если грамматическая конструкция не повторена буквально в примере,
+ // используем содержательное слово из того же авторского предложения.
+ if(!word){const matches=sentence.match(/[\u3400-\u9fff]{2,}/g)||[];word=matches.find(x=>x.length>=2)?.slice(0,2)||''}
+ return word&&sentence.includes(word)?[{g,word}]:[];
 });
 if(!candidates.length){prompt.textContent='Пока нет предложений для этого урока.';translation.textContent='';next.disabled=true;return}
 const current=candidates[exercise%candidates.length],g=current.g,answer=current.word;
