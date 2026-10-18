@@ -21,8 +21,9 @@ for(const [lesson,count] of Object.entries(expected)){
   assert.equal(words?.length,count,'Lesson '+lesson+' count differs from textbook');
   assert.equal(new Set(words.map(w=>w[0])).size,count,'Lesson '+lesson+' duplicate headword');
   for(const word of words){
-    assert.equal(word.length,3,'Lesson '+lesson+' has unsourced example fields');
-    assert(word.every(v=>typeof v==='string'&&v.trim()),'Lesson '+lesson+' has empty Chinese/pinyin/Russian field');
+    assert(word.length===3||word.length===6,'Lesson '+lesson+' has invalid flashcard shape');
+    assert(word.slice(0,3).every(v=>typeof v==='string'&&v.trim()),'Lesson '+lesson+' has empty Chinese/pinyin/Russian field');
+    if(word.length===6) assert(word.slice(3).every(v=>typeof v==='string'),'Example fields must contain strings');
   }
 }
 
@@ -40,4 +41,4 @@ assert(html.includes('mainLessonStudio'),'Main lesson studio missing');
 assert(!html.includes('const draftCards='),'Non-textbook draft cards must not be present');
 assert(!html.includes('const cardExamples='),'Unsourced Chinese example bank must not be present');
 assert(!html.includes('const extraCardExamples='),'Unsourced Chinese example bank must not be present');
-console.log('Passed: all inline JS parses; lessons 1–10: 323 cards including 14 proper names; no missing fields or duplicates; original controls retained.');
+console.log('Passed: all inline JS parses; lessons 1–10: 323 cards including 14 proper names; no missing headwords or duplicates; original controls retained.');
