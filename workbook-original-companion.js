@@ -21,7 +21,7 @@ function mount(host,lesson){
  const persist=()=>{try{localStorage.setItem(key,JSON.stringify(state))}catch(e){status.textContent='Не удалось сохранить прогресс.'}};
  const shell=el('section',undefined,'hsk-original');host.append(shell);
  const banner=el('div',undefined,'hsk-original-banner');banner.append(el('strong','🧠 HSK 4 · Тренировка'),el('span','🌸 Урок '+lesson));shell.append(banner);
- shell.append(el('p','📖 Задания из твоей HSK 4A Workbook: отвечай по номеру и сразу проверяй результат. Оригинальные страницы доступны по кнопке «Показать страницу».','hsk-original-lead'));
+ shell.append(el('p','📖 Выполняй задания по оригинальным страницам прямо на карточке, выбирай ответы и сразу проверяй. Файл остаётся только на твоём устройстве.','hsk-original-lead'));
  const upload=el('div',undefined,'hsk-original-upload');
  upload.append(el('strong','Твоя рабочая тетрадь (PDF, хранится только на устройстве)'));
  const input=el('input');input.type='file';input.accept='application/pdf,.pdf';input.setAttribute('aria-label','Загрузить свою рабочую тетрадь HSK 4A');upload.append(input);
@@ -94,9 +94,9 @@ function mount(host,lesson){
   for(let i=navigationRange[0];i<=navigationRange[1];i++){const c=btn(String(i),()=>{current=i;display()},(i===n?'active ':'')+(state[i]?.checked?(i<=43?(correct(i)?'correct':'wrong'):'correct'):''));jump.append(c)}
   task.append(el('h3','Задание '+n,'hsk-original-task-title'));
   task.append(el('p',group[0]+' · Страница '+targetPage+' твоей рабочей тетради','hsk-wb-number'));
-  originalCopy.textContent='Задание №'+n+' · страница '+targetPage+'. Открой свой PDF один раз, затем выполняй упражнение, не выходя из тренировки.';
-  task.append(el('p','Прочитай оригинальное условие №'+n+' на странице слева (или выше на телефоне). Здесь выполни его и проверь ответ.','hsk-wb-hint'));
-  task.append(btn('📖 Показать страницу задания',()=>{page=targetPage;showPage();materials.open=true;originalBox.scrollIntoView({behavior:'smooth',block:'start'})},'hsk-wb-audio'));
+  originalCopy.textContent='Задание №'+n+' · оригинальная страница '+targetPage+' (показана ниже).';
+  task.append(el('p','Выбери ответ на задание №'+n+' со страницы выше.','hsk-wb-hint'));
+  task.append(btn('📖 Вернуться к странице',()=>{page=targetPage;showPage();originalBox.scrollIntoView({behavior:'smooth',block:'start'})},'hsk-wb-audio'));
   if(n>=23&&n<=26)task.append(el('p','阅读 第一部分 · подбери подходящее слово A–E к пропуску.','hsk-wb-hint'));
   if(n>=27&&n<=30)task.append(el('p','阅读 第二部分 · подбери соответствующий вариант A–E.','hsk-wb-hint'));
   if(n>=31&&n<=34)task.append(el('p','阅读 第三部分 · поставь части A, B, C в правильном порядке.','hsk-wb-hint'));
@@ -107,7 +107,7 @@ function mount(host,lesson){
   if(n<=22)task.append(el('p','Для оригинального аудирования нужен аудиофайл издательства; синтезированные случайные слова не заменяют диалоги из тетради.','hsk-wb-hint'));
   const choices=el('div',undefined,'hsk-wb-options');
   let value=old.value||'';
-  const picks=n<=5?['Верно','Неверно']:n>=31&&n<=34?null:n<=30?Array.from({length:n>=23&&n<=30?5:4},(_,i)=>'ABCDE'[i]):n<=43?['A','B','C','D']:null;
+  const picks=n<=5?['Верно','Неверно']:n>=31&&n<=34?null:n<=22?['A','B','C','D']:n<=30?['A','B','C','D','E']:n<=43?['A','B','C','D']:null;
   if(n>=31&&n<=34){
    const arranged=el('div',undefined,'hsk-wb-assembled');arranged.setAttribute('role','status');
    const controls=el('div',undefined,'hsk-wb-tokens');
@@ -133,9 +133,10 @@ function mount(host,lesson){
  }
  const layout=el('div',undefined,'hsk-original-layout');
  const sourceCol=el('div',undefined,'hsk-original-source');const exerciseCol=el('div',undefined,'hsk-original-exercise');
- const materials=el('details',undefined,'hsk-original-materials');const materialHeading=el('summary','📚 Открыть страницы учебника, записи и ключи');
- materials.append(materialHeading,sourceCol);sourceCol.append(upload,audioSection,keySection);
- originalBody.append(materials);
+ const materials=el('details',undefined,'hsk-original-materials');const materialHeading=el('summary','🎧 Дополнительно: аудио и официальные ключи');
+ materials.append(materialHeading,sourceCol);sourceCol.append(audioSection,keySection);
+ // The actual workbook page must be visible inside the question card, never hidden in a separate sidebar or drawer.
+ originalBody.append(upload,materials);
  exerciseCol.append(status,nav,stepHeader,progressTrack,jump,originalBox,task,actions);
  layout.append(exerciseCol);shell.append(layout);display();
 }
