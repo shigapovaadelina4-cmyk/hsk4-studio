@@ -1441,7 +1441,18 @@ const next=document.createElement('button');next.className='primary';next.textCo
 }
 draw();
 }else{
-if(window.HSKWorkbook)window.HSKWorkbook.mount(body,active,d,speech);
+if(window.HSKOriginalWorkbook){
+const choice=document.createElement('div');choice.className='hsk-wb-sections';
+const original=document.createElement('button'),author=document.createElement('button');
+original.textContent='📒 Оригинальная тетрадь + ответы';original.className='active';
+author.textContent='🌸 Дополнительная авторская практика';
+choice.append(original,author);body.append(choice);
+const host=document.createElement('div');body.append(host);
+const show=mode=>{host.replaceChildren();original.classList.toggle('active',mode==='original');author.classList.toggle('active',mode==='authored');
+if(mode==='original')window.HSKOriginalWorkbook.mount(host,active);
+else if(window.HSKWorkbook)window.HSKWorkbook.mount(host,active,d,speech)};
+original.onclick=()=>show('original');author.onclick=()=>show('authored');show('original');
+}else if(window.HSKWorkbook)window.HSKWorkbook.mount(body,active,d,speech);
 else{const note=document.createElement('p');note.textContent='Модуль заданий не загрузился. Обнови страницу.';body.append(note)}
 }
 }
@@ -1613,4 +1624,4 @@ window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,700)});
 #mainLessonStudio .ml-grammar-detail{background:#f8effb!important;border-radius:18px!important;padding:24px!important}
 #mainLessonStudio .ml-grammar-training{background:white!important;border:1px solid #ecd9ee!important;border-radius:18px!important}
 #mainLessonStudio .ml-grammar-training .ml-grammar-choices button{background:#fff!important;border:1px solid #ead5ed!important}
-#mainLessonStudio .ml-grammar-pinyin{color:#80508f;font-size:16px;font-weight:600}#mainLessonStudio .ml-grammar-schema{background:#f4e9fa;padding:12px 15px;border-radius:12px}#mainLessonStudio .ml-grammar-training button{min-height:46px}#mainLessonStudio .ml-quiz-options button{min-height:56px;padding:14px 10px;border-radius:14px;font-size:18px}#mainLessonStudio .ml-actions button{min-height:48px}#mainLessonStudio .ml-card-example button{min-height:44px}#mainLessonStudio .ml-grammar-training{margin-top:18px}</style><script src="./workbook-studio.js?v=3" defer></script></body></html>
+#mainLessonStudio .ml-grammar-pinyin{color:#80508f;font-size:16px;font-weight:600}#mainLessonStudio .ml-grammar-schema{background:#f4e9fa;padding:12px 15px;border-radius:12px}#mainLessonStudio .ml-grammar-training button{min-height:46px}#mainLessonStudio .ml-quiz-options button{min-height:56px;padding:14px 10px;border-radius:14px;font-size:18px}#mainLessonStudio .ml-actions button{min-height:48px}#mainLessonStudio .ml-card-example button{min-height:44px}#mainLessonStudio .ml-grammar-training{margin-top:18px}</style><script src="./workbook-studio.js?v=3" defer></script><script src="./workbook-answer-codes.js?v=1" defer></script><script src="./workbook-original-companion.js?v=1" defer></script></body></html>
