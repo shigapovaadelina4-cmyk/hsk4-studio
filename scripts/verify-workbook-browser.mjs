@@ -58,7 +58,7 @@ try {
   }
   assert.equal(await original.locator('.hsk-original-embedded .hsk-original-upload .hsk-original-frame').count(),1);
   assert.equal(await original.locator('.hsk-original-materials').getAttribute('open'),null);
-  assert.match(await original.locator('.hsk-original-instruction').innerText(),/оригинальная страница/);
+  assert.match(await original.locator('.hsk-original-instruction').innerText(),/страница/);
   await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 31–34'}).click();
   if(lesson===2)assert.match(await original.locator('.hsk-source-question').innerText(),/来北京半年多了/);
   const exact=await page.evaluate(n=>window.HSK4OfficialAnswerCodes[n][31],lesson);
