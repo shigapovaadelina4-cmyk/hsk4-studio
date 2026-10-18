@@ -163,7 +163,7 @@ const host=document.querySelector('#workbook .personal-wb');
 if(!host||host.querySelector('.wb-audio'))return;
 const box=document.createElement('section');box.className='wb-audio';
 box.innerHTML='<h3>🎧 Оригинальное аудио рабочей тетради</h3><p>Выбери свой ZIP с аудио HSK 4A или HSK 4B. Файл открывается только в браузере и не загружается на сайт. После закрытия страницы ZIP потребуется выбрать снова.</p><label>ZIP с аудиозаписями: <input id="wbAudioZip" type="file" accept=".zip,application/zip"></label><p><label>Урок: <select id="wbAudioLesson">'+Array.from({length:20},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'</option>').join('')+'</select></label></p><p id="wbAudioStatus" role="status">Выбери ZIP с записями.</p><div id="wbAudioTracks"></div>';
-const layout=host.querySelector('.wb-study-layout');host.insertBefore(box,layout||host.firstChild);
+const layout=host.querySelector('.wb-study-layout');host.insertBefore(box,layout?.parentElement===host?layout:host.firstChild);
 const input=box.querySelector('#wbAudioZip'),select=box.querySelector('#wbAudioLesson'),status=box.querySelector('#wbAudioStatus'),tracks=box.querySelector('#wbAudioTracks');
 async function show(){
 clean();tracks.replaceChildren();if(!archive)return;
@@ -212,7 +212,7 @@ if(!checker||checker.querySelector('.original-exercises'))return;
 const section=document.createElement('section');section.className='original-exercises';
 section.innerHTML='<h3>📖 Оригинальные задания · Урок 1</h3><p>Чтение, №23–34. Задания перенесены из твоего HSK 4A Workbook. Выбирай ответ в поле с тем же номером справа или ниже.</p><p><b>№23–26 · 选词填空</b><br>A 自然 · B 缺点 · C 互相 · D 竟然 · E 生活</p>';
 for(const [n,content] of exercises){if(n===27){const p=document.createElement('p');p.innerHTML='<b>№27–30 · 选词填空</b><br>A 俩 · B 刚 · C 温度 · D 还是 · E 够';section.appendChild(p)}if(n===31){const p=document.createElement('p');p.innerHTML='<b>№31–34 · 排列顺序</b><br>Выбери порядок частей A, B, C.';section.appendChild(p)}const box=document.createElement('div');box.className='source-task';const title=document.createElement('b');title.textContent='Задание '+n;box.appendChild(title);if(Array.isArray(content)){const parts=document.createElement('div');parts.className='parts';content.forEach(t=>{const span=document.createElement('span');span.textContent=t;parts.appendChild(span)});box.appendChild(parts)}else{const p=document.createElement('p');p.textContent=content;box.appendChild(p)}section.appendChild(box)}
-checker.insertBefore(section,checker.querySelector('#keyRows'));
+checker.insertBefore(section,checker.querySelector(':scope > #keyRows'));
 }
 window.addEventListener('DOMContentLoaded',()=>{install();setTimeout(install,900);setTimeout(install,2500)});
 })();
@@ -526,7 +526,7 @@ const host=document.querySelector('#workbook .personal-wb');if(!host)return;
 const audio=host.querySelector('.wb-audio'),checker=host.querySelector('.key-checker');
 if(!audio||!checker)return;
 let holder=host.querySelector('.wb-direct-audio');
-if(!holder){holder=document.createElement('section');holder.className='wb-direct-audio';holder.innerHTML='<h3>🎧 Аудио рабочей тетради · Урок 1</h3><p class="muted small">Записи для заданий на аудирование 1–22. Если архив уже сохранялся в браузере, записи откроются автоматически.</p>';host.insertBefore(holder,checker)}
+if(!holder){holder=document.createElement('section');holder.className='wb-direct-audio';holder.innerHTML='<h3>🎧 Аудио рабочей тетради · Урок 1</h3><p class="muted small">Записи для заданий на аудирование 1–22. Если архив уже сохранялся в браузере, записи откроются автоматически.</p>';host.insertBefore(holder,checker?.parentElement===host?checker:null)}
 if(audio.parentElement!==holder)holder.appendChild(audio);
 const lesson=audio.querySelector('#wbAudioLesson');if(lesson&&!lesson.dataset.fixed){lesson.value='1';lesson.dataset.fixed='1'}
 const status=audio.querySelector('#wbAudioStatus');
