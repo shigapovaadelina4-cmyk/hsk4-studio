@@ -42,7 +42,8 @@ try {
   assert.match(await original.locator('.hsk-wb-status').innerText(),/Проверено: 1 из 50/);
   await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 31–34'}).click();
   const exact=await page.evaluate(n=>window.HSK4OfficialAnswerCodes[n][31],lesson);
-  await original.locator('.hsk-wb-options input').fill(exact);
+  for(const character of exact)await original.locator('.hsk-wb-tokens button').filter({hasText:character}).click();
+  assert.equal(await original.locator('.hsk-wb-assembled').innerText(),exact);
   await original.locator('.hsk-wb-check').click();
   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/Правильно/);
   await original.locator('.hsk-wb-sections button').filter({hasText:'书写 44–50'}).click();
@@ -50,6 +51,9 @@ try {
   await original.locator('.hsk-wb-check').click();
   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/手|Письменное|письменное/);
   assert.match(await original.locator('.hsk-wb-status').innerText(),/Проверено: 3 из 50/);
+  // Match source pages: question 44 uses page start + 8.
+  const sourcePage=await original.locator('.hsk-original-source input[type=number]').inputValue();
+  assert.equal(Number(sourcePage),8+(lesson-1)*10+8,'Wrong original PDF page for lesson '+lesson);
   const pdfInput=original.locator('.hsk-original-upload input[type=file]');
   await pdfInput.setInputFiles({name:'practice.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\\n1 0 obj <</Type /Catalog>> endobj\\n%%EOF')});
   await page.locator('#mainLessonStudio .hsk-wb-sections button').filter({hasText:'Дополнительная авторская практика'}).click();
