@@ -1441,26 +1441,8 @@ const next=document.createElement('button');next.className='primary';next.textCo
 }
 draw();
 }else{
-const title=document.createElement('h3');title.textContent='📒 Рабочая тетрадь · Урок '+active;
-const note=document.createElement('p');note.className='muted';note.textContent='Самостоятельная интерактивная практика по проверенному словарю урока. Это НЕ оригинальные задания и НЕ официальные ключи рабочей тетради.';
-const key='hsk4-authored-workbook-'+active;let answers={};try{answers=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
-const status=document.createElement('p');status.setAttribute('role','status');
-const tasks=document.createElement('div');const available=d.words.filter(w=>w[0]&&w[1]&&w[2]).slice(0,15);
-function save(){try{localStorage.setItem(key,JSON.stringify(answers))}catch(e){status.textContent='Сохранение недоступно в этом браузере'}}
-function progress(){const correct=available.filter((w,i)=>answers[i]?.checked&&answers[i]?.text===w[0]).length;status.textContent='Правильно: '+correct+' из '+available.length+' · Ответы сохраняются на этом устройстве.'}
-function renderTasks(){tasks.replaceChildren();available.forEach((w,i)=>{
- const item=document.createElement('div');item.className='notice';item.style.margin='12px 0';
- const label=document.createElement('label');label.textContent=(i+1)+'. Напиши по-китайски: '+w[2]+' ('+w[1]+')';label.style.display='block';label.style.marginBottom='9px';
- const input=document.createElement('input');input.value=answers[i]?.text||'';input.placeholder='Введите иероглифы';input.autocomplete='off';input.setAttribute('aria-label','Ответ на задание '+(i+1));input.style.maxWidth='100%';
- const feedback=document.createElement('p');feedback.setAttribute('role','status');
- function showFeedback(){if(!answers[i]?.checked)return;const ok=answers[i].text===w[0];feedback.textContent=(ok?'✓ Верно. ':'✕ Правильный ответ: '+w[0]+'. ')+'Пиньинь: '+w[1];feedback.style.color=ok?'#197442':'#9c4050'}
- input.oninput=()=>{answers[i]={text:input.value,checked:false};feedback.textContent='';save();progress()};
- const check=document.createElement('button');check.textContent='Проверить';check.onclick=()=>{answers[i]={text:input.value.trim(),checked:true};save();showFeedback();progress()};
- const listen=document.createElement('button');listen.textContent='🔊';listen.setAttribute('aria-label','Прослушать слово');listen.onclick=()=>speech(w[0]);
- const row=document.createElement('div');row.className='ml-actions';row.append(input,check,listen);item.append(label,row,feedback);tasks.append(item);showFeedback()
-})}
-const reset=document.createElement('button');reset.textContent='Пройти заново ↻';reset.onclick=()=>{answers={};save();renderTasks();progress()};
-body.append(title,note,status,tasks,reset);renderTasks();progress()
+if(window.HSKWorkbook)window.HSKWorkbook.mount(body,active,d,speech);
+else{const note=document.createElement('p');note.textContent='Модуль заданий не загрузился. Обнови страницу.';body.append(note)}
 }
 }
 studio.querySelectorAll('[data-ml]').forEach(b=>b.onclick=()=>{tab=b.dataset.ml;render()});
@@ -1631,4 +1613,4 @@ window.addEventListener('DOMContentLoaded',()=>{init();setTimeout(init,700)});
 #mainLessonStudio .ml-grammar-detail{background:#f8effb!important;border-radius:18px!important;padding:24px!important}
 #mainLessonStudio .ml-grammar-training{background:white!important;border:1px solid #ecd9ee!important;border-radius:18px!important}
 #mainLessonStudio .ml-grammar-training .ml-grammar-choices button{background:#fff!important;border:1px solid #ead5ed!important}
-#mainLessonStudio .ml-grammar-pinyin{color:#80508f;font-size:16px;font-weight:600}#mainLessonStudio .ml-grammar-schema{background:#f4e9fa;padding:12px 15px;border-radius:12px}#mainLessonStudio .ml-grammar-training button{min-height:46px}#mainLessonStudio .ml-quiz-options button{min-height:56px;padding:14px 10px;border-radius:14px;font-size:18px}#mainLessonStudio .ml-actions button{min-height:48px}#mainLessonStudio .ml-card-example button{min-height:44px}#mainLessonStudio .ml-grammar-training{margin-top:18px}</style></body></html>
+#mainLessonStudio .ml-grammar-pinyin{color:#80508f;font-size:16px;font-weight:600}#mainLessonStudio .ml-grammar-schema{background:#f4e9fa;padding:12px 15px;border-radius:12px}#mainLessonStudio .ml-grammar-training button{min-height:46px}#mainLessonStudio .ml-quiz-options button{min-height:56px;padding:14px 10px;border-radius:14px;font-size:18px}#mainLessonStudio .ml-actions button{min-height:48px}#mainLessonStudio .ml-card-example button{min-height:44px}#mainLessonStudio .ml-grammar-training{margin-top:18px}</style><script src="./workbook-studio.js?v=2" defer></script></body></html>
