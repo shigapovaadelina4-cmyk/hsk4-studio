@@ -15,4 +15,21 @@ jobs:
         with:
           node-version: '22'
       - name: Validate scripts and flashcards
-        run: node scripts/verify-vocab.mjs && node scripts/verify-workbook.mjs && node scripts/verify-workbook.mjs
+        run: node scripts/verify-vocab.mjs && node scripts/verify-workbook.mjs
+
+  workbook-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Configure Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Test every authored workbook on mobile Chromium
+        run: node scripts/verify-workbook-browser.mjs
