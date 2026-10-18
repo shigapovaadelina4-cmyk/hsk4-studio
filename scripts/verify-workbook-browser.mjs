@@ -35,11 +35,22 @@ try {
   // Verify real workbook mode first: original PDF upload and 50 numbered answers.
   const original=page.locator('#mainLessonStudio .hsk-original');
   await original.waitFor({state:'visible'});
+  assert.match(await original.locator('.hsk-original-banner').innerText(),/HSK 4 · Тренировка/);
+  assert.match(await original.locator('.hsk-original-step-header').innerText(),/Задание 1 · 1 из 5 · Отвечено: 0/);
+  assert.equal(await original.locator('.hsk-original-embedded').count(),1);
+  assert.equal(await original.locator('.hsk-original-materials').getAttribute('open'),null);
+  assert.equal(await original.locator('.hsk-original-exercise .hsk-wb-nav button').count(),5);
   assert.equal(await original.locator('.hsk-wb-sections button').count(),7);
   await original.locator('.hsk-wb-options button').first().click();
   await original.locator('.hsk-wb-check').click();
   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/ключу/);
   assert.match(await original.locator('.hsk-wb-status').innerText(),/Проверено: 1 из 50/);
+  
+  await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 23–30'}).click();
+  assert.equal(await original.locator('.hsk-original-exercise .hsk-wb-nav button').count(),12);
+  assert.match(await original.locator('.hsk-original-step-header').innerText(),/Задание 23 · 1 из 12/);
+  await original.locator('.hsk-wb-question button').filter({hasText:'Показать страницу задания'}).click();
+  assert.equal(await original.locator('.hsk-original-materials').getAttribute('open'),'');
   await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 31–34'}).click();
   const exact=await page.evaluate(n=>window.HSK4OfficialAnswerCodes[n][31],lesson);
   for(const character of exact)await original.locator('.hsk-wb-tokens button').filter({hasText:character}).click();
