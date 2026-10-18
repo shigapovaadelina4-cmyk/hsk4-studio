@@ -63,7 +63,7 @@ function mount(host,n,data,speak){
  const previous=$('button','','← Предыдущее'),next=$('button','','Следующее →'),reset=$('button','','Пройти заново ↻');
  for(const b of [previous,next,reset])b.type='button';
  controls.append(previous,next,reset);shell.append(heading,note,status,bar,sections,nav,question,controls);
- const correctAt=i=>responses[items[i].id]?.checked&&normalize(responses[items[i].id].value)===normalize(items[i].answer);
+ const correctAt=i=>{const task=items[i],r=responses[task.id];if(!r?.checked)return false;const value=task.kind==='order'?String(r.value||'').split('|').filter(Boolean).map(k=>task.tokens[Number(k)]).join(''):r.value;return normalize(value)===normalize(task.answer)};
  const progress=()=>{const done=items.filter(x=>responses[x.id]?.checked).length,correct=items.filter((x,i)=>correctAt(i)).length;status.textContent='Правильно: '+correct+' из '+items.length+' · Выполнено: '+done+' из '+items.length;fill.style.width=(100*done/items.length)+'%'};
  const button=(text,fn,cls)=>{const b=$('button',cls||'',text);b.type='button';b.onclick=fn;return b};
  function render(){
