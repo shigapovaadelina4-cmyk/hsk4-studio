@@ -125,13 +125,21 @@ function mount(host,lesson){
     for(const part of ['A','B','C']){const b=btn(part,()=>{if(value.includes(part))return;value+=part;state[n]={value,checked:false};persist();redraw();progress()});b.disabled=value.includes(part);controls.append(b)}
    };
    redraw();choices.append(arranged,controls,btn('Сбросить порядок ↻',()=>{value='';state[n]={value,checked:false};persist();redraw();progress()}));
+  }else if(sourceItem?.type==='write-order'){
+   const chosen=el('div',undefined,'hsk-wb-assembled');chosen.setAttribute('role','status');
+   const pool=el('div',undefined,'hsk-wb-tokens');let indices=value.split('|').filter(Boolean).map(Number).filter(i=>i>=0&&i<sourceItem.words.length);
+   function repaint(){chosen.replaceChildren();pool.replaceChildren();
+    for(const i of indices)chosen.append(btn(sourceItem.words[i],()=>{indices=indices.filter(v=>v!==i);value=indices.join('|');state[n]={value,checked:false};persist();repaint();progress()}));
+    sourceItem.words.forEach((word,i)=>{if(indices.includes(i))return;pool.append(btn(word,()=>{indices.push(i);value=indices.join('|');state[n]={value,checked:false};persist();repaint();progress()}))});
+   }
+   repaint();choices.append(chosen,pool,btn('Сбросить ↻',()=>{indices=[];value='';state[n]={value,checked:false};persist();repaint();progress()}));
   }else if(picks)for(const option of picks)choices.append(btn(option,()=>{value=option;state[n]={value,checked:false};persist();display()},option===value?'selected':''));
   else{const inp=el('input');inp.type='text';inp.value=value;inp.placeholder=n<=34?'Например: ACB':'Запиши своё предложение на китайском';inp.setAttribute('aria-label','Ответ на задание '+n);inp.oninput=()=>{value=inp.value;state[n]={value,checked:false};persist();progress()};choices.append(inp)}
   task.append(choices);
   const feedback=el('p',undefined,'hsk-wb-feedback');feedback.setAttribute('role','status');
   function show(){const r=state[n];feedback.replaceChildren();feedback.className='hsk-wb-feedback '+(n<=43?(correct(n)?'good':'bad'):'');
    if(n<=43){feedback.append(el('strong',correct(n)?'✓ Правильно':'✕ Ответ отличается от ключа'));feedback.append(el('p','Ответ по загруженному официальному ключу: '+answers[n]));}
-   else feedback.textContent='Ответ сохранён. Письменное задание №'+n+' оцени самостоятельно по оригинальному PDF ключей; единственный буквальный вариант не всегда обязателен.';
+   else{const written=sourceItem?.type==='write-order'?value.split('|').filter(Boolean).map(i=>sourceItem.words[Number(i)]).join(''):value;feedback.textContent='Твой вариант: '+written+' · Ответ сохранён. Сравни порядок и формулировку с образцом в оригинальных ключах.'}
   }
   if(old.checked)show();
   const check=btn('Проверить',()=>{state[n]={value,checked:true};persist();show();progress()},'hsk-wb-check');
