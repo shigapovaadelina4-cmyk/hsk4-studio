@@ -70,7 +70,7 @@ try {
   if(lesson===2){assert.match(await original.locator('.hsk-source-question').innerText(),/幽默的人/);await original.locator('.hsk-wb-tokens button').first().click()}else await original.locator('.hsk-wb-options input').fill('我练习写汉字。');
   await original.locator('.hsk-wb-check').click();
   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/Твой вариант|Письменное|письменное/);
-  assert.match(await original.locator('.hsk-wb-status').innerText(),/Проверено: 3 из 50/);
+  assert.match(await original.locator('.hsk-wb-status').innerText(),new RegExp('Проверено: '+(lesson===2?4:3)+' из 50'));
   // Match source pages: question 44 uses page start + 8.
   const sourcePage=await original.locator('.hsk-original-source input[type=number]').inputValue();
   assert.equal(Number(sourcePage),8+(lesson-1)*10+8,'Wrong original PDF page for lesson '+lesson);
@@ -111,7 +111,7 @@ try {
   await page.locator('#mainLessonStudio').waitFor({state:'attached'});
   await page.evaluate(n=>document.dispatchEvent(new CustomEvent('hsk-main-lesson',{detail:n})),lesson);
   await page.locator('#mainLessonStudio [data-ml="workbook"]').click();
-  assert.match(await page.locator('#mainLessonStudio .hsk-original .hsk-wb-status').innerText(),/Проверено: 3 из 50/);
+  assert.match(await page.locator('#mainLessonStudio .hsk-original .hsk-wb-status').innerText(),new RegExp('Проверено: '+(lesson===2?4:3)+' из 50'));
   await page.locator('#mainLessonStudio .hsk-wb-sections button').filter({hasText:'Дополнительная авторская практика'}).click();
   const progress=await wb.locator('.hsk-wb-status').innerText();
   assert.match(progress,/Выполнено: [1-9]/,'Progress must survive reload');
