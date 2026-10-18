@@ -1335,7 +1335,6 @@ const check=document.createElement('button');check.textContent='Проверит
 const reset=document.createElement('button');reset.textContent='Сбросить ↻';reset.onclick=()=>{chosen.length=0;feedback.textContent='';paint()};
 actions.append(check,reset);area.append(label,selection,pool,feedback,actions);
 }}
-}
 const next=document.createElement('button');next.className='primary';next.textContent='Следующий раунд →';next.onclick=nextRound;area.append(next);
 }
 draw();
