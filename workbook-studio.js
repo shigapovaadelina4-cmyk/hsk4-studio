@@ -36,12 +36,13 @@ function build(lesson){
   add('a-'+(i+13),'听力 13–22 · Аудирование','choice','Прослушай авторское предложение и выбери перевод.',x[3],x[2]+' · '+(x[5]||'')+' · '+x[3]+' · '+x[1],{audio:x[2],options:opts(x[3],other,i+23)});
  }
  for(let i=0;i<8;i++){
-  const x=w(i+12);
-  add('a-'+(i+23),'阅读 23–30 · Чтение','choice','Прочитай слово «'+x[0]+'» и выбери перевод.',x[2],x[0]+' · '+x[1]+' · '+x[2],{options:opts(x[2],words.map(y=>y[2]),i+35)});
+  const x=g(i),context=g(i+1);
+  const passage=x[2]+' '+context[2];
+  add('a-'+(i+23),'阅读 23–30 · Чтение','choice','Прочитай небольшой авторский текст и выбери перевод второго предложения.',context[3],'Второе предложение: '+context[2]+' · '+(context[5]||'')+' · '+context[3]+' · '+context[1],{passage,options:opts(context[3],grammar.filter(y=>y!==context).map(y=>y[3]),i+35)});
  }
  for(let i=0;i<4;i++){
   const x=g(i);
-  add('a-'+(i+31),'阅读 31–34 · Чтение','choice','Прочитай авторское предложение и выбери его перевод: '+x[2],x[3],x[2]+' · '+(x[5]||'')+' · '+x[3]+' · '+x[1],{options:opts(x[3],grammar.map(y=>y[3]),i+45)});
+  add('a-'+(i+31),'阅读 31–34 · Чтение','choice','Прочитай авторский текст и выбери перевод первого предложения.',x[3],x[2]+' · '+(x[5]||'')+' · '+x[3]+' · '+x[1],{passage:x[2]+' '+g(i+2)[2],options:opts(x[3],grammar.filter(y=>y!==x).map(y=>y[3]),i+45)});
  }
  for(let i=0;i<9;i++){
   const x=g(i+4),matches=(x[0].match(/[\u3400-\u9fff]+/g)||[]);
@@ -85,6 +86,7 @@ function mount(host,n,data,speak){
   for(let i=begin;i<=end;i++){nav.append(button(String(i-begin+1),()=>{pos=i;render()},(pos===i?'active ':'')+(responses[items[i].id]?.checked?(correctAt(i)?'correct':'wrong'):'')))}
   question.append($('p','hsk-wb-number','Задание '+(pos+1)+' из '+items.length+' · '+task.section));
   question.append($('h4','hsk-wb-prompt',task.prompt));
+  if(task.passage){const passage=$('div','hsk-wb-passage',task.passage);passage.setAttribute('lang','zh-Hans');question.append(passage)}
   if(task.hint)question.append($('p','hsk-wb-hint',task.hint));
   if(task.audio)question.append(button('🔊 Прослушать',()=>speak(task.audio),'hsk-wb-audio'));
   let current=stored.value||'';const area=$('div','hsk-wb-answer'),feedback=$('div','hsk-wb-feedback');feedback.setAttribute('role','status');
@@ -116,7 +118,7 @@ function mount(host,n,data,speak){
    feedback.append($('p','','Правильный ответ: '+(task.kind==='order'?task.tokens.join(''):task.answer)));
    feedback.append($('p','',task.explanation));}
   question.append(button('Проверить',check,'hsk-wb-check'));
-  question.append(button('Показать правильный ответ',()=>showFeedback(false),'hsk-wb-reveal'));
+  question.append(button('Показать правильный ответ',()=>{feedback.replaceChildren();feedback.className='hsk-wb-feedback';feedback.append($('strong','','Правильный ответ (без оценки)'));feedback.append($('p','','Ответ: '+(task.kind==='order'?task.tokens.join(''):task.answer)));feedback.append($('p','',task.explanation))},'hsk-wb-reveal'));
   question.append(feedback);
   if(stored.checked)showFeedback(correctAt(pos));
   previous.disabled=pos===0;next.disabled=pos===items.length-1;
