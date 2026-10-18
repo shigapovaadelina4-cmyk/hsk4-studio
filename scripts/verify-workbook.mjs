@@ -10,7 +10,8 @@ assert(html.includes('workbook-studio.css'),'Mobile stylesheet must be linked');
 const dataStart=html.indexOf('const data={');
 const dataEnd=html.indexOf('function init(){',dataStart);
 assert(dataStart>=0&&dataEnd>dataStart);
-const context={console,window:{}};
+const bank={};vm.runInNewContext(fs.readFileSync(new URL('../natural-examples.js',import.meta.url),'utf8'),{window:bank});
+const context={console,window:{HSKNaturalExamples:bank.HSKNaturalExamples,addEventListener(){}}};
 vm.runInNewContext(html.slice(dataStart,dataEnd)+'\n;globalThis.checkedData=data;',context);
 vm.runInNewContext(source,context);
 for(let n=2;n<=10;n++){
