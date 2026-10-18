@@ -112,3 +112,11 @@
 #mainLessonStudio .hsk-original .hsk-wb-question{border-top:1px solid #e9deed;padding-top:22px}
 #mainLessonStudio .hsk-original .hsk-wb-options button{font-size:17px;font-weight:650}
 @media(max-width:540px){#mainLessonStudio .hsk-original-embedded .hsk-original-frame{height:67vh;min-height:410px}#mainLessonStudio .hsk-original-embedded{padding:12px}}
+
+#mainLessonStudio .hsk-source-text{white-space:pre-line;padding:6px 0 16px}
+#mainLessonStudio .hsk-source-question{font-size:clamp(21px,3vw,25px);line-height:1.85;color:#352544;margin:8px 0 14px;font-family:"PingFang SC","Microsoft YaHei",sans-serif}
+#mainLessonStudio .hsk-source-bank{font-size:17px;line-height:2;background:#f7effa;border-radius:12px;padding:13px;color:#543560}
+#mainLessonStudio .hsk-source-task-note{color:#786481}
+#mainLessonStudio .hsk-source-reference{border:1px solid #ecdeed;border-radius:12px;padding:10px 14px;margin-top:8px;background:#fffafd}
+#mainLessonStudio .hsk-source-reference summary{cursor:pointer;font-weight:600;color:#796089}
+#mainLessonStudio .hsk-source-reference .hsk-original-upload[hidden]{display:none}
