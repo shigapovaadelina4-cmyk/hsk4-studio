@@ -5,6 +5,8 @@
 const el=(tag,text,cls)=>{const o=document.createElement(tag);if(text!==undefined)o.textContent=text;if(cls)o.className=cls;return o};
 const btn=(label,fn,cls)=>{const b=el('button',label,cls);b.type='button';b.onclick=fn;return b};
 const pageStart=n=>8+10*(n-1);
+// Ten pages per lesson in the supplied HSK 4A Workbook PDF.
+const pageFor=(lesson,task)=>pageStart(lesson)+(task<=5?0:task<=12?1:task<=22?2:task<=26?3:task<=30?4:task<=34?5:task<=38?6:task<=43?7:task<=48?8:9);
 const norm=s=>String(s||'').trim().replace(/\s/g,'').toUpperCase();
 function dbOpen(){
  return new Promise((resolve,reject)=>{const q=indexedDB.open('hsk4-private-source-v1',1);q.onupgradeneeded=()=>q.result.createObjectStore('pdf');q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)});
@@ -27,7 +29,7 @@ function mount(host,lesson){
  const pager=el('div',undefined,'hsk-wb-controls');const frame=el('iframe');frame.title='Оригинальные страницы твоей рабочей тетради';frame.className='hsk-original-frame';
  let fileUrl=null,page=pageStart(lesson);
  const pageLabel=el('span','Страница PDF: '+page);
- const showPage=()=>{page=Math.max(1,Math.min(112,page));pageLabel.textContent='Страница PDF: '+page;if(fileUrl)frame.src=fileUrl+'#page='+page+'&zoom=page-width'};
+ const showPage=()=>{page=Math.max(1,Math.min(112,page));pageLabel.textContent='Страница PDF: '+page;pgInput.value=String(page);if(fileUrl)frame.src=fileUrl+'#page='+page+'&zoom=page-width'};
  const prevPage=btn('← Страница',()=>{page--;showPage()}),nextPage=btn('Страница →',()=>{page++;showPage()});
  const pgInput=el('input');pgInput.type='number';pgInput.min='1';pgInput.max='112';pgInput.value=String(page);pgInput.setAttribute('aria-label','Номер страницы PDF');pgInput.onchange=()=>{page=Number(pgInput.value)||page;showPage()};
  pager.append(prevPage,pageLabel,nextPage,pgInput);
@@ -52,15 +54,32 @@ function mount(host,lesson){
  function progress(){const done=Object.keys(state).filter(k=>state[k]?.checked).length;const score=Array.from({length:43},(_,i)=>i+1).filter(correct).length;status.textContent='Проверено: '+done+' из 50 · Верно (№1–43): '+score+' из 43 · №44–50 — самостоятельная сверка с ключом.'}
  function display(){
   const n=current,old=state[n]||{value:'',checked:false};nav.replaceChildren();jump.replaceChildren();task.replaceChildren();
+  const targetPage=pageFor(lesson,n);if(page!==targetPage){page=targetPage;showPage()}
   sections.forEach(([label,a,b])=>nav.append(btn(label,()=>{current=a;display()},n>=a&&n<=b?'active':'')));
   const group=sections.find(([,a,b])=>n>=a&&n<=b);
   for(let i=group[1];i<=group[2];i++){const c=btn(String(i),()=>{current=i;display()},(i===n?'active ':'')+(state[i]?.checked?(i<=43?(correct(i)?'correct':'wrong'):'correct'):''));jump.append(c)}
-  task.append(el('p','Задание '+n+' / 50 · '+group[0]+' · Открой задание №'+n+' в PDF выше.','hsk-wb-number'));
+  task.append(el('p','Задание '+n+' / 50 · '+group[0]+' · страница PDF '+targetPage,'hsk-wb-number'));
+  task.append(el('p','Прочитай оригинальное условие №'+n+' на странице слева (или выше на телефоне). Здесь выполни его и проверь ответ.','hsk-wb-hint'));
+  task.append(btn('📖 К странице задания',()=>{page=targetPage;showPage();upload.scrollIntoView({behavior:'smooth',block:'start'})},'hsk-wb-audio'));
+  if(n>=23&&n<=26)task.append(el('p','阅读 第一部分 · подбери подходящее слово A–E к пропуску.','hsk-wb-hint'));
+  if(n>=27&&n<=30)task.append(el('p','阅读 第二部分 · подбери соответствующий вариант A–E.','hsk-wb-hint'));
+  if(n>=31&&n<=34)task.append(el('p','阅读 第三部分 · поставь части A, B, C в правильном порядке.','hsk-wb-hint'));
+  if(n>=35&&n<=43)task.append(el('p','阅读 第四部分 · прочитай текст и выбери верный вариант.','hsk-wb-hint'));
+  if(n>=44&&n<=50)task.append(el('p','书写 · напиши своё предложение, затем сравни с образцом в ключах.','hsk-wb-hint'));
+  if(n>=1&&n<=5)task.append(el('p','听力 第一部分 · прослушай высказывание и определи, верно оно или нет.','hsk-wb-hint'));
+
   if(n<=22)task.append(el('p','Для оригинального аудирования нужен аудиофайл издательства; синтезированные случайные слова не заменяют диалоги из тетради.','hsk-wb-hint'));
   const choices=el('div',undefined,'hsk-wb-options');
   let value=old.value||'';
   const picks=n<=5?['Верно','Неверно']:n>=31&&n<=34?null:n<=30?Array.from({length:n>=23&&n<=30?5:4},(_,i)=>'ABCDE'[i]):n<=43?['A','B','C','D']:null;
-  if(picks)for(const option of picks)choices.append(btn(option,()=>{value=option;state[n]={value,checked:false};persist();display()},option===value?'selected':''));
+  if(n>=31&&n<=34){
+   const arranged=el('div',undefined,'hsk-wb-assembled');arranged.setAttribute('role','status');
+   const controls=el('div',undefined,'hsk-wb-tokens');
+   const redraw=()=>{arranged.textContent=value||'Нажимай на A, B, C в нужном порядке.';controls.replaceChildren();
+    for(const part of ['A','B','C']){const b=btn(part,()=>{if(value.includes(part))return;value+=part;state[n]={value,checked:false};persist();redraw();progress()});b.disabled=value.includes(part);controls.append(b)}
+   };
+   redraw();choices.append(arranged,controls,btn('Сбросить порядок ↻',()=>{value='';state[n]={value,checked:false};persist();redraw();progress()}));
+  }else if(picks)for(const option of picks)choices.append(btn(option,()=>{value=option;state[n]={value,checked:false};persist();display()},option===value?'selected':''));
   else{const inp=el('input');inp.type='text';inp.value=value;inp.placeholder=n<=34?'Например: ACB':'Запиши своё предложение на китайском';inp.setAttribute('aria-label','Ответ на задание '+n);inp.oninput=()=>{value=inp.value;state[n]={value,checked:false};persist();progress()};choices.append(inp)}
   task.append(choices);
   const feedback=el('p',undefined,'hsk-wb-feedback');feedback.setAttribute('role','status');
@@ -76,7 +95,10 @@ function mount(host,lesson){
   const back=btn('← Предыдущее',()=>{current--;display()}),next=btn('Следующее →',()=>{current++;display()}),reset=btn('Пройти заново ↻',()=>{if(confirm('Сбросить ответы этого урока?')){state={};persist();current=1;display()}});back.disabled=n===1;next.disabled=n===50;actions.append(back,next,reset);
   progress();
  }
- shell.append(status,nav,jump,task,actions);display();
+ const layout=el('div',undefined,'hsk-original-layout');
+ const sourceCol=el('div',undefined,'hsk-original-source');const exerciseCol=el('div',undefined,'hsk-original-exercise');
+ sourceCol.append(upload,keySection);exerciseCol.append(status,nav,jump,task,actions);
+ layout.append(sourceCol,exerciseCol);shell.append(layout);display();
 }
 window.HSKOriginalWorkbook={mount};
 })();
