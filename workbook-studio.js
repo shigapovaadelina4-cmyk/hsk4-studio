@@ -4,12 +4,12 @@
 'use strict';
 const $=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt!==undefined)el.textContent=txt;return el;};
 const shuffle=(a,seed)=>{const b=[...a];for(let i=b.length-1;i>0;i--){let j=(seed*17+i*13+i*i)% (i+1);[b[i],b[j]]=[b[j],b[i]]}return b};
-const normalize=v=>String(v||'').replace(/[\\s，。！？!?、,.;；：:]/g,'').trim();
+const normalize=v=>String(v||'').replace(/[\s，。！？!?、,.;；：:]/g,'').trim();
 function splitSentence(sentence,words){
  const clean=sentence.replace(/[。！？!?]/g,'');
  const known=[...new Set([...words.map(w=>w[0]),'我们','他们','你们','这个','那个','今天','明天','每天','周末','一个','自己','老师','朋友','工作','学习','时候','没有','因为','所以','但是','还是','如果','可以','应该','知道','觉得','喜欢','很多','已经','非常','一起','正在','不管','只要','尽管','虽然','就是','首先','其次','另外','结果','最后','现在','来不及','差不多','通过','健康','生活','自己','重要','好看'])].sort((a,b)=>b.length-a.length);
  const parts=[];let i=0;
- while(i<clean.length){const ch=clean[i];if(/[，,；;：:\\s]/.test(ch)){i++;continue}
+ while(i<clean.length){const ch=clean[i];if(/[，,；;：:\s]/.test(ch)){i++;continue}
   let match=known.find(w=>clean.startsWith(w,i));if(!match)match=clean.slice(i,i+Math.min(2,clean.length-i));parts.push(match);i+=match.length;
  }
  return parts.length>=2?parts:[clean];
@@ -31,8 +31,8 @@ function build(lesson){
  }
  for(let i=0;i<10;i++){
   const g=grammar[i%grammar.length];if(!g)continue;
-  const matches=g[0].match(/[\\u3400-\\u9fff]+/g)||[];
-  const answer=matches.find(x=>g[2].includes(x))||matches.flatMap(x=>[...x]).find(x=>g[2].includes(x))||((g[2].match(/[\\u3400-\\u9fff]{2,}/g)||[])[0]||'').slice(0,2);
+  const matches=g[0].match(/[\u3400-\u9fff]+/g)||[];
+  const answer=matches.find(x=>g[2].includes(x))||matches.flatMap(x=>[...x]).find(x=>g[2].includes(x))||((g[2].match(/[\u3400-\u9fff]{2,}/g)||[])[0]||'').slice(0,2);
   if(!answer)continue;
   items.push({id:'cloze-'+i,kind:'text',section:'Грамматика',prompt:'Вставь пропущенные иероглифы: '+g[2].replace(answer,'＿＿＿'),hint:g[3],answer,explanation:'Полное предложение: '+g[2]+' · '+(g[5]||'')+' · '+g[3]+' · Правило: '+g[1]});
  }
