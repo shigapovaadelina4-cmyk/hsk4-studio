@@ -1417,7 +1417,28 @@ actions.append(check,undo,reset);area.append(label,meaning,selection,pool,feedba
 const next=document.createElement('button');next.className='primary';next.textContent=mode==='sentence'?'Следующее →':'Следующий раунд →';next.onclick=nextRound;area.append(next);
 }
 draw();
-}else{const p=document.createElement('p');p.textContent=active===2?'Урок 2: задания на чтение №23–30 доступны в разделе «Рабочая тетрадь» выше.':'Интерактивная рабочая тетрадь для урока 3 пока не перенесена.';const b=document.createElement('button');b.className='primary';b.textContent='Перейти к рабочей тетради';b.onclick=()=>{document.querySelector('[data-tab="workbook"]')?.click();document.querySelector('#wbMainLesson')?.scrollIntoView({behavior:'smooth'});const picker=document.querySelector('#wbMainLesson');if(picker){picker.value=String(active);picker.dispatchEvent(new Event('change',{bubbles:true}))}};body.append(p,b)}
+}else{
+const title=document.createElement('h3');title.textContent='📒 Рабочая тетрадь · Урок '+active;
+const note=document.createElement('p');note.className='muted';note.textContent='Самостоятельная интерактивная практика по проверенному словарю урока. Это НЕ оригинальные задания и НЕ официальные ключи рабочей тетради.';
+const key='hsk4-authored-workbook-'+active;let answers={};try{answers=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
+const status=document.createElement('p');status.setAttribute('role','status');
+const tasks=document.createElement('div');const available=d.words.filter(w=>w[0]&&w[1]&&w[2]).slice(0,15);
+function save(){try{localStorage.setItem(key,JSON.stringify(answers))}catch(e){status.textContent='Сохранение недоступно в этом браузере'}}
+function progress(){const correct=available.filter((w,i)=>answers[i]?.checked&&answers[i]?.text===w[0]).length;status.textContent='Правильно: '+correct+' из '+available.length+' · Ответы сохраняются на этом устройстве.'}
+function renderTasks(){tasks.replaceChildren();available.forEach((w,i)=>{
+ const item=document.createElement('div');item.className='notice';item.style.margin='12px 0';
+ const label=document.createElement('label');label.textContent=(i+1)+'. Напиши по-китайски: '+w[2]+' ('+w[1]+')';label.style.display='block';label.style.marginBottom='9px';
+ const input=document.createElement('input');input.value=answers[i]?.text||'';input.placeholder='Введите иероглифы';input.autocomplete='off';input.setAttribute('aria-label','Ответ на задание '+(i+1));input.style.maxWidth='100%';
+ const feedback=document.createElement('p');feedback.setAttribute('role','status');
+ function showFeedback(){if(!answers[i]?.checked)return;const ok=answers[i].text===w[0];feedback.textContent=(ok?'✓ Верно. ':'✕ Правильный ответ: '+w[0]+'. ')+'Пиньинь: '+w[1];feedback.style.color=ok?'#197442':'#9c4050'}
+ input.oninput=()=>{answers[i]={text:input.value,checked:false};feedback.textContent='';save();progress()};
+ const check=document.createElement('button');check.textContent='Проверить';check.onclick=()=>{answers[i]={text:input.value.trim(),checked:true};save();showFeedback();progress()};
+ const listen=document.createElement('button');listen.textContent='🔊';listen.setAttribute('aria-label','Прослушать слово');listen.onclick=()=>speech(w[0]);
+ const row=document.createElement('div');row.className='ml-actions';row.append(input,check,listen);item.append(label,row,feedback);tasks.append(item);showFeedback()
+})}
+const reset=document.createElement('button');reset.textContent='Пройти заново ↻';reset.onclick=()=>{answers={};save();renderTasks();progress()};
+body.append(title,note,status,tasks,reset);renderTasks();progress()
+}
 }
 studio.querySelectorAll('[data-ml]').forEach(b=>b.onclick=()=>{tab=b.dataset.ml;render()});
 document.addEventListener('hsk-main-lesson',e=>select(e.detail));function select(n){active=n;idx=0;qidx=0;score=0;flipped=false;tab='cards';for(const b of document.querySelectorAll('#partA button.lesson, #partB button.lesson'))b.classList.toggle('active',b.textContent.trim()==='Урок '+n);for(const b of document.querySelectorAll('#hskQuickLessonButtons button'))b.style.background=b.textContent.trim()==='Урок '+n?'#00aaa3':'#f9f4fa';studio.hidden=false;panel.style.display='none';render();studio.scrollIntoView({behavior:'smooth',block:'start'})}
