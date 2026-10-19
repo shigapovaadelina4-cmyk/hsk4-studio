@@ -1,4 +1,4 @@
-/* Transcribed from user-provided HSK Standard Course 4A workbook, lesson 2, PDF pages 18, 21–23. No other lessons are represented as transcribed. */
+/* Selected exercises adapted into interactive cards from the user's HSK Standard Course 4A Workbook (lessons 2–10). This is partial coverage, not a complete reproduction. The private PDF and original audio are not published. */
 window.HSKWorkbookSourceItems=Object.freeze({
  2:{
  1:{text:'平时要多跟朋友联系。',type:'judgment'},
