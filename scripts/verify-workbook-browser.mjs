@@ -78,7 +78,9 @@ try {
   await original.locator('.hsk-wb-check').click();
   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/Правильно/);
   await original.locator('.hsk-wb-sections button').filter({hasText:'书写 44–50'}).click();
-  if(lesson===2){assert.match(await original.locator('.hsk-source-question').innerText(),/幽默的人/);await original.locator('.hsk-wb-tokens button').first().click()}else await original.locator('.hsk-wb-options input').fill('我练习写汉字。');
+  const sourceWriting=await page.evaluate(n=>window.HSKWorkbookSourceItems?.[n]?.[44],lesson);
+  if(sourceWriting?.type==='write-order')await original.locator('.hsk-wb-tokens button').first().click();
+  else await original.locator('.hsk-wb-options input').fill('我练习写汉字。');
   await original.locator('.hsk-wb-check').click();
   assert.match(await original.locator('.hsk-wb-feedback').innerText(),/Твой вариант|Письменное|письменное/);
   assert.match(await original.locator('.hsk-wb-status').innerText(),new RegExp('Проверено: '+(lesson===2?4:3)+' из 50'));
