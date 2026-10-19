@@ -99,6 +99,17 @@ function mount(host,lesson){
   sourceText.replaceChildren();
   if(sourceItem){
    const question=el('p',sourceItem.text,'hsk-source-question');sourceText.append(question);
+   if(sourceItem.audioContext){
+    const play=btn('🔊 Прослушать (синтезированная речь)',()=>{
+      if(!('speechSynthesis' in window))return;
+      const speech=new SpeechSynthesisUtterance(sourceItem.audioContext);speech.lang='zh-CN';speech.rate=0.86;
+      window.speechSynthesis.cancel();window.speechSynthesis.speak(speech);
+    },'hsk-source-listen');
+    sourceText.prepend(play);
+    const transcript=el('details',undefined,'hsk-source-transcript');
+    transcript.append(el('summary','Показать текст аудирования'),el('p',sourceItem.audioContext));
+    sourceText.append(transcript);
+   }
    if(sourceItem.prompt)sourceText.append(el('p','★ '+sourceItem.prompt,'hsk-source-prompt'));
    if(sourceItem.choices){const choicesList=el('p',sourceItem.choices.map((v,i)=>'ABCDE'[i]+' '+v).join(' · '),'hsk-source-bank');sourceText.append(choicesList)}
    if(sourceItem.type==='order')sourceText.append(el('p','Нажми на A, B, C в правильном порядке.','hsk-source-task-note'));
