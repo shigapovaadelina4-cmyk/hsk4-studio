@@ -31,6 +31,34 @@ try {
   await page.goto('http://127.0.0.1:8123/',{waitUntil:'domcontentloaded'});
   await page.locator('#mainLessonStudio').waitFor({state:'attached',timeout:20000});
   await page.evaluate(n=>document.dispatchEvent(new CustomEvent('hsk-main-lesson',{detail:n})),lesson);
+  // The flashcard review deck must contain only words marked «Не знаю».
+  await page.locator('#mainLessonStudio [data-ml="cards"]').click();
+  const cards=page.locator('#mainLessonStudio .ml-body');
+  const first=await cards.locator('.ml-hanzi').innerText();
+  await cards.locator('.ml-rating button.ml-unknown').click();
+  const nextWord=await cards.locator('.ml-hanzi').innerText();
+  assert.notEqual(first,nextWord);
+  await cards.locator('.ml-rating button.ml-unknown').click();
+  await cards.locator('.ml-review-button').click();
+  assert.match(await cards.locator('p').filter({hasText:'Повторение'}).first().innerText(),/Повторение 1 из 2/);
+  assert.equal(await cards.locator('.ml-body > .ml-review-bar').count(),0);
+  assert.equal(await cards.locator('.ml-hanzi').innerText(),first);
+  await cards.locator('.ml-actions button').filter({hasText:'Далее'}).click();
+  assert.equal(await cards.locator('.ml-hanzi').innerText(),nextWord);
+  await cards.locator('.ml-rating button.ml-known').click();
+  assert.match(await cards.locator('p').filter({hasText:'Повторение'}).first().innerText(),/Повторение 1 из 1/);
+  await cards.locator('.ml-rating button.ml-known').click();
+  assert.match(await cards.locator('.ml-review-done').innerText(),/повторила все трудные слова/);
+  await cards.locator('.ml-review-all').click();
+  assert.match(await cards.locator('.ml-review-button').innerText(),/\(0\)/);
+  await cards.locator('.ml-rating button.ml-unknown').click();
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.evaluate(n=>document.dispatchEvent(new CustomEvent('hsk-main-lesson',{detail:n})),lesson);
+  await page.locator('#mainLessonStudio [data-ml="cards"]').click();
+  assert.match(await page.locator('#mainLessonStudio .ml-review-button').innerText(),/\(1\)/);
+  await page.locator('#mainLessonStudio .ml-review-button').click();
+  assert.match(await page.locator('#mainLessonStudio .ml-body p').filter({hasText:'Повторение'}).first().innerText(),/Повторение 1 из 1/);
+  await page.locator('#mainLessonStudio .ml-review-all').click();
   await page.locator('#mainLessonStudio [data-ml="workbook"]').click();
   // Verify real workbook mode first: original PDF upload and 50 numbered answers.
   const original=page.locator('#mainLessonStudio .hsk-original');
