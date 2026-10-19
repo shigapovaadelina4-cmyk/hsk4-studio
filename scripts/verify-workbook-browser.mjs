@@ -43,6 +43,7 @@ try {
   if(lesson===3){
     assert.match(await original.locator('.hsk-source-question').innerText(),/面试通知/);
     assert.equal(await original.locator('.hsk-source-listen').count(),1);
+    await original.locator('.hsk-source-transcript summary').click();
     assert.match(await original.locator('.hsk-source-transcript').innerText(),/经理对我印象不错/);
   }
   assert.equal(await original.locator('.hsk-wb-sections button').count(),7);
