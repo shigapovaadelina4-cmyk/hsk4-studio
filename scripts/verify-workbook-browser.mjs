@@ -42,7 +42,9 @@ try {
   assert.equal(await original.locator('.hsk-original-exercise .hsk-wb-nav button').count(),lesson<=3?5:12);
   if(lesson===3){
     assert.match(await original.locator('.hsk-source-question').innerText(),/面试通知/);
-    assert.equal(await original.locator('.hsk-source-listen').count(),1);
+    assert.equal(await original.locator('.hsk-source-listen').count(),0);
+    assert.equal(await original.locator('.hsk-listening-inline audio').count(),1);
+    assert.equal(await original.locator('.hsk-listening-upload').count(),1);
     await original.locator('.hsk-source-transcript summary').click();
     assert.match(await original.locator('.hsk-source-transcript').innerText(),/经理对我印象不错/);
   }
@@ -98,7 +100,7 @@ try {
   assert.equal(await audioPicker.count(),1,'Original audio upload missing');
   await audioPicker.setInputFiles([0,1,2].map(i=>({name:'part'+(i+1)+'.mp3',mimeType:'audio/mpeg',buffer:Buffer.from([73,68,51,3,0,0,0,0,0,0])})));
   await original.locator('.hsk-wb-sections button').filter({hasText:'听力 13–22'}).click();
-  assert.match(await original.locator('.hsk-original-source audio').getAttribute('src')||'',/^blob:/);
+  assert.match(await original.locator('.hsk-listening-inline audio').getAttribute('src')||'',/^blob:/);
   const pdfInput=original.locator('.hsk-original-upload input[type=file]');
   await pdfInput.setInputFiles({name:'practice.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\\n1 0 obj <</Type /Catalog>> endobj\\n%%EOF')});
   await page.locator('#mainLessonStudio .hsk-wb-sections button').filter({hasText:'Дополнительная авторская практика'}).click();
