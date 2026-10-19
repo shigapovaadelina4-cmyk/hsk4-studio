@@ -36,10 +36,10 @@ try {
   const original=page.locator('#mainLessonStudio .hsk-original');
   await original.waitFor({state:'visible'});
   assert.match(await original.locator('.hsk-original-banner').innerText(),/HSK 4 · Тренировка/);
-  assert.match(await original.locator('.hsk-original-step-header').innerText(),/Задание 1 · 1 из 5 · Отвечено: 0/);
+  assert.match(await original.locator('.hsk-original-step-header').innerText(),lesson<=3?/Задание 1 · 1 из 5 · Отвечено: 0/:/Задание 23 · 1 из 12 · Отвечено: 0/);
   assert.equal(await original.locator('.hsk-original-embedded').count(),1);
   assert.equal(await original.locator('.hsk-original-materials').getAttribute('open'),null);
-  assert.equal(await original.locator('.hsk-original-exercise .hsk-wb-nav button').count(),5);
+  assert.equal(await original.locator('.hsk-original-exercise .hsk-wb-nav button').count(),lesson<=3?5:12);
   if(lesson===3){
     assert.match(await original.locator('.hsk-source-question').innerText(),/面试通知/);
     assert.equal(await original.locator('.hsk-source-listen').count(),1);
