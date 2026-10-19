@@ -36,6 +36,11 @@ window.HSKWorkbookSourceItems=Object.freeze({
  50:{text:'看图，用“毕业”造句。',type:'picture-write'}
  },
  3:{
+  1:{type:'judgment',text:'他在等面试通知。',audioContext:'我通过那家公司的面试了。经理对我印象不错，他要我明天就正式去上班。真没想到，找工作这么容易。'},
+  2:{type:'judgment',text:'小林正在找工作。',audioContext:'小林，这次招聘是你负责吧？李教授又介绍了他的一个学生，还不错，这是他的材料，你看看。'},
+  3:{type:'judgment',text:'面试时必须准时到。',audioContext:'去面试的时候衣服要穿得正式一些，不能太随便，这样能给面试者留下一个好的第一印象。'},
+  4:{type:'judgment',text:'他去过很多国家。',audioContext:'大学毕业以后，他去了一家公司。公司经常让他去国外，短短一年的时间，就去了十几个国家。同学们都很羡慕他。'},
+  5:{type:'judgment',text:'马经理告诉大家他很满意。',audioContext:'大家现在工作都很努力，虽然马经理没有说，但是大家都明白，他对我们最近的工作还是很满意的。'},
  23:{type:'fill',text:'那位女服务员给我们（　）下了很深的印象。',choices:['能力','通知','留','坚持','首先']},
  24:{type:'fill',text:'不管别人怎么说，（　）你要对自己有信心。',choices:['能力','通知','留','坚持','首先']},
  25:{type:'fill',text:'会议改到明天下午两点半开，你去（　）一下班里的其他人。',choices:['能力','通知','留','坚持','首先']},
