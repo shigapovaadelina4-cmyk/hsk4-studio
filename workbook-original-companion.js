@@ -79,7 +79,8 @@ function mount(host,lesson){
  const sourceText=el('div',undefined,'hsk-source-text');sourceText.setAttribute('lang','zh-Hans');originalBody.append(sourceText);
  originalBox.append(originalTitle,originalCopy,originalBody);
  const sections=[['听力 1–5',1,5],['听力 6–12',6,12],['听力 13–22',13,22],['阅读 23–30',23,30],['阅读 31–34',31,34],['阅读 35–43',35,43],['书写 44–50',44,50]];
- let current=1;
+ // Start on an embedded exercise instead of an empty PDF placeholder when listening transcription is pending.
+ let current=window.HSKWorkbookSourceItems?.[lesson]?.[1]?1:23;
  function correct(i){const r=state[i];return i<=43&&r?.checked&&norm(r.value)===norm(answers[i])}
  function progress(){const done=Object.keys(state).filter(k=>state[k]?.checked).length;const score=Array.from({length:43},(_,i)=>i+1).filter(correct).length;status.textContent='Проверено: '+done+' из 50 · Верно (№1–43): '+score+' из 43 · №44–50 — самостоятельная сверка с ключом.';
  const group=current>=23&&current<=34?[23,34]:current>=35&&current<=43?[35,43]:current>=44?[44,50]:current<=5?[1,5]:current<=12?[6,12]:[13,22];
@@ -160,7 +161,7 @@ function mount(host,lesson){
   const reveal=btn('Показать ответ',()=>{feedback.className='hsk-wb-feedback';feedback.textContent=n<=43?'Ответ официального ключа: '+answers[n]:sourceItem?.correct?'Ответ по ключу: '+sourceItem.correct+'。':'Открой ключи HSK 4A, задание '+n+'; письменный ответ проверяется вручную.'});
   task.append(check,reveal,feedback);
   actions.replaceChildren();
-  const back=btn('← Предыдущее',()=>{current--;display()}),next=btn('Следующее →',()=>{current++;display()}),reset=btn('Пройти заново ↻',()=>{if(confirm('Сбросить ответы этого урока?')){state={};persist();current=1;display()}});back.disabled=n===1;next.disabled=n===50;actions.append(back,next,reset);
+  const back=btn('← Предыдущее',()=>{current--;display()}),next=btn('Следующее →',()=>{current++;display()}),reset=btn('Пройти заново ↻',()=>{if(confirm('Сбросить ответы этого урока?')){state={};persist();current=window.HSKWorkbookSourceItems?.[lesson]?.[1]?1:23;display()}});back.disabled=n===1;next.disabled=n===50;actions.append(back,next,reset);
   progress();
  }
  const layout=el('div',undefined,'hsk-original-layout');
