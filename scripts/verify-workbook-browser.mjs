@@ -53,11 +53,13 @@ try {
   assert.match(await original.locator('.hsk-wb-status').innerText(),/Проверено: 1 из 50/);
   if(lesson>=4){
     const excerpt=await original.locator('.hsk-source-question').innerText();
-    assert.ok(excerpt.includes('（　）'),'Original cloze question 23 missing for lesson '+lesson);
+    assert.ok(excerpt.includes('（　）'),'Missing cloze question 23 in lesson '+lesson);
     const expected=await page.evaluate(n=>window.HSK4OfficialAnswerCodes[n][23],lesson);
-    await original.locator('.hsk-wb-options button').filter({hasText:new RegExp('^'+expected+'
-  
-  await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 23–30'}).click();
+    await original.locator('.hsk-wb-options button').filter({hasText:expected}).click();
+    await original.locator('.hsk-wb-check').click();
+    assert.match(await original.locator('.hsk-wb-feedback').innerText(),/Правильно/);
+  }
+    await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 23–30'}).click();
   assert.equal(await original.locator('.hsk-original-exercise .hsk-wb-nav button').count(),12);
   assert.match(await original.locator('.hsk-original-step-header').innerText(),/Задание 23 · 1 из 12/);
   if(lesson===3){
