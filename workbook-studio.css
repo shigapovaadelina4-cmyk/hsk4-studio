@@ -120,3 +120,41 @@
 #mainLessonStudio .hsk-source-reference{border:1px solid #ecdeed;border-radius:12px;padding:10px 14px;margin-top:8px;background:#fffafd}
 #mainLessonStudio .hsk-source-reference summary{cursor:pointer;font-weight:600;color:#796089}
 #mainLessonStudio .hsk-source-reference .hsk-original-upload[hidden]{display:none}
+
+
+/* Refined single-card workbook: lesson 1 navigation, lesson 2–10 compact interaction. */
+#mainLessonStudio .hsk-original .hsk-original-exercise{max-width:980px;margin:0 auto;padding:12px clamp(14px,3vw,28px) 22px}
+#mainLessonStudio .hsk-original .hsk-original-embedded{padding:clamp(16px,3vw,28px);margin:12px 0 14px;border:1px solid #ead9e9;border-radius:22px;box-shadow:0 10px 32px rgba(107,70,121,.045)}
+#mainLessonStudio .hsk-original .hsk-original-instruction{font-size:13px;color:#947699;letter-spacing:.015em;line-height:1.5;margin:0 0 14px}
+#mainLessonStudio .hsk-original .hsk-source-text{padding:0}
+#mainLessonStudio .hsk-original .hsk-source-question{font-size:clamp(22px,3vw,28px);line-height:1.85;font-weight:520;color:#33243f;margin:8px 0 18px;overflow-wrap:anywhere}
+#mainLessonStudio .hsk-original .hsk-source-bank{display:none}
+#mainLessonStudio .hsk-original .hsk-source-prompt{font-size:17px;font-weight:650;color:#593963;line-height:1.65;margin:12px 0}
+#mainLessonStudio .hsk-original .hsk-wb-question{padding:0;border:0;margin:0;background:transparent}
+#mainLessonStudio .hsk-original .hsk-original-chapter{font-size:13px;color:#917895;margin:3px 0 12px}
+#mainLessonStudio .hsk-original .hsk-wb-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:10px;margin:15px 0 18px}
+#mainLessonStudio .hsk-original .hsk-wb-options button{font-weight:700;font-size:17px;text-align:center;padding:13px 14px;border-radius:13px;min-height:52px;border:1px solid #e6d4eb;background:#fff;color:#5e426a;box-shadow:0 1px 3px #e9dce9}
+#mainLessonStudio .hsk-original .hsk-wb-options button.selected{background:#80508f;color:#fff;border-color:#80508f}
+#mainLessonStudio .hsk-original .hsk-wb-check{background:#07a8a4!important;color:#fff!important;border-color:#07a8a4!important;min-width:150px}
+#mainLessonStudio .hsk-original .hsk-original-check-actions{display:flex;align-items:stretch;flex-wrap:wrap;gap:10px;margin:16px 0 8px}
+#mainLessonStudio .hsk-original .hsk-original-check-actions button{border-radius:12px;padding:12px 18px;min-height:46px}
+#mainLessonStudio .hsk-original .hsk-original-source-link{background:transparent;border:0;color:#906d9b;font-size:13px;padding:8px 0;text-decoration:underline;text-underline-offset:3px;min-height:36px}
+#mainLessonStudio .hsk-original .hsk-source-reference{margin-top:18px;background:#faf7fb;border:1px solid #f0e6f0}
+#mainLessonStudio .hsk-original .hsk-original-materials{margin-top:10px;background:#faf7fb}
+#mainLessonStudio .hsk-original .hsk-listening-inline{border:1px solid #e9d8eb;background:#faf5fc;padding:14px;border-radius:15px;margin:0 0 18px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+#mainLessonStudio .hsk-original .hsk-listening-heading{flex-basis:100%;font-weight:700;margin:0;color:#4b3258}
+#mainLessonStudio .hsk-original .hsk-listening-inline audio{display:block;flex:1 1 280px;min-width:0;width:100%;border-radius:12px}
+#mainLessonStudio .hsk-original .hsk-listening-upload{background:#fff;border:1px solid #dcc6df;border-radius:12px;font-weight:600;min-height:44px}
+#mainLessonStudio .hsk-original .hsk-listening-status{flex-basis:100%;font-size:13px;color:#866c8c;margin:0}
+#mainLessonStudio .hsk-original .hsk-source-transcript{font-size:14px;color:#6a5278;margin:10px 0 16px}
+#mainLessonStudio .hsk-original .hsk-source-transcript summary{cursor:pointer}
+#mainLessonStudio .hsk-original .hsk-source-transcript p{line-height:1.75;padding:12px;border-radius:12px;background:#f8f1fa}
+#mainLessonStudio .hsk-original .hsk-wb-assembled{min-height:52px}
+#mainLessonStudio .hsk-original .hsk-wb-feedback{font-size:15px}
+@media(max-width:540px){
+ #mainLessonStudio .hsk-original .hsk-original-embedded{padding:14px;border-radius:16px}
+ #mainLessonStudio .hsk-original .hsk-wb-options{grid-template-columns:repeat(auto-fit,minmax(75px,1fr));gap:8px}
+ #mainLessonStudio .hsk-original .hsk-original-check-actions button{flex:1 1 42%}
+ #mainLessonStudio .hsk-original .hsk-original-exercise{padding:10px 12px}
+ #mainLessonStudio .hsk-original .hsk-listening-inline{padding:12px}
+}
