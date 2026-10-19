@@ -140,11 +140,13 @@ function mount(host,lesson){
   const feedback=el('p',undefined,'hsk-wb-feedback');feedback.setAttribute('role','status');
   function show(){const r=state[n];feedback.replaceChildren();feedback.className='hsk-wb-feedback '+(n<=43?(correct(n)?'good':'bad'):'');
    if(n<=43){feedback.append(el('strong',correct(n)?'✓ Правильно':'✕ Ответ отличается от ключа'));feedback.append(el('p','Ответ по загруженному официальному ключу: '+answers[n]));}
-   else{const written=sourceItem?.type==='write-order'?value.split('|').filter(Boolean).map(i=>sourceItem.words[Number(i)]).join(''):value;feedback.textContent='Твой вариант: '+written+' · Ответ сохранён. Сравни порядок и формулировку с образцом в оригинальных ключах.'}
+   else{const written=sourceItem?.type==='write-order'?value.split('|').filter(Boolean).map(i=>sourceItem.words[Number(i)]).join(''):value;
+    if(sourceItem?.correct){const good=norm(written)===norm(sourceItem.correct);feedback.className='hsk-wb-feedback '+(good?'good':'bad');feedback.textContent=(good?'✓ Правильно. ':'✕ Проверь порядок слов. ')+'Твой вариант: '+written+' · По ключу: '+sourceItem.correct+'。'}
+    else feedback.textContent='Твой вариант: '+written+' · Ответ сохранён. Сравни порядок и формулировку с образцом в оригинальных ключах.'}
   }
   if(old.checked)show();
   const check=btn('Проверить',()=>{state[n]={value,checked:true};persist();show();progress()},'hsk-wb-check');
-  const reveal=btn('Показать ответ',()=>{feedback.className='hsk-wb-feedback';feedback.textContent=n<=43?'Ответ официального ключа: '+answers[n]:'Открой ключи HSK 4A, задание '+n+'; письменный ответ проверяется вручную.'});
+  const reveal=btn('Показать ответ',()=>{feedback.className='hsk-wb-feedback';feedback.textContent=n<=43?'Ответ официального ключа: '+answers[n]:sourceItem?.correct?'Ответ по ключу: '+sourceItem.correct+'。':'Открой ключи HSK 4A, задание '+n+'; письменный ответ проверяется вручную.'});
   task.append(check,reveal,feedback);
   actions.replaceChildren();
   const back=btn('← Предыдущее',()=>{current--;display()}),next=btn('Следующее →',()=>{current++;display()}),reset=btn('Пройти заново ↻',()=>{if(confirm('Сбросить ответы этого урока?')){state={};persist();current=1;display()}});back.disabled=n===1;next.disabled=n===50;actions.append(back,next,reset);
