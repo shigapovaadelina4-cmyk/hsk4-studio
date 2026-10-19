@@ -20,7 +20,14 @@ try {
   assert.ok((await lessonOne.locator('#exampleRu').innerText()).length>8);
   await lessonOne.locator('#cards [data-rate="yes"]').click();
  }
- assert.equal(await lessonOne.locator('#speakExample').count(),1);
+ await lessonOne.locator('#cards [data-rate="no"]').click();
+ assert.match(await lessonOne.locator('#l1reviewUnknown').innerText(),/\(1\)/);
+ await lessonOne.locator('#l1reviewUnknown').click();
+ assert.match(await lessonOne.locator('#count').innerText(),/Повторение 1 из 1/);
+ await lessonOne.locator('#cards [data-rate="yes"]').click();
+ assert.match(await lessonOne.locator('#l1reviewNote').innerText(),/Все трудные слова повторены/);
+ assert.match(await lessonOne.locator('#l1reviewUnknown').innerText(),/\(0\)/);
+  assert.equal(await lessonOne.locator('#speakExample').count(),1);
  assert.deepEqual(l1errors,[],'Lesson 1 flashcard JavaScript errors');
  await lessonOne.close();
  console.log('Interactive mobile flashcard test passed: lesson 1, all 37 cards');
