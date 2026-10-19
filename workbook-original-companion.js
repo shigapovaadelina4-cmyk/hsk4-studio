@@ -148,7 +148,7 @@ function mount(host,lesson){
     sourceItem.words.forEach((word,i)=>{if(indices.includes(i))return;pool.append(btn(word,()=>{indices.push(i);value=indices.join('|');state[n]={value,checked:false};persist();repaint();progress()}))});
    }
    repaint();choices.append(chosen,pool,btn('Сбросить ↻',()=>{indices=[];value='';state[n]={value,checked:false};persist();repaint();progress()}));
-  }else if(picks)for(const option of picks)choices.append(btn(option,()=>{value=option;state[n]={value,checked:false};persist();display()},option===value?'selected':''));
+  }else if(picks)for(const option of picks){const choiceIndex='ABCDE'.indexOf(option);const label=sourceItem?.choices?.[choiceIndex]?option+' · '+sourceItem.choices[choiceIndex]:option;choices.append(btn(label,()=>{value=option;state[n]={value,checked:false};persist();display()},option===value?'selected':''))}
   else{const inp=el('input');inp.type='text';inp.value=value;inp.placeholder=n<=34?'Например: ACB':'Запиши своё предложение на китайском';inp.setAttribute('aria-label','Ответ на задание '+n);inp.oninput=()=>{value=inp.value;state[n]={value,checked:false};persist();progress()};choices.append(inp)}
   task.append(choices);
   const feedback=el('p',undefined,'hsk-wb-feedback');feedback.setAttribute('role','status');
