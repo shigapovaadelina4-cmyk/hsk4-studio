@@ -1299,24 +1299,43 @@ const panel=document.querySelector('.panel');if(!panel)return;
 const studio=document.createElement('section');studio.id='mainLessonStudio';studio.hidden=true;
 studio.innerHTML='<div class="ml-head"></div><p class="muted small">Материалы каждого урока открываются в одинаковом оформлении. Карточки с примерами для запоминания. Примеры составлены для тренировки, это не цитаты из учебника.</p><div class="ml-tabs"><button data-ml="cards">🀄 Карточки</button><button data-ml="grammar">📖 Грамматика</button><button data-ml="practice">✍️ Практика</button><button data-ml="audio">🎧 Аудирование</button><button data-ml="games">🎮 Игры</button><button data-ml="workbook">📒 Рабочая тетрадь</button></div><div class="ml-body"></div>';
 panel.insertAdjacentElement('afterend',studio);
-let active=4,tab='cards',idx=0,flipped=false,qidx=0,score=0;
+let active=4,tab='cards',idx=0,flipped=false,qidx=0,score=0,reviewUnknown=false;
 const head=studio.querySelector('.ml-head'),body=studio.querySelector('.ml-body');
 function speech(text){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='zh-CN';u.rate=.85;window.speechSynthesis.speak(u)}
 function render(){
 const d=data[active];head.textContent='🌸 Урок '+active+' · '+d.title;body.replaceChildren();if(active>=6&&active<=10){const note=document.createElement('p');note.style.cssText='background:#fff3dd;border-radius:12px;padding:12px 16px;color:#765522';note.textContent='📖 Слова урока сверены с пронумерованным словарём учебника HSK 4A. Примеры для запоминания составлены специально для сайта, это не цитаты из учебника.';body.appendChild(note)}
 studio.querySelectorAll('[data-ml]').forEach(b=>b.classList.toggle('active',b.dataset.ml===tab));
 if(tab==='cards'){
-const w=d.words[idx];const count=document.createElement('p');count.textContent='Слово '+(idx+1)+' из '+d.words.length;
+const key='hsk4-card-rating-'+active;let ratings={};try{ratings=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
+const unknownIndices=()=>d.words.map((w,i)=>ratings[w[0]]==='no'?i:-1).filter(i=>i>=0);
+const currentIndices=()=>reviewUnknown?unknownIndices():d.words.map((_,i)=>i);
+let indices=currentIndices();
+const reviewBar=document.createElement('div');reviewBar.className='ml-review-bar';
+const unknownBtn=document.createElement('button');unknownBtn.type='button';unknownBtn.className='ml-review-button'+(reviewUnknown?' active':'');
+unknownBtn.textContent='🔁 Повторить незнакомые ('+unknownIndices().length+')';
+unknownBtn.onclick=()=>{if(!unknownIndices().length){reviewNote.textContent='Сейчас нет слов с отметкой «Не знаю».';return}reviewUnknown=true;idx=unknownIndices()[0];flipped=false;render()};
+const allBtn=document.createElement('button');allBtn.type='button';allBtn.className='ml-review-all';allBtn.textContent='Все слова';
+allBtn.onclick=()=>{reviewUnknown=false;idx=0;flipped=false;render()};
+const reviewNote=document.createElement('span');reviewNote.className='ml-review-note';reviewNote.setAttribute('role','status');
+reviewBar.append(unknownBtn,allBtn,reviewNote);
+body.append(reviewBar);
+if(reviewUnknown&&!indices.length){
+const done=document.createElement('div');done.className='ml-review-done';
+done.textContent='🎉 Отлично! Ты повторила все трудные слова этого урока. Теперь нет слов с отметкой «Не знаю».';
+body.append(done);return;
+}
+if(!indices.includes(idx))idx=indices[0];
+const move=(step)=>{indices=currentIndices();if(!indices.length){render();return}const pos=indices.indexOf(idx);idx=indices[(pos+step+indices.length)%indices.length];flipped=false;render()};
+const w=d.words[idx];const count=document.createElement('p');count.textContent=reviewUnknown?'Повторение '+(indices.indexOf(idx)+1)+' из '+indices.length+' · Слово '+(idx+1):'Слово '+(idx+1)+' из '+d.words.length;
 const card=document.createElement('div');card.className='ml-card';card.innerHTML='<div class="ml-hanzi"></div><p></p><p></p><p></p>';card.querySelector('.ml-hanzi').textContent=w[0];const ps=card.querySelectorAll('p');ps[0].textContent=flipped?w[1]:'Нажми на карточку, чтобы открыть перевод';ps[1].textContent=flipped?w[2]:'';ps[2].textContent='';if(flipped){const example=document.createElement('div');example.className='ml-card-example';example.style.cssText='margin-top:14px;padding:14px;background:#f8effb;border-radius:14px;text-align:left';const zh=document.createElement('p');zh.textContent='例句 · '+w[3];zh.style.fontSize='19px';const py=document.createElement('p');py.textContent=w[5];py.style.color='#7a4a8b';const ru=document.createElement('p');ru.textContent=w[4];const audio=document.createElement('button');audio.textContent='🔊 Пример';audio.onclick=()=>speech(w[3]);example.append(zh,py,ru,audio);card.appendChild(example)}
 card.onclick=e=>{if(e.target.closest('button'))return;flipped=!flipped;render()};
 const actions=document.createElement('div');actions.className='ml-actions';
-[['← Назад',()=>{idx=(idx+d.words.length-1)%d.words.length;flipped=false;render()}],['🔊 Слушать',()=>speech(w[0])],['Далее →',()=>{idx=(idx+1)%d.words.length;flipped=false;render()}]].forEach(([label,fn])=>{const b=document.createElement('button');b.textContent=label;b.onclick=fn;actions.appendChild(b)});
+[['← Назад',()=>move(-1)],['🔊 Слушать',()=>speech(w[0])],['Далее →',()=>move(1)]].forEach(([label,fn])=>{const b=document.createElement('button');b.textContent=label;b.onclick=fn;actions.appendChild(b)});
 const rating=document.createElement('div');rating.className='ml-rating';
-const key='hsk4-card-rating-'+active;let ratings={};try{ratings=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
-const mark=(v)=>{ratings[w[0]]=v;localStorage.setItem(key,JSON.stringify(ratings));idx=(idx+1)%d.words.length;flipped=false;render()};
+const mark=(v)=>{const oldIndices=currentIndices();const place=oldIndices.indexOf(idx);ratings[w[0]]=v;try{localStorage.setItem(key,JSON.stringify(ratings))}catch(e){};const updated=currentIndices();if(updated.length){if(v==='no'&&updated.includes(idx)&&reviewUnknown){idx=updated[(updated.indexOf(idx)+1)%updated.length]}else{const next=oldIndices[(place+1)%oldIndices.length];idx=updated.includes(next)?next:updated[Math.min(place,updated.length-1)]}}flipped=false;render()};
 for(const [label,val,cls] of [['✕ Не знаю','no','ml-unknown'],['✓ Знаю','yes','ml-known']]){const b=document.createElement('button');b.type='button';b.textContent=label;b.className=cls;b.onclick=()=>mark(val);rating.appendChild(b)}
-const stats=document.createElement('p');stats.className='ml-rating-status';const vals=Object.values(ratings);stats.textContent='Урок '+active+' · Знаю: '+vals.filter(v=>v==='yes').length+' · Повторить: '+vals.filter(v=>v==='no').length+' · Всего слов: '+d.words.length;
-const jump=document.createElement('div');jump.style.cssText='display:flex;gap:6px;flex-wrap:wrap;margin-top:12px';for(let j=0;j<d.words.length;j++){const b=document.createElement('button');b.type='button';b.textContent=String(j+1);b.title='Слово '+(j+1);b.style.cssText='border:1px solid #c9dedb;border-radius:9px;min-width:34px;padding:7px;background:'+(j===idx?'#0aa99f;color:white':'white');b.onclick=()=>{idx=j;flipped=false;render()};jump.appendChild(b)}
+const stats=document.createElement('p');stats.className='ml-rating-status';const vals=Object.values(ratings);stats.textContent='Урок '+active+' · Знаю: '+vals.filter(v=>v==='yes').length+' · Повторить: '+unknownIndices().length+' · Всего слов: '+d.words.length;
+const jump=document.createElement('div');jump.style.cssText='display:flex;gap:6px;flex-wrap:wrap;margin-top:12px';for(const j of indices){const b=document.createElement('button');b.type='button';b.textContent=String(j+1);b.title='Слово '+(j+1);b.style.cssText='border:1px solid #c9dedb;border-radius:9px;min-width:34px;padding:7px;background:'+(j===idx?'#0aa99f;color:white':'white');b.onclick=()=>{idx=j;flipped=false;render()};jump.appendChild(b)}
 body.append(count,card,rating,stats,actions,jump);
 }else if(tab==='grammar'){
 const heading=document.createElement('h3');heading.textContent='📖 Грамматика урока '+active;
@@ -1469,7 +1488,7 @@ else{const note=document.createElement('p');note.textContent='Модуль за�
 }
 }
 studio.querySelectorAll('[data-ml]').forEach(b=>b.onclick=()=>{tab=b.dataset.ml;render()});
-document.addEventListener('hsk-main-lesson',e=>select(e.detail));function select(n){active=n;idx=0;qidx=0;score=0;flipped=false;tab='cards';for(const b of document.querySelectorAll('#partA button.lesson, #partB button.lesson'))b.classList.toggle('active',b.textContent.trim()==='Урок '+n);for(const b of document.querySelectorAll('#hskQuickLessonButtons button'))b.style.background=b.textContent.trim()==='Урок '+n?'#00aaa3':'#f9f4fa';studio.hidden=false;panel.style.display='none';render();studio.scrollIntoView({behavior:'smooth',block:'start'})}
+document.addEventListener('hsk-main-lesson',e=>select(e.detail));function select(n){active=n;idx=0;qidx=0;score=0;flipped=false;reviewUnknown=false;tab='cards';for(const b of document.querySelectorAll('#partA button.lesson, #partB button.lesson'))b.classList.toggle('active',b.textContent.trim()==='Урок '+n);for(const b of document.querySelectorAll('#hskQuickLessonButtons button'))b.style.background=b.textContent.trim()==='Урок '+n?'#00aaa3':'#f9f4fa';studio.hidden=false;panel.style.display='none';render();studio.scrollIntoView({behavior:'smooth',block:'start'})}
 function addButtons(){for(const n of [2,3,4,5,6,7,8,9,10]){const old=[...top.querySelectorAll('button.lesson')].find(b=>b.textContent.trim()==='Урок '+n);if(!old)continue;old.disabled=false;old.title='Открыть основной урок '+n;old.onclick=()=>select(n)}}
 addButtons();
 /* lesson buttons are wired directly by renderLessons */
