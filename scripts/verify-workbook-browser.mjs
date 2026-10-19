@@ -40,6 +40,11 @@ try {
   assert.equal(await original.locator('.hsk-original-embedded').count(),1);
   assert.equal(await original.locator('.hsk-original-materials').getAttribute('open'),null);
   assert.equal(await original.locator('.hsk-original-exercise .hsk-wb-nav button').count(),5);
+  if(lesson===3){
+    assert.match(await original.locator('.hsk-source-question').innerText(),/面试通知/);
+    assert.equal(await original.locator('.hsk-source-listen').count(),1);
+    assert.match(await original.locator('.hsk-source-transcript').innerText(),/经理对我印象不错/);
+  }
   assert.equal(await original.locator('.hsk-wb-sections button').count(),7);
   await original.locator('.hsk-wb-options button').first().click();
   await original.locator('.hsk-wb-check').click();
@@ -49,6 +54,10 @@ try {
   await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 23–30'}).click();
   assert.equal(await original.locator('.hsk-original-exercise .hsk-wb-nav button').count(),12);
   assert.match(await original.locator('.hsk-original-step-header').innerText(),/Задание 23 · 1 из 12/);
+  if(lesson===3){
+    assert.match(await original.locator('.hsk-source-question').innerText(),/女服务员/);
+    assert.match(await original.locator('.hsk-source-bank').innerText(),/C 留/);
+  }
   if(lesson===2){
    assert.match(await original.locator('.hsk-source-question').innerText(),/如果有什么问题/);
    assert.match(await original.locator('.hsk-source-bank').innerText(),/C 及时/);
@@ -60,6 +69,7 @@ try {
   assert.equal(await original.locator('.hsk-original-materials').getAttribute('open'),null);
   assert.match(await original.locator('.hsk-original-instruction').innerText(),/страница/);
   await original.locator('.hsk-wb-sections button').filter({hasText:'阅读 31–34'}).click();
+  if(lesson===3)assert.match(await original.locator('.hsk-source-question').innerText(),/午饭后不要马上睡午觉/);
   if(lesson===2)assert.match(await original.locator('.hsk-source-question').innerText(),/来北京半年多了/);
   const exact=await page.evaluate(n=>window.HSK4OfficialAnswerCodes[n][31],lesson);
   for(const character of exact)await original.locator('.hsk-wb-tokens button').filter({hasText:character}).click();
