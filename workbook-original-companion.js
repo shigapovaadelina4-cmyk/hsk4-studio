@@ -74,10 +74,10 @@ function mount(host,lesson){
  const nav=el('div',undefined,'hsk-wb-sections'),jump=el('div',undefined,'hsk-wb-nav'),task=el('div',undefined,'hsk-wb-question'),actions=el('div',undefined,'hsk-wb-controls');
  const stepHeader=el('div',undefined,'hsk-original-step-header');
  const progressTrack=el('div',undefined,'hsk-original-progress');const progressFill=el('div',undefined,'hsk-original-progress-fill');progressTrack.append(progressFill);
- const originalBox=el('div',undefined,'hsk-original-embedded');const originalTitle=el('h3','📖 Оригинальное задание · Урок '+lesson);
+ const originalBox=el('div',undefined,'hsk-original-embedded');
  const originalBody=el('div',undefined,'hsk-original-embedded-body');const originalCopy=el('p',undefined,'hsk-original-instruction');
  const sourceText=el('div',undefined,'hsk-source-text');sourceText.setAttribute('lang','zh-Hans');originalBody.append(sourceText);
- originalBox.append(originalTitle,originalCopy,originalBody);
+ originalBox.append(originalCopy,originalBody);
  const sections=[['听力 1–5',1,5],['听力 6–12',6,12],['听力 13–22',13,22],['阅读 23–30',23,30],['阅读 31–34',31,34],['阅读 35–43',35,43],['书写 44–50',44,50]];
  // Start on an embedded exercise instead of an empty PDF placeholder when listening transcription is pending.
  let current=window.HSKWorkbookSourceItems?.[lesson]?.[1]?1:23;
@@ -94,40 +94,42 @@ function mount(host,lesson){
   const group=sections.find(([,a,b])=>n>=a&&n<=b);
   const navigationRange=n>=23&&n<=34?[23,34]:[group[1],group[2]];
   for(let i=navigationRange[0];i<=navigationRange[1];i++){const c=btn(String(i),()=>{current=i;display()},(i===n?'active ':'')+(state[i]?.checked?(i<=43?(correct(i)?'correct':'wrong'):'correct'):''));jump.append(c)}
-  task.append(el('h3','Задание '+n,'hsk-original-task-title'));
-  task.append(el('p',group[0]+' · Страница '+targetPage+' твоей рабочей тетради','hsk-wb-number'));
+  const chapter=el('p',group[0]+' · Задание '+n+' · Страница '+targetPage,'hsk-original-chapter');
+  task.append(chapter);
   const sourceItem=window.HSKWorkbookSourceItems?.[lesson]?.[n];
   sourceText.replaceChildren();
   if(sourceItem){
    const question=el('p',sourceItem.text,'hsk-source-question');sourceText.append(question);
+   if(n<=22){
+    const listen=el('div',undefined,'hsk-listening-inline');
+    const note=el('p','🎧 Оригинальное аудирование · запись издательства','hsk-listening-heading');listen.append(note);
+    listen.append(player);
+    listen.append(btn('Выбрать оригинальный аудиофайл',()=>audioInput.click(),'hsk-listening-upload'));
+    const statusText=el('p',undefined,'hsk-listening-status');
+    statusText.textContent=recordings[audioPart(n)]?'Загружено: '+recordings[audioPart(n)].name:'Для этого задания пока нет записи. Добавь аудио из своего комплекта.';
+    listen.append(statusText);
+    sourceText.prepend(listen);
+   }
    if(sourceItem.audioContext){
-    const play=btn('🔊 Прослушать (синтезированная речь)',()=>{
-      if(!('speechSynthesis' in window))return;
-      const speech=new SpeechSynthesisUtterance(sourceItem.audioContext);speech.lang='zh-CN';speech.rate=0.86;
-      window.speechSynthesis.cancel();window.speechSynthesis.speak(speech);
-    },'hsk-source-listen');
-    sourceText.prepend(play);
     const transcript=el('details',undefined,'hsk-source-transcript');
-    transcript.append(el('summary','Показать текст аудирования'),el('p',sourceItem.audioContext));
+    transcript.append(el('summary','Посмотреть текст аудирования'),el('p',sourceItem.audioContext));
     sourceText.append(transcript);
    }
    if(sourceItem.prompt)sourceText.append(el('p','★ '+sourceItem.prompt,'hsk-source-prompt'));
    if(sourceItem.choices){const choicesList=el('p',sourceItem.choices.map((v,i)=>'ABCDE'[i]+' '+v).join(' · '),'hsk-source-bank');sourceText.append(choicesList)}
    if(sourceItem.type==='order')sourceText.append(el('p','Нажми на A, B, C в правильном порядке.','hsk-source-task-note'));
-   originalCopy.textContent='Урок '+lesson+' · задание №'+n+' · сверено с твоим PDF (страница '+targetPage+').';
-  }else originalCopy.textContent='Задание №'+n+' · оригинальная страница '+targetPage+'. Открой PDF, чтобы увидеть условие целиком.';
+   originalCopy.textContent='Урок '+lesson+' · исходное упражнение №'+n+' · стр. '+targetPage;
+  }else{originalCopy.textContent='Для задания №'+n+' нужен оригинальный PDF · стр. '+targetPage+'.';
+    if(n<=22){const listen=el('div',undefined,'hsk-listening-inline');listen.append(el('p','🎧 Оригинальное аудирование','hsk-listening-heading'),player,btn('Выбрать оригинальный аудиофайл',()=>audioInput.click(),'hsk-listening-upload'));sourceText.append(listen)}
+  }
   upload.hidden=!!sourceItem&&sourceItem.type!=='picture-write';
   reference.open=!sourceItem||sourceItem.type==='picture-write'; // Pictures must remain visible for writing tasks.
-  task.append(el('p','Выбери ответ на задание №'+n+' со страницы выше.','hsk-wb-hint'));
-  task.append(btn('📖 Открыть исходную страницу',()=>{page=targetPage;showPage();upload.hidden=false;reference.open=true;originalBox.scrollIntoView({behavior:'smooth',block:'start'})},'hsk-wb-audio'));
-  if(n>=23&&n<=26)task.append(el('p','阅读 第一部分 · подбери подходящее слово A–E к пропуску.','hsk-wb-hint'));
-  if(n>=27&&n<=30)task.append(el('p','阅读 第二部分 · подбери соответствующий вариант A–E.','hsk-wb-hint'));
-  if(n>=31&&n<=34)task.append(el('p','阅读 第三部分 · поставь части A, B, C в правильном порядке.','hsk-wb-hint'));
-  if(n>=35&&n<=43)task.append(el('p','阅读 第四部分 · прочитай текст и выбери верный вариант.','hsk-wb-hint'));
-  if(n>=44&&n<=50)task.append(el('p','书写 · напиши своё предложение, затем сравни с образцом в ключах.','hsk-wb-hint'));
-  if(n>=1&&n<=5)task.append(el('p','听力 第一部分 · прослушай высказывание и определи, верно оно или нет.','hsk-wb-hint'));
-
-  if(n<=22)task.append(el('p','Для оригинального аудирования нужен аудиофайл издательства; синтезированные случайные слова не заменяют диалоги из тетради.','hsk-wb-hint'));
+  if(!sourceItem)task.append(el('p','Прочитай условие в PDF и выбери ответ.','hsk-wb-hint'));
+  const openSource=btn('📄 Оригинальная страница',()=>{page=targetPage;showPage();upload.hidden=false;reference.open=true;reference.scrollIntoView({behavior:'smooth',block:'nearest'})},'hsk-original-source-link');
+  task.append(openSource);
+  // Only a short instruction is needed: the actual Chinese task is already above the answer.
+  if(n>=31&&n<=34)task.append(el('p','Собери порядок частей A, B, C.','hsk-wb-hint'));
+  if(n>=44&&n<=50)task.append(el('p','Составь предложение и проверь ответ.','hsk-wb-hint'));
   const choices=el('div',undefined,'hsk-wb-options');
   let value=old.value||'';
   const picks=n<=5?['Верно','Неверно']:n>=31&&n<=34?null:n<=22?['A','B','C','D']:n<=30?['A','B','C','D','E']:n<=43?['A','B','C','D']:null;
@@ -159,7 +161,7 @@ function mount(host,lesson){
   if(old.checked)show();
   const check=btn('Проверить',()=>{state[n]={value,checked:true};persist();show();progress()},'hsk-wb-check');
   const reveal=btn('Показать ответ',()=>{feedback.className='hsk-wb-feedback';feedback.textContent=n<=43?'Ответ официального ключа: '+answers[n]:sourceItem?.correct?'Ответ по ключу: '+sourceItem.correct+'。':'Открой ключи HSK 4A, задание '+n+'; письменный ответ проверяется вручную.'});
-  task.append(check,reveal,feedback);
+  const checkActions=el('div',undefined,'hsk-original-check-actions');checkActions.append(check,reveal);task.append(checkActions,feedback);
   actions.replaceChildren();
   const back=btn('← Предыдущее',()=>{current--;display()}),next=btn('Следующее →',()=>{current++;display()}),reset=btn('Пройти заново ↻',()=>{if(confirm('Сбросить ответы этого урока?')){state={};persist();current=window.HSKWorkbookSourceItems?.[lesson]?.[1]?1:23;display()}});back.disabled=n===1;next.disabled=n===50;actions.append(back,next,reset);
   progress();
@@ -171,10 +173,10 @@ function mount(host,lesson){
  // The actual workbook page must be visible inside the question card, never hidden in a separate sidebar or drawer.
  // When the original prompt is available as text, keep its PDF available only as an optional reference.
  const reference=el('details',undefined,'hsk-source-reference');reference.append(el('summary','📄 Оригинальная страница PDF'));reference.append(upload);
- originalBody.append(reference,materials);
+ originalBody.append(task,reference,materials);
  const showRef=()=>{if(upload.hidden){upload.hidden=false;reference.open=true}else reference.open=true};
  originalBox.addEventListener('click',e=>{if(e.target.closest('.hsk-show-original'))showRef()});
- exerciseCol.append(status,nav,stepHeader,progressTrack,jump,originalBox,task,actions);
+ exerciseCol.append(status,nav,stepHeader,progressTrack,jump,originalBox,actions);
  layout.append(exerciseCol);shell.append(layout);display();
 }
 window.HSKOriginalWorkbook={mount};
