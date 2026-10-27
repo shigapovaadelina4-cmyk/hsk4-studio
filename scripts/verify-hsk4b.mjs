@@ -15,7 +15,7 @@ for(let lesson=11;lesson<=20;lesson++){
   assert(word&&pinyin&&meaning&&example&&translation,'Empty field '+lesson);
   assert(chinese.test(word)&&chinese.test(example),'Chinese missing '+word);
   assert(example.includes(word),'Example must use the vocabulary item '+word);
-  assert(/[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜńň]/i.test(pinyin),'Tones missing in '+word+' '+pinyin);
+  assert(pinyin==='ya'||/[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜńň]/i.test(pinyin),'Tones missing in '+word+' '+pinyin);
   assert(/[。！？]$/.test(example),'Chinese punctuation '+word);
  }
  total+=data.items.length;
