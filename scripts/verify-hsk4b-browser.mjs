@@ -20,6 +20,8 @@ try{
       const chain=[];for(let x=b;x&&chain.length<8;x=x.parentElement){const st=getComputedStyle(x);chain.push({tag:x.tagName,id:x.id,cls:x.className,display:st.display,visibility:st.visibility,opacity:st.opacity,rect:x.getBoundingClientRect().toJSON()})}return chain
     })));
   }
+  const partDetails=page.locator('details.lesson-group').filter({has:page.locator('#partB')});
+  if(await partDetails.count()) await partDetails.locator('summary').click();
   await lessonBtn.click();
   const studio=page.locator('#hsk4bStudio');await studio.waitFor({state:'visible',timeout:20000});
   const card=studio.locator('#hsk4bCard');
