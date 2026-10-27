@@ -123,7 +123,7 @@
   async function open(n){
     lesson=n;index=0;review=false;flipped=false;loadRatings();root.hidden=false;
     $('hsk4bFace').textContent='Загружаю словарь урока '+n+'…';
-    const old=document.querySelector('#sourceStudio');if(old)old.hidden=true;
+    const old=document.querySelector('#hskSourceStudio');if(old)old.hidden=true;
     document.querySelector('#mainLessonStudio')?.setAttribute('hidden','');
     const panel=document.querySelector('main.wrap > .panel');if(panel)panel.style.display='none';
     try{
