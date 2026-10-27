@@ -144,9 +144,10 @@
     const studio=document.querySelector('#mainLessonStudio');
     if(studio)studio.insertAdjacentElement('afterend',root);else main.append(root);
     document.addEventListener('hsk-source-lesson',e=>{const n=Number(e.detail);if(n>=11&&n<=20)queueMicrotask(()=>open(n))});
-    document.addEventListener('hsk-main-lesson',()=>{root.hidden=true});
-    const partA=document.querySelector('#partA');if(partA)partA.addEventListener('click',()=>{root.hidden=true});
-    document.addEventListener('click',e=>{if(e.target.closest('#partA .lesson'))root.hidden=true});
+    const leave=()=>{root.hidden=true;const panel=document.querySelector('main.wrap > .panel');if(panel)panel.style.display=''};
+    document.addEventListener('hsk-main-lesson',leave);
+    const partA=document.querySelector('#partA');if(partA)partA.addEventListener('click',leave);
+    document.addEventListener('click',e=>{if(e.target.closest('#partA .lesson'))leave()});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
 })();
