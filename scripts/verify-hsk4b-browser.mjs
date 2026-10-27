@@ -13,7 +13,14 @@ try{
   // Test the fallback when third-party pinyin is unavailable: the card must remain usable.
   await page.route('**/cdn.jsdelivr.net/**',route=>route.abort());
   await page.goto('http://127.0.0.1:8127/',{waitUntil:'domcontentloaded'});
-  await page.locator('#partB button.lesson').filter({hasText:'Урок '+n}).click();
+  const lessonBtn=page.locator('#partB button.lesson').filter({hasText:'Урок '+n});
+  if(!(await lessonBtn.isVisible())){
+    console.log('LESSON BUTTON DIAGNOSTIC '+n,JSON.stringify(await page.evaluate(()=>{
+      const b=[...document.querySelectorAll('#partB button.lesson')].find(e=>e.textContent.trim()==='Урок 11');
+      const chain=[];for(let x=b;x&&chain.length<8;x=x.parentElement){const st=getComputedStyle(x);chain.push({tag:x.tagName,id:x.id,cls:x.className,display:st.display,visibility:st.visibility,opacity:st.opacity,rect:x.getBoundingClientRect().toJSON()})}return chain
+    })));
+  }
+  await lessonBtn.click();
   const studio=page.locator('#hsk4bStudio');await studio.waitFor({state:'visible',timeout:20000});
   const card=studio.locator('#hsk4bCard');
   assert.match(await studio.locator('#hsk4bCounter').innerText(),/Слово 1 из/);
