@@ -1,4 +1,4 @@
-name: Verify HSK 4A flashcards
+name: Verify HSK 4A and 4B flashcards
 on:
   push:
     branches: [main]
@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: '22'
       - name: Validate scripts and flashcards
-        run: node scripts/verify-vocab.mjs && node scripts/verify-workbook.mjs
+        run: node scripts/verify-vocab.mjs && node scripts/verify-workbook.mjs && node scripts/verify-hsk4b.mjs
 
   workbook-browser:
     runs-on: ubuntu-latest
@@ -32,4 +32,4 @@ jobs:
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
       - name: Test every authored workbook on mobile Chromium
-        run: node scripts/verify-workbook-browser.mjs
+        run: node scripts/verify-workbook-browser.mjs && node scripts/verify-hsk4b-browser.mjs
