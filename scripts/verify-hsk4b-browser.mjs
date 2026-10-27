@@ -25,6 +25,7 @@ try{
   await lessonBtn.click();
   const studio=page.locator('#hsk4bStudio');await studio.waitFor({state:'visible',timeout:20000});
   const card=studio.locator('#hsk4bCard');
+  await page.waitForFunction(()=>document.querySelector('#hsk4bCounter')?.textContent?.startsWith('Слово 1 из'),null,{timeout:15000});
   assert.match(await studio.locator('#hsk4bCounter').innerText(),/Слово 1 из/);
   const first=await studio.locator('.hsk4b-hanzi').innerText();
   assert(first.length>0);
