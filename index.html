@@ -1605,6 +1605,8 @@ studio.innerHTML='<div class="source-top">📚 Урок 6 · Оригиналь�
 panel.insertAdjacentElement('afterend',studio);
 const title=studio.querySelector('.source-top'),status=studio.querySelector('.source-status'),frame=studio.querySelector('iframe'),input=studio.querySelector('input'),tabs=studio.querySelector('.source-tabs');
 function key(){return tab+(active<=10?'A':'B')}
+function pageKey(){return 'hsk-source-page-'+key()}
+function refreshNotes(){/* PDF viewer has no editable notes panel; keep switching safe. */}
 async function show(){
 const k=key();title.textContent='🌸 Урок '+active+' · '+defs[k];
 tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.source===tab));
