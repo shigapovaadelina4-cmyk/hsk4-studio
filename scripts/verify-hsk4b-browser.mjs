@@ -52,6 +52,8 @@ try{
   // Force one missed word then reload to verify per-lesson local persistence.
   await studio.locator('[data-action="no"]').click();
   await page.reload({waitUntil:'domcontentloaded'});
+  const reloadDetails=page.locator('details.lesson-group').filter({has:page.locator('#partB')});
+  if(await reloadDetails.count()) await reloadDetails.locator('summary').click();
   await page.locator('#partB button.lesson').filter({hasText:'Урок '+n}).click();
   await studio.waitFor({state:'visible'});
   assert.equal(await studio.locator('#hsk4bUnknown').innerText(),'1','Review count not persisted');
