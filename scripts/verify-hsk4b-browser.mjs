@@ -56,6 +56,7 @@ try{
   if(await reloadDetails.count()) await reloadDetails.locator('summary').click();
   await page.locator('#partB button.lesson').filter({hasText:'Урок '+n}).click();
   await studio.waitFor({state:'visible'});
+  await page.waitForFunction(()=>document.querySelector('#hsk4bUnknown')?.textContent==='1',{timeout:10000});
   assert.equal(await studio.locator('#hsk4bUnknown').innerText(),'1','Review count not persisted');
   await studio.locator('[data-action="review"]').click();
   assert.match(await studio.locator('#hsk4bCounter').innerText(),/Повторение: 1 из 1/);
